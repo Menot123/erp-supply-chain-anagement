@@ -4,7 +4,6 @@ import {
   BrowserRouter,
   Switch,
   Route,
-  Link
 } from "react-router-dom";
 
 function App() {
@@ -21,6 +20,7 @@ function App() {
           </Route>
           <Route path="/" exact>
             <h4>Home</h4>
+            <button className='btn btn-primary'>Button bootstrap</button>
           </Route>
           <Route path="*" exact>
             404 Not found
