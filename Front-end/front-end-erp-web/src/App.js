@@ -7,9 +7,17 @@ import {
   Switch,
   Route,
 } from "react-router-dom";
+import { useEffect } from 'react'
+import Home from './components/Home/Home';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-  const url = window.location.pathname
+
+  useEffect(() => {
+    document.title = 'Ứng dụng - ERP Viet';
+  }, []);
+
   return (
     <BrowserRouter>
       <div className='app-container'>
@@ -25,15 +33,27 @@ function App() {
             <SignIn />
           </Route>
           <Route path="/" exact>
-            <h4>Home</h4>
-            <button className='btn btn-primary'>Button bootstrap</button>
+            <Home />
           </Route>
           <Route path="*" exact>
             <NotFound404 />
           </Route>
         </Switch>
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
       </div>
     </BrowserRouter>
+
   )
 }
 
