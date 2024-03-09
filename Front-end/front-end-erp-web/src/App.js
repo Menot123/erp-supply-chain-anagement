@@ -1,6 +1,7 @@
 import './App.scss'
 import Navigation from "./components/Nav/Navigation";
 import SignIn from "./components/SignIn/SignIn";
+import NotFound404 from "./components/404_Not_Found/NotFound404";
 import {
   BrowserRouter,
   Switch,
@@ -20,7 +21,7 @@ function App() {
           <Route path="/about">
             <h4>About</h4>
           </Route>
-          <Route path="/sign-in">
+          <Route path="/sign-in" exact>
             <SignIn />
           </Route>
           <Route path="/" exact>
@@ -28,7 +29,7 @@ function App() {
             <button className='btn btn-primary'>Button bootstrap</button>
           </Route>
           <Route path="*" exact>
-            404 Not found
+            <NotFound404 />
           </Route>
         </Switch>
       </div>
