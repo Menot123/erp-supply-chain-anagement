@@ -1,0 +1,17 @@
+.not-found-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .not-found {
+        text-align: center;
+        width: 120vh;
+        overflow: hidden;
+        .btn:hover {
+            background-color: rgb(85, 40, 76) !important;
+        }
+    }
+    .not-found img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+}

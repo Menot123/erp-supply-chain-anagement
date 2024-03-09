@@ -1,6 +1,7 @@
 import './App.scss'
 import Navigation from "./components/Nav/Navigation";
 import SignIn from "./components/SignIn/SignIn";
+import NotFound404 from "./components/404_Not_Found/NotFound404";
 import {
   BrowserRouter,
   Switch,
@@ -17,8 +18,7 @@ function App() {
     document.title = 'Ứng dụng - ERP Viet';
   }, []);
 
-  let url = ' '
-
+  const url = window.location.pathname;
   return (
     <BrowserRouter>
       <div className='app-container'>
@@ -30,14 +30,14 @@ function App() {
           <Route path="/about">
             <h4>About</h4>
           </Route>
-          <Route path="/sign-in">
+          <Route path="/sign-in" exact>
             <SignIn />
           </Route>
           <Route path="/" exact>
             <Home />
           </Route>
           <Route path="*" exact>
-            404 Not found
+            <NotFound404 />
           </Route>
         </Switch>
         <ToastContainer

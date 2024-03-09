@@ -1,28 +1,29 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import './SignIn.scss'
 import logo from '../../assets/img/logo.png'
 import { FaKey, FaUser } from 'react-icons/fa'
-import { useHistory } from 'react-router-dom'
+// import { useHistory } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const SignIn = (props) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const history = useHistory()
+    // const history = useHistory()
 
-    const defaultIsValidInput = {
-        usernameValid: true,
-        passwordValid: true,
-    }
+    // const defaultIsValidInput = {
+    //     usernameValid: true,
+    //     passwordValid: true,
+    // }
 
-    const [isValidInput, setIsValidInput] = useState(defaultIsValidInput)
+    // const [isValidInput, setIsValidInput] = useState(defaultIsValidInput)
     const usernameRef = useRef(null);
     const passwordRef = useRef(null)
 
     // Check Email Structure
     const validateEmail = (email) => {
         return email.match(
-            /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            /^\w+([.-]?\w+)@\w+([.-]?\w+)(\.\w{2,3})+$/
         );
     };
 
@@ -31,9 +32,9 @@ const SignIn = (props) => {
 
         // is username empty
         if (!username) {
-            setIsValidInput({ ...defaultIsValidInput, usernameValid: false })
-            alert('Please enter your username')
-            // toast.error('Please enter your username')
+            // setIsValidInput({ ...defaultIsValidInput, usernameValid: false })
+            // alert('Please enter your username')
+            toast.error('Please enter your username')
             if (usernameRef.current) {
                 usernameRef.current.focus();
             }
@@ -42,9 +43,9 @@ const SignIn = (props) => {
 
         // is username wrong
         if (!validateEmail(username)) {
-            setIsValidInput({ ...defaultIsValidInput, usernameValid: false })
-            alert('This email is invalid')
-            // toast.error('Please enter your username')
+            // setIsValidInput({ ...defaultIsValidInput, usernameValid: false })
+            // alert('This email is invalid')
+            toast.error('This email is invalid')
             if (usernameRef.current) {
                 usernameRef.current.focus();
             }
@@ -53,9 +54,9 @@ const SignIn = (props) => {
 
         // is password empty
         if (!password) {
-            setIsValidInput({ ...defaultIsValidInput, passwordValid: false })
-            alert('Please enter your password')
-            // toast.error('Please enter your password')
+            // setIsValidInput({ ...defaultIsValidInput, passwordValid: false })
+            // alert('Please enter your password')
+            toast.error('Please enter your password')
             if (passwordRef.current) {
                 passwordRef.current.focus();
             }
@@ -64,9 +65,9 @@ const SignIn = (props) => {
 
         // is password less than 6 character
         if (password.length < 6) {
-            setIsValidInput({ ...defaultIsValidInput, passwordValid: false })
-            alert('Password must be at least 6 characters')
-            // toast.error('Please enter your password')
+            // setIsValidInput({ ...defaultIsValidInput, passwordValid: false })
+            // alert('Password must be at least 6 characters')
+            toast.error('Password must be at least 6 characters')
             if (passwordRef.current) {
                 passwordRef.current.focus();
             }
@@ -153,7 +154,7 @@ const SignIn = (props) => {
                                     <input onChange={() => setShowPassword((prev) => !prev)} type="checkbox" id="showPwd" /> <label htmlFor="showPwd">Show Password</label>
                                 </div>
                                 <div className=' mt-2'>
-                                    <a href="#">Forgot password?</a>
+                                    <a href="/forgot-password">Forgot password?</a>
                                 </div>
                             </div>
 
