@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom'
 import { HiSquares2X2 } from "react-icons/hi2";
 import { FaBell } from "react-icons/fa6";
 import tempAvatar from './tempAva.jpeg'
+import logo from '../../assets/img/logo.png'
 
 const Navigation = (props) => {
     return (
@@ -12,6 +13,9 @@ const Navigation = (props) => {
                 <div className="content-left d-flex align-items-center">
                     <div className='icon-header'>
                         <HiSquares2X2 />
+                    </div>
+                    <div className='logo-page'>
+                        <img className='img-avatar' src={logo} alt='img-logo-page' />
                     </div>
                     <NavLink className="navbar-brand ms-3 current-app" to='/'>Ứng dụng</NavLink>
                 </div>
