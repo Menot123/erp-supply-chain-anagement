@@ -1,5 +1,6 @@
 import './App.scss'
 import Navigation from "./components/Nav/Navigation";
+import SignIn from "./components/SignIn/SignIn";
 import {
   BrowserRouter,
   Switch,
@@ -19,13 +20,16 @@ function App() {
   return (
     <BrowserRouter>
       <div className='app-container'>
-        <Navigation />
+        {url === '/sign-in' || url === '/forgot-password' ? ' ' : <Navigation />}
         <Switch>
           <Route path="/news">
             <h4>News</h4>
           </Route>
           <Route path="/about">
             <h4>About</h4>
+          </Route>
+          <Route path="/sign-in">
+            <SignIn />
           </Route>
           <Route path="/" exact>
             <Home />
