@@ -18,6 +18,7 @@ function App() {
     document.title = 'Ứng dụng - ERP Viet';
   }, []);
 
+  const url = window.location.pathname;
   return (
     <BrowserRouter>
       <div className='app-container'>
