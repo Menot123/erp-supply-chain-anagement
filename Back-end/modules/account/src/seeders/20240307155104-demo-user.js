@@ -6,7 +6,7 @@ module.exports = {
             idCard: '089202012345',
             role: 'admin',
             name: 'John Doe',
-            email: 'example@example.com',
+            email: 'admin@gmail.com',
             password: '123456',
             phone: '0123456789',
             gender: 'Male',
