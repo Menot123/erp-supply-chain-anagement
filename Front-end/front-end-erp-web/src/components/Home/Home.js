@@ -30,8 +30,6 @@ function Home() {
     return (
         <div className='wrapper-homepage'>
             <div className='container home-container '>
-                <h3><FormattedMessage id='homepage.language' />{language}</h3>
-                <button onClick={() => handleChangeLanguage()}>Change language</button>
                 <div className='search-input-wrap '>
                     <div className='d-flex form-control item-search'>
                         <input type='text' className='input-search-text' placeholder={intl.formatMessage({ id: "homepage.search" })} />

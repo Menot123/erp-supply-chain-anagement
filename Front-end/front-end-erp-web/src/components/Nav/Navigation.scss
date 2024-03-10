@@ -82,6 +82,10 @@
                     &:hover {
                         cursor: pointer;
                     }
+
+                    &.active {
+                        color: #f78613 !important;
+                    }
                 }
 
             }

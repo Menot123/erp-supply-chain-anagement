@@ -6,9 +6,25 @@ import { FaBell } from "react-icons/fa6";
 import tempAvatar from './tempAva.jpeg'
 import logo from '../../assets/img/logo.png'
 import { FormattedMessage } from 'react-intl'
+import { useSelector, useDispatch } from 'react-redux';
+import { translate } from '../../redux-toolkit/slices/langSlice'
+import { LANGUAGES } from '../../utils/constant'
+import { useEffect } from 'react'
 
 
 const Navigation = (props) => {
+
+    const language = useSelector(state => state.language.value)
+    const dispatch = useDispatch()
+
+    const handleChangeLanguage = (key) => {
+        dispatch(translate(key))
+    }
+
+    useEffect(() => {
+        dispatch(translate(language))
+    }, [language])
+
     return (
         <nav className="navbar navbar-expand-lg navbar-light navigation-home">
             <div className="container-fluid">
@@ -34,13 +50,13 @@ const Navigation = (props) => {
 
                     </div>
                     <div className='languages'>
-                        <span className='language-vi active'>VN</span>
-                        <span className='language-en'>EN</span>
+                        <span onClick={() => handleChangeLanguage('vi')} className={language === LANGUAGES.VI ? 'language-vi active' : 'language-vi'}>VN</span>
+                        <span onClick={() => handleChangeLanguage('en')} className={language === LANGUAGES.EN ? 'language-en active' : 'language-en'}>EN</span>
                     </div>
                 </div>
 
             </div>
-        </nav>
+        </nav >
     )
 }
 
