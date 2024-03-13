@@ -1,6 +1,6 @@
 import express from 'express';
 import homeController from '../controllers/homeController'
-import apiController from '../controllers/apiController'
+import apiController from '../controllers/loginController'
 import jwt from '../middleware/JWTServices';
 
 let router = express.Router();

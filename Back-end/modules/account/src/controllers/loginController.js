@@ -1,5 +1,5 @@
-import userService from '../services/userService';
-let handleLogin = async(req, res) => {
+import userService from '../services/loginService';
+let handleLogin = async (req, res) => {
     try {
         let { email, password } = req.body;
 

@@ -1,10 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React from 'react'
 import './NotFound404.scss'
-import logo from '../../assets/img/logo.png'
 import notFound404 from '../../assets/img/404_not_found.png'
-import { FaKey, FaUser } from 'react-icons/fa'
 import { useHistory } from 'react-router-dom'
-import { directive } from '@babel/types'
 
 const NotFound404 = (props) => {
     const history = useHistory();

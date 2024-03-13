@@ -6,14 +6,18 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { store } from './redux-toolkit/store'
 import { Provider } from 'react-redux'
 import Wrapper from './HOC/Wrapper'
-
+import { BrowserRouter } from "react-router-dom";
 
 
 ReactDOM.render(
   <Provider store={store}>
     <Wrapper>
       <React.StrictMode>
-        <App />
+        <BrowserRouter>
+
+          <App />
+        </BrowserRouter>
+
       </React.StrictMode>
     </Wrapper>
   </Provider>,
