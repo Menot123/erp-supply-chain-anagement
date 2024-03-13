@@ -1,59 +1,160 @@
 import db from '../models/index'
-import { createJWT } from '../middleware/JWTServices'
-import bcrypt from 'bcryptjs';
 const { Op } = require("sequelize");
 
-
-const salt = bcrypt.genSaltSync(8);
-
-
-const handleUserLogin = async(email, pwd) => {
+const handleGetAllUsersService = async() => {
     try {
-        let user = await db.User.findOne({
+        let res = {}
+        let user = await db.User.findAll({
+            order: [
+                ['createdAt', 'DESC']
+            ],
             where: {
-                email: email,
-            }
+                email: {
+                    [Op.not]: 'admin@gmail.com'
+                },
+                status: {
+                    [Op.not]: 'deleted'
+                },
+            },
+            attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
         });
         if (user) {
-            let checkPass = true
-            if (user.email !== 'admin@gmail.com') {
-                checkPass = bcrypt.compareSync(pwd, user.password);
-            } else {
-                if (pwd !== user.password)
-                    checkPass = false;
-            }
-            if (checkPass) {
-                let payload = {
-                    email: user.email,
-                    name: user.email === 'admin@gmail.com' ? 'Admin' : user.name
-                }
-                let token = createJWT(payload)
-                return {
-                    EM: 'OK',
-                    EC: 0,
-                    DT: {
-                        access_token: token,
-                        email: user.email,
-                        name: user.name,
-                    }
-                }
-            }
+            res.EC = 0
+            res.EM = 'Get all users successfully'
+            res.DT = user
+        } else {
+            res.EM = 'Get all users failed'
+            res.EC = 1
+            res.DT = ''
         }
-        return {
-            EM: 'Your email or password is incorrect',
-            EC: 1,
-            DT: ''
-        }
+        return res
     } catch (e) {
         console.log('>>> error: ', e)
-        return {
-            EM: 'Something wrong in handle login userService',
-            EC: 1,
-            DT: ''
+    }
+}
+
+const handleGetUserService = async(idCard) => {
+    try {
+        let res = {}
+        let user = await db.User.findOne({
+            where: {
+                email: {
+                    [Op.not]: 'admin@gmail.com'
+                },
+                status: {
+                    [Op.not]: 'deleted'
+                },
+                idCard: idCard
+            },
+            attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
+        });
+        if (user) {
+            res.EC = 0
+            res.EM = 'Get user successfully'
+            res.DT = user
+        } else {
+            res.EM = 'Get user failed'
+            res.EC = 1
+            res.DT = ''
         }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
+const handleCreateUserService = async(data) => {
+    try {
+        let res = {}
+        let user = await db.User.findOne({
+            where: {
+                [Op.or]: [
+                    { idCard: data.idCard },
+                    { email: data.email },
+                    { phone: data.phone }
+                ]
+            },
+        });
+        if (user) {
+            res.EC = -1
+            res.EM = 'User is existing'
+            res.DT = ''
+        } else {
+            let newUser = await db.User.create(data)
+            res.EM = 'Create user successfully'
+            res.EC = 1
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
+const handleUpdateUserService = async(idCard, data) => {
+    try {
+        let res = {}
+        let user = await db.User.findOne({
+            where: {
+                email: {
+                    [Op.not]: 'admin@gmail.com'
+                },
+                status: {
+                    [Op.not]: 'deleted'
+                },
+                idCard: idCard
+            },
+        });
+        if (user) {
+            let editUser = await user.update({...data })
+            res.EM = 'Update user successfully'
+            res.EC = 1
+            res.DT = ''
+        } else {
+            res.EC = -1
+            res.EM = 'User not found'
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
+const handleDeleteUserService = async(idCard) => {
+    try {
+        let res = {}
+        let user = await db.User.findOne({
+            where: {
+                email: {
+                    [Op.not]: 'admin@gmail.com'
+                },
+                status: {
+                    [Op.not]: 'deleted'
+                },
+                idCard: idCard
+            },
+        });
+        if (user) {
+            let deleteUser = await user.update({ status: 'deleted' })
+            res.EC = 0
+            res.EM = 'Delete user successfully'
+            res.DT = ''
+        } else {
+            res.EM = 'Delete user failed'
+            res.EC = 1
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
     }
 }
 
 module.exports = {
-    handleUserLogin
+    handleGetAllUsersService,
+    handleGetUserService,
+    handleCreateUserService,
+    handleUpdateUserService,
+    handleDeleteUserService
 }

@@ -1,4 +1,4 @@
-import userService from '../services/userService';
+import loginService from '../services/loginService';
 let handleLogin = async(req, res) => {
     try {
         let { email, password } = req.body;
@@ -11,7 +11,7 @@ let handleLogin = async(req, res) => {
             })
         }
         // Checking email and Password
-        let data = await userService.handleUserLogin(email, password)
+        let data = await loginService.handleUserLogin(email, password)
         if (data && data.DT.access_token) {
             res.cookie('jwt', data.DT.access_token, { httpOnly: true, maxAge: 60 * 60 * 1000 });
         }
