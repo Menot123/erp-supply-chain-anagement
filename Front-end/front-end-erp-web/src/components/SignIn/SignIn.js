@@ -4,11 +4,31 @@ import logo from '../../assets/img/logo.png'
 import { FaKey, FaUser } from 'react-icons/fa'
 // import { useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { useSelector, useDispatch } from 'react-redux';
+import { translate } from '../../redux-toolkit/slices/langSlice'
+import { LANGUAGES } from '../../utils/constant'
+import { useEffect } from 'react'
+
 
 const SignIn = (props) => {
+
+    const intl = useIntl();
+    const language = useSelector(state => state.language.value)
+    const dispatch = useDispatch()
+
+    const handleChangeLanguage = (key) => {
+        dispatch(translate(key))
+    }
+
+    useEffect(() => {
+        dispatch(translate(language))
+    }, [language, dispatch])
+
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+
     // const history = useHistory()
 
     // const defaultIsValidInput = {
@@ -34,7 +54,7 @@ const SignIn = (props) => {
         if (!username) {
             // setIsValidInput({ ...defaultIsValidInput, usernameValid: false })
             // alert('Please enter your username')
-            toast.error('Please enter your username')
+            toast.error(<FormattedMessage id='login-form.toast-empty-email' />)
             if (usernameRef.current) {
                 usernameRef.current.focus();
             }
@@ -45,7 +65,7 @@ const SignIn = (props) => {
         if (!validateEmail(username)) {
             // setIsValidInput({ ...defaultIsValidInput, usernameValid: false })
             // alert('This email is invalid')
-            toast.error('This email is invalid')
+            toast.error(<FormattedMessage id='login-form.toast-invalid-email' />)
             if (usernameRef.current) {
                 usernameRef.current.focus();
             }
@@ -56,7 +76,7 @@ const SignIn = (props) => {
         if (!password) {
             // setIsValidInput({ ...defaultIsValidInput, passwordValid: false })
             // alert('Please enter your password')
-            toast.error('Please enter your password')
+            toast.error(<FormattedMessage id='login-form.toast-empty-password' />)
             if (passwordRef.current) {
                 passwordRef.current.focus();
             }
@@ -67,7 +87,7 @@ const SignIn = (props) => {
         if (password.length < 6) {
             // setIsValidInput({ ...defaultIsValidInput, passwordValid: false })
             // alert('Password must be at least 6 characters')
-            toast.error('Password must be at least 6 characters')
+            toast.error(<FormattedMessage id='login-form.toast-invalid-password' />)
             if (passwordRef.current) {
                 passwordRef.current.focus();
             }
@@ -95,9 +115,9 @@ const SignIn = (props) => {
                     <div className="login-box col-md-6">
                         {/* Translate */}
                         <div className='text-end me-5 mt-4'>
-                            <span className='unselected-language'>VI</span>
+                            <span onClick={() => handleChangeLanguage('vi')} className={language === LANGUAGES.VI ? 'selected-language' : 'unselected-language'}>VI</span>
                             <span className='ms-2'></span>
-                            <span className='selected-language'>EN</span>
+                            <span onClick={() => handleChangeLanguage('en')} className={language === LANGUAGES.EN ? 'selected-language' : 'unselected-language'}>EN</span>
                         </div>
 
                         {/* Logo */}
@@ -106,17 +126,17 @@ const SignIn = (props) => {
                         </div>
 
                         {/* Login text */}
-                        <div className="login-text text-center">Login into your account</div>
+                        <div className="login-text text-center"><FormattedMessage id="login-form.title" /></div>
 
                         {/* Username */}
                         <div className="form-group pe-5 ps-5">
-                            <label htmlFor="inputEmail" className="form-label">Email address</label>
+                            <label htmlFor="inputEmail" className="form-label"><FormattedMessage id="login-form.email-field" /></label>
                             <div className="input-group">
                                 <input
                                     type="email"
                                     className="form-control"
                                     id="inputEmail"
-                                    placeholder='Enter your email address'
+                                    placeholder={intl.formatMessage({ id: "login-form.email-field-placeholder" })}
                                     ref={usernameRef}
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
@@ -131,13 +151,13 @@ const SignIn = (props) => {
 
                         {/* Password */}
                         <div className="form-group pe-5 ps-5 mb-5 mt-3">
-                            <label htmlFor="inputPassword" className="form-label">Password</label>
+                            <label htmlFor="inputPassword" className="form-label"><FormattedMessage id="login-form.password-field" /></label>
                             <div className="input-group">
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     className="form-control"
                                     id="inputPassword"
-                                    placeholder='Enter your password'
+                                    placeholder={intl.formatMessage({ id: "login-form.password-field-placeholder" })}
                                     ref={passwordRef}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -151,10 +171,10 @@ const SignIn = (props) => {
                             </div>
                             <div className='d-flex justify-content-between'>
                                 <div className='mt-2'>
-                                    <input onChange={() => setShowPassword((prev) => !prev)} type="checkbox" id="showPwd" /> <label htmlFor="showPwd">Show Password</label>
+                                    <input onChange={() => setShowPassword((prev) => !prev)} type="checkbox" id="showPwd" /> <label htmlFor="showPwd"><FormattedMessage id="login-form.show-pass" /></label>
                                 </div>
                                 <div className=' mt-2'>
-                                    <a href="/forgot-password">Forgot password?</a>
+                                    <a href="/forgot-password"><FormattedMessage id="login-form.forgot-pass" /></a>
                                 </div>
                             </div>
 
@@ -163,7 +183,7 @@ const SignIn = (props) => {
                         {/* Login button */}
                         <div className="login-button pe-5 ps-5 mb-5 mt-3">
                             <div className="button-div d-grid gap-2">
-                                <button onClick={() => handleLogin()} className="btn" type="button" style={{ backgroundColor: '#714B67', color: 'white' }}>Login Now</button>
+                                <button onClick={() => handleLogin()} className="btn" type="button" style={{ backgroundColor: '#714B67', color: 'white' }}><FormattedMessage id="login-form.btn-login" /></button>
                             </div>
                         </div>
                     </div>

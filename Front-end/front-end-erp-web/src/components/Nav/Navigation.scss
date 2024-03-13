@@ -1,95 +1,143 @@
-.navigation-home {
-    background-color: #714B67;
-    color           : #fff;
+.wrap-navigation-home {
+    position: relative;
 
-    .container-fluid {
-        .content-left {
-            .icon-header {
-                &:hover {
-                    cursor : pointer;
-                    opacity: 0.8;
-                }
-            }
+    .navigation-home {
+        background-color: #714B67;
+        color           : #fff;
 
-            .logo-page {
-                width : 100px;
-                height: 50px;
+        .container-fluid {
+            .content-left {
+                .icon-header {
 
-                .img-avatar {
-                    width : 100%;
-                    height: 100%;
-                }
-            }
-
-            .current-app {
-                color: #fff !important;
-            }
-        }
-
-        .content-right {
-            .icon-notifications {
-                &:hover {
-                    cursor: pointer;
-                }
-            }
-
-            .user-profile {
-                margin: 0 14px;
-
-                &:hover {
-                    cursor: pointer;
+                    &:hover {
+                        cursor : pointer;
+                        opacity: 0.8;
+                    }
                 }
 
-                .avatar-user {
-                    position        : relative;
-                    width           : 18px;
-                    height          : 18px;
-                    background-color: #fff;
-                    border-radius   : 8px;
-                    margin-right    : 6px;
+                .logo-page {
+                    width : 100px;
+                    height: 50px;
 
                     .img-avatar {
-                        position     : absolute;
-                        top          : 0;
-                        object-fit   : contain;
-                        width        : 100%;
-                        height       : 100%;
-                        border-radius: 8px;
-
+                        width : 100%;
+                        height: 100%;
                     }
                 }
 
-
+                .current-app {
+                    color: #fff !important;
+                }
             }
 
-            .languages {
-                display: flex;
-                gap    : 4px;
-
-                .language-vi {
-                    margin-right: 4px;
-
-                    &.active {
-                        color: #f78613 !important;
-                    }
-
+            .content-right {
+                .icon-notifications {
                     &:hover {
                         cursor: pointer;
                     }
                 }
 
-                .language-en {
+                .user-profile {
+                    margin: 0 14px;
+
                     &:hover {
                         cursor: pointer;
                     }
 
-                    &.active {
-                        color: #f78613 !important;
+                    .avatar-user {
+                        position        : relative;
+                        width           : 18px;
+                        height          : 18px;
+                        background-color: #fff;
+                        border-radius   : 8px;
+                        margin-right    : 6px;
+
+                        .img-avatar {
+                            position     : absolute;
+                            top          : 0;
+                            object-fit   : contain;
+                            width        : 100%;
+                            height       : 100%;
+                            border-radius: 8px;
+
+                        }
                     }
+
+
+                }
+
+                .languages {
+                    display: flex;
+                    gap    : 4px;
+
+                    .language-vi {
+                        margin-right: 4px;
+
+                        &.active {
+                            color: #f78613 !important;
+                        }
+
+                        &:hover {
+                            cursor: pointer;
+                        }
+                    }
+
+                    .language-en {
+                        &:hover {
+                            cursor: pointer;
+                        }
+
+                        &.active {
+                            color: #f78613 !important;
+                        }
+                    }
+
                 }
 
             }
+        }
+    }
 
+    .drop-down-menu-apps {
+        position                  : absolute;
+        height                    : 200px;
+        width                     : 110px;
+        background-color          : #fff;
+        display                   : flex;
+        flex-direction            : column;
+        box-shadow                : 0 0 5px rgba(0, 0, 0, 0.3);
+        border-bottom-right-radius: 4px;
+        border-bottom-left-radius : 4px;
+
+        .item-app-menu {
+            padding: 8px 8px;
+
+            &:hover {
+                background-color: #c49bb8;
+                cursor          : pointer;
+            }
+        }
+    }
+
+    .drop-down-user-apps {
+        z-index                   : 10;
+        position                  : absolute;
+        right                     : 0px;
+        width                     : 180px;
+        background-color          : #fff;
+        display                   : flex;
+        flex-direction            : column;
+        box-shadow                : 0 0 5px rgba(0, 0, 0, 0.3);
+        border-bottom-right-radius: 4px;
+        border-bottom-left-radius : 4px;
+
+        .item-app-user {
+            padding: 8px 8px;
+
+            &:hover {
+                background-color: #c49bb8;
+                cursor          : pointer;
+            }
         }
     }
 }

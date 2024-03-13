@@ -1,31 +1,17 @@
 import React from 'react'
 import './Home.scss'
-import { toast } from 'react-toastify'
 import { FaSearch } from "react-icons/fa";
 import inventory from '../../../src/assets/img/inventory2.png'
 import mua_hang from '../../../src/assets/img/mua_hang.png'
 import ban_hang from '../../../src/assets/img/ban_hang.png'
 import ke_toan from '../../../src/assets/img/ke_toan.png'
 import tai_khoan from '../../../src/assets/img/account.png'
-import { useSelector, useDispatch } from 'react-redux';
-import { translate } from '../../redux-toolkit/slices/langSlice'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { useIntl, FormattedMessage } from 'react-intl'
 
 
 function Home() {
 
     const intl = useIntl();
-    const language = useSelector(state => state.language.value)
-    const dispatch = useDispatch()
-
-    const handleToast = () => {
-        toast.success('Hi guys')
-    }
-
-
-    const handleChangeLanguage = () => {
-        dispatch(translate('en'))
-    }
 
     return (
         <div className='wrapper-homepage'>
@@ -45,11 +31,11 @@ function Home() {
 
                         <div className='content-item'>
                             <div className='wrap-title'>
-                                <span className='title-app'>Quản lý Kho </span>
+                                <span className='title-app'><FormattedMessage id='homepage.item-inventory-name' /></span>
                             </div>
 
                             <div className='wrap-description'>
-                                <span className='description-app'>Quản lý kho của bạn và các hoạt động logistics</span>
+                                <span className='description-app'><FormattedMessage id='homepage.item-inventory-des' /></span>
                             </div>
                         </div>
 
@@ -63,11 +49,11 @@ function Home() {
 
                         <div className='content-item'>
                             <div className='wrap-title'>
-                                <span className='title-app'>Mua hàng</span>
+                                <span className='title-app'><FormattedMessage id='homepage.item-purchase-name' /></span>
                             </div>
 
                             <div className='wrap-description'>
-                                <span className='description-app'>Đơn mua hàng, nhà cung cấp và các thỏa thuận</span>
+                                <span className='description-app'><FormattedMessage id='homepage.item-purchase-des' /></span>
                             </div>
                         </div>
 
@@ -81,11 +67,11 @@ function Home() {
 
                         <div className='content-item'>
                             <div className='wrap-title'>
-                                <span className='title-app'>Bán hàng</span>
+                                <span className='title-app'><FormattedMessage id='homepage.item-sales-name' /></span>
                             </div>
 
                             <div className='wrap-description'>
-                                <span className='description-app'>Từ báo giá tới hóa đơn</span>
+                                <span className='description-app'><FormattedMessage id='homepage.item-sales-des' /></span>
                             </div>
                         </div>
 
@@ -99,11 +85,11 @@ function Home() {
 
                         <div className='content-item'>
                             <div className='wrap-title'>
-                                <span className='title-app'>Kế toán</span>
+                                <span className='title-app'><FormattedMessage id='homepage.item-accounting-name' /></span>
                             </div>
 
                             <div className='wrap-description'>
-                                <span className='description-app'>Quản lý kế toán và phân tích tài chính</span>
+                                <span className='description-app'><FormattedMessage id='homepage.item-accounting-des' /></span>
                             </div>
                         </div>
                     </div>
@@ -115,11 +101,11 @@ function Home() {
 
                         <div className='content-item'>
                             <div className='wrap-title'>
-                                <span className='title-app'>Quản lý tài khoản</span>
+                                <span className='title-app'><FormattedMessage id='homepage.item-account-name' /></span>
                             </div>
 
                             <div className='wrap-description'>
-                                <span className='description-app'>Tổng hợp chung thông tin nhân viên và tài khoản</span>
+                                <span className='description-app'><FormattedMessage id='homepage.item-account-des' /></span>
                             </div>
                         </div>
                     </div>
