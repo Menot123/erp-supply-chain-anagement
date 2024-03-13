@@ -8,13 +8,17 @@ import logo from '../../assets/img/logo.png'
 import { FormattedMessage } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { translate } from '../../redux-toolkit/slices/langSlice'
+import { logOut } from '../../redux-toolkit/slices/userSlice'
 import { LANGUAGES } from '../../utils/constant'
 import { useRef, useEffect, useState } from 'react'
+import { logoutService } from '../../services/userServices'
+import { toast } from 'react-toastify';
 
 
 const Navigation = (props) => {
 
     const language = useSelector(state => state.language.value)
+    const userLogin = useSelector(state => state.user.isLogin)
     const dispatch = useDispatch()
     const [isShowMenuApp, setIsShowMenuApp] = useState(false)
     const [isShowMenuUser, setIsShowMenuUser] = useState(false)
@@ -24,6 +28,15 @@ const Navigation = (props) => {
 
     const handleChangeLanguage = (key) => {
         dispatch(translate(key))
+    }
+
+    const handleLogout = async () => {
+        let res = await logoutService()
+        if (res.EC !== 0) {
+            toast.error(res.EM)
+        } else {
+            dispatch(logOut())
+        }
     }
 
     useEffect(() => {
@@ -71,16 +84,23 @@ const Navigation = (props) => {
                         </div>
 
                         <div className="content-right d-flex align-items-center">
-                            <div className='icon-notifications'>
-                                <FaBell />
-                            </div>
-                            <div ref={dropdownUserRef} onClick={() => handleShowMenuUser(isShowMenuUser)} className='d-flex user-profile align-items-center'>
-                                <div className='avatar-user '>
-                                    <img className='img-avatar' src={tempAvatar} alt='avatar User' />
-                                </div>
-                                <span className='name-user'>Joan Felix</span>
+                            {userLogin ?
+                                <>
+                                    <div className='icon-notifications'>
+                                        <FaBell />
+                                    </div>
+                                    <div ref={dropdownUserRef} onClick={() => handleShowMenuUser(isShowMenuUser)} className='d-flex user-profile align-items-center'>
+                                        <div className='avatar-user '>
+                                            <img className='img-avatar' src={tempAvatar} alt='avatar User' />
+                                        </div>
+                                        <span className='name-user'>Joan Felix</span>
 
-                            </div>
+                                    </div>
+                                </>
+                                :
+                                <NavLink className="navbar-brand ms-3 current-app text-login" to='/login'><FormattedMessage id='navigation.button-login' /></NavLink>
+                            }
+
                             <div className='languages'>
                                 <span onClick={() => handleChangeLanguage('vi')} className={language === LANGUAGES.VI ? 'language-vi active' : 'language-vi'}>VN</span>
                                 <span onClick={() => handleChangeLanguage('en')} className={language === LANGUAGES.EN ? 'language-en active' : 'language-en'}>EN</span>
@@ -99,7 +119,7 @@ const Navigation = (props) => {
 
                 <div className={isShowMenuUser === false ? 'drop-down-user-apps d-none' : 'drop-down-user-apps'}>
                     <span className='item-app-user'><FormattedMessage id='navigation.dropdown-user-personal' /></span>
-                    <span className='item-app-user'><FormattedMessage id='navigation.dropdown-user-logout' /></span>
+                    <span onClick={() => handleLogout()} className='item-app-user'><FormattedMessage id='navigation.dropdown-user-logout' /></span>
                 </div>
             </div>
         </>

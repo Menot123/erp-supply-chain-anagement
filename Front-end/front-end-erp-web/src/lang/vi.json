@@ -19,6 +19,7 @@
     "navigation.dropdown-app-accounting": "Kế toán",
     "navigation.dropdown-user-personal": "Tùy chỉnh cá nhân",
     "navigation.dropdown-user-logout": "Đăng xuất",
+    "navigation.button-login": "Đăng nhập",
     "login-form.title": "Login into your account",
     "login-form.title": "Đăng nhập vào tài khoản của bạn",
     "login-form.email-field": "Địa chỉ email",
@@ -31,5 +32,7 @@
     "login-form.toast-empty-email": "Vui lòng nhập vào email!",
     "login-form.toast-invalid-email": "Địa chỉ email này không hợp lệ!",
     "login-form.toast-empty-password": "Vui lòng nhập vào mật khẩu của bạn!",
-    "login-form.toast-invalid-password": "Mật khẩu bắt buộc ít nhất 6 kí tự!"
+    "login-form.toast-invalid-password": "Mật khẩu bắt buộc ít nhất 6 kí tự!",
+    "login-form.toast-axios-error": "Bạn không có quyền truy cập tài nguyên này...",
+    "login-form.toast-login-failed": "Email hoặc mật khẩu của bạn không đúng!"
 }

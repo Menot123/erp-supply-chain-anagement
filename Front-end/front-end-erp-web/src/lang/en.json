@@ -19,6 +19,7 @@
     "navigation.dropdown-app-accounting": "Accounting",
     "navigation.dropdown-user-personal": "Personal customization",
     "navigation.dropdown-user-logout": "Log out",
+    "navigation.button-login": "Sign In",
     "login-form.title": "Login into your account",
     "login-form.email-field": "Email address",
     "login-form.email-field-placeholder": "Enter your email address",
@@ -30,5 +31,7 @@
     "login-form.toast-empty-email": "Please enter your username!",
     "login-form.toast-invalid-email": "This email is invalid!",
     "login-form.toast-empty-password": "Please enter your password!",
-    "login-form.toast-invalid-password": "Password must be at least 6 characters!"
+    "login-form.toast-invalid-password": "Password must be at least 6 characters!",
+    "login-form.toast-axios-error": "You don't have permission to access this resource...",
+    "login-form.toast-login-failed": "Your email or password is incorrect!"
 }

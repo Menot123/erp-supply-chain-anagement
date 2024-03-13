@@ -30,7 +30,7 @@ let handleLogin = async(req, res) => {
 
 }
 
-const handleLogout = (req, res, next) => {
+const handleLogoutAccount = (req, res, next) => {
     try {
         res.clearCookie('jwt')
         return res.status(200).json({
@@ -40,11 +40,11 @@ const handleLogout = (req, res, next) => {
         })
     } catch (e) {
         return res.status(500).json({
-            EM: 'error from server',
+            EM: 'error from logout service server',
             EC: '-1',
             DT: ''
         })
     }
 }
 
-module.exports = { handleLogin, handleLogout };
+module.exports = { handleLogin, handleLogoutAccount };

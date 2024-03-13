@@ -6,7 +6,6 @@ const createJWT = (payload) => {
     let token = null
     try {
         token = jwt.sign(payload, key, { expiresIn: '1h' });
-        // console.log(token);
     } catch (err) {
         console.log(err)
     }
@@ -25,9 +24,9 @@ const verifyToken = (token) => {
     return dataDecoded;
 }
 
-const notCheckPath = ['/login', '/forgot-password'];
+const passCheckMiddleWare = ['/login', '/forgot-password'];
 const checkUserJWT = (req, res, next) => {
-    if (notCheckPath.includes(req.path)) {
+    if (passCheckMiddleWare.includes(req.path)) {
         return next()
     }
     let cookies = req.cookies

@@ -13,7 +13,7 @@ let initApiRoutes = (app) => {
 
     // Login and logout
     router.post('/login', loginController.handleLogin);
-    router.post('/logout', loginController.handleLogout);
+    router.post('/logout', loginController.handleLogoutAccount);
 
     // CRUD user
     router.get('/users', userController.handleGetUsers);

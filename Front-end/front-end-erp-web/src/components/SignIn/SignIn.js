@@ -7,8 +7,12 @@ import { toast } from 'react-toastify'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { translate } from '../../redux-toolkit/slices/langSlice'
+import { loginSuccess } from '../../redux-toolkit/slices/userSlice'
 import { LANGUAGES } from '../../utils/constant'
 import { useEffect } from 'react'
+import { loginService } from '../../services/userServices'
+import { useHistory } from 'react-router-dom'
+
 
 
 const SignIn = (props) => {
@@ -16,6 +20,7 @@ const SignIn = (props) => {
     const intl = useIntl();
     const language = useSelector(state => state.language.value)
     const dispatch = useDispatch()
+    const history = useHistory();
 
     const handleChangeLanguage = (key) => {
         dispatch(translate(key))
@@ -29,14 +34,6 @@ const SignIn = (props) => {
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
-    // const history = useHistory()
-
-    // const defaultIsValidInput = {
-    //     usernameValid: true,
-    //     passwordValid: true,
-    // }
-
-    // const [isValidInput, setIsValidInput] = useState(defaultIsValidInput)
     const usernameRef = useRef(null);
     const passwordRef = useRef(null)
 
@@ -49,52 +46,50 @@ const SignIn = (props) => {
 
     // Submit button login
     const handleLogin = async () => {
-
-        // is username empty
-        if (!username) {
-            // setIsValidInput({ ...defaultIsValidInput, usernameValid: false })
-            // alert('Please enter your username')
-            toast.error(<FormattedMessage id='login-form.toast-empty-email' />)
-            if (usernameRef.current) {
-                usernameRef.current.focus();
-            }
-            return
-        }
-
-        // is username wrong
-        if (!validateEmail(username)) {
-            // setIsValidInput({ ...defaultIsValidInput, usernameValid: false })
-            // alert('This email is invalid')
-            toast.error(<FormattedMessage id='login-form.toast-invalid-email' />)
-            if (usernameRef.current) {
-                usernameRef.current.focus();
-            }
-            return
-        }
-
-        // is password empty
-        if (!password) {
-            // setIsValidInput({ ...defaultIsValidInput, passwordValid: false })
-            // alert('Please enter your password')
-            toast.error(<FormattedMessage id='login-form.toast-empty-password' />)
-            if (passwordRef.current) {
-                passwordRef.current.focus();
-            }
-            return
-        }
-
-        // is password less than 6 character
-        if (password.length < 6) {
-            // setIsValidInput({ ...defaultIsValidInput, passwordValid: false })
-            // alert('Password must be at least 6 characters')
-            toast.error(<FormattedMessage id='login-form.toast-invalid-password' />)
-            if (passwordRef.current) {
-                passwordRef.current.focus();
-            }
-            return
-        }
-
         try {
+            // is username empty
+            if (!username) {
+                toast.error(<FormattedMessage id='login-form.toast-empty-email' />)
+                if (usernameRef.current) {
+                    usernameRef.current.focus();
+                }
+                return
+            }
+
+            // is username wrong
+            if (!validateEmail(username)) {
+                toast.error(<FormattedMessage id='login-form.toast-invalid-email' />)
+                if (usernameRef.current) {
+                    usernameRef.current.focus();
+                }
+                return
+            }
+
+            // is password empty
+            if (!password) {
+                toast.error(<FormattedMessage id='login-form.toast-empty-password' />)
+                if (passwordRef.current) {
+                    passwordRef.current.focus();
+                }
+                return
+            }
+
+            // is password less than 6 character
+            if (password.length < 6) {
+                toast.error(<FormattedMessage id='login-form.toast-invalid-password' />)
+                if (passwordRef.current) {
+                    passwordRef.current.focus();
+                }
+                return
+            }
+
+            let res = await loginService({ email: username, password: password })
+            if (res.EC === 0) {
+                dispatch(loginSuccess())
+                history.push('/home')
+            } else {
+                toast.error(<FormattedMessage id='login-form.toast-login-failed' />)
+            }
 
         } catch (error) {
             console.error(error);
