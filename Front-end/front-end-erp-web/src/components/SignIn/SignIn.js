@@ -7,6 +7,7 @@ import { toast } from 'react-toastify'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { translate } from '../../redux-toolkit/slices/langSlice'
+import { loginSuccess } from '../../redux-toolkit/slices/userSlice'
 import { LANGUAGES } from '../../utils/constant'
 import { useEffect } from 'react'
 import { loginService } from '../../services/userServices'
@@ -84,6 +85,7 @@ const SignIn = (props) => {
 
             let res = await loginService({ email: username, password: password })
             if (res.EC === 0) {
+                dispatch(loginSuccess())
                 history.push('/home')
             } else {
                 toast.error(<FormattedMessage id='login-form.toast-login-failed' />)

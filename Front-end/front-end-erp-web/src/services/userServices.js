@@ -4,4 +4,9 @@ const loginService = (data) => {
     return axios.post('/api/login', data)
 }
 
-export { loginService }
+const logoutService = () => {
+    return axios.post('/api/logout')
+
+}
+
+export { loginService, logoutService }

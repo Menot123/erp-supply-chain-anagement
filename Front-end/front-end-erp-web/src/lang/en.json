@@ -19,6 +19,7 @@
     "navigation.dropdown-app-accounting": "Accounting",
     "navigation.dropdown-user-personal": "Personal customization",
     "navigation.dropdown-user-logout": "Log out",
+    "navigation.button-login": "Sign In",
     "login-form.title": "Login into your account",
     "login-form.email-field": "Email address",
     "login-form.email-field-placeholder": "Enter your email address",
