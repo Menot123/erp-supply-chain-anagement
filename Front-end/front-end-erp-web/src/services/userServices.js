@@ -6,7 +6,18 @@ const loginService = (data) => {
 
 const logoutService = () => {
     return axios.post('/api/logout')
-
 }
 
-export { loginService, logoutService }
+const getOTPCode = (email) => {
+    return axios.post('/api/forgot-password', { email })
+}
+
+const checkingOTP = (email, otp) => {
+    return axios.post('/api/checking-otp', { email, otp })
+}
+
+const resetPassword = (email, newPass) => {
+    return axios.post('/api/change-password', { email, newPass })
+}
+
+export { loginService, logoutService, getOTPCode, checkingOTP, resetPassword }

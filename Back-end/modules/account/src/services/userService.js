@@ -1,5 +1,8 @@
 import db from '../models/index'
+import bcrypt from 'bcryptjs';
 const { Op } = require("sequelize");
+
+const salt = bcrypt.genSaltSync(Number(process.env.SALT_HASH_CODE));
 
 const handleGetAllUsersService = async() => {
     try {
@@ -63,6 +66,15 @@ const handleGetUserService = async(idCard) => {
     }
 }
 
+let hashUserPassword = async(password) => {
+    try {
+        const hashPassword = await bcrypt.hash(password, salt);
+        return hashPassword;
+    } catch (err) {
+        throw err;
+    }
+};
+
 const handleCreateUserService = async(data) => {
     try {
         let res = {}
@@ -80,6 +92,8 @@ const handleCreateUserService = async(data) => {
             res.EM = 'User is existing'
             res.DT = ''
         } else {
+            let hashPassword = await hashUserPassword(data.password)
+            data.password = hashPassword
             let newUser = await db.User.create(data)
             res.EM = 'Create user successfully'
             res.EC = 1

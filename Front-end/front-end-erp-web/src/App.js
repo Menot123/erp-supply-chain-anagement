@@ -1,6 +1,7 @@
 import './App.scss'
 import Navigation from "./components/Nav/Navigation";
 import SignIn from "./components/SignIn/SignIn";
+import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
 import NotFound404 from "./components/404_Not_Found/NotFound404";
 import {
   Switch,
@@ -34,6 +35,9 @@ function App() {
         </Route>
         <Route path="/login" exact>
           <SignIn />
+        </Route>
+        <Route path="/forgot-password" exact>
+          <ForgotPassword />
         </Route>
         <Route path={['/', '/home']} exact>
           <Home />
