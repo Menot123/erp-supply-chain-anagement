@@ -1,0 +1,85 @@
+.wrapper-create-employee {
+    background-color: #ccc;
+    height          : 100vh;
+
+    .header-create {
+        padding         : 4px 12px;
+        height          : 84px;
+        border-bottom   : 1px solid #eee;
+        background-color: #fff;
+
+        .title-create {
+            font-size  : 1.3em;
+            font-weight: 500;
+            color      : #632c54;
+        }
+    }
+
+    .create-employee-container {
+        border          : 1px solid #ccc;
+        border-radius   : 3px;
+        margin-top      : 12px;
+        height          : 400px;
+        background-color: #fff;
+
+        .name-position-avatar {
+            display: flex;
+            padding: 24px;
+
+            .name-position {
+                width         : 75%;
+                display       : flex;
+                flex-direction: column;
+
+                .name-employee {
+                    line-height: 1.9rem;
+                    height     : 50px;
+                    font-size  : 30px;
+                }
+
+                .name-employee,
+                .position-employee {
+                    outline: none;
+                    border : none;
+
+                    &:focus {
+                        border-bottom: 1px solid #ccc;
+                    }
+                }
+            }
+
+            .avatar {
+                width: 25%;
+
+                .icon-upload {
+                    color  : #ccc;
+                    border : 1px solid #ccc;
+                    float  : right;
+                    height : 80px;
+                    width  : 80px;
+                    padding: 4px;
+                }
+            }
+        }
+
+        .information-detail {
+            padding: 0 24px;
+            display: flex;
+
+            // gap    : 8px;
+            .label-input {
+                width: 25%;
+            }
+
+            .input-inf {
+                width  : 75%;
+                outline: none;
+                border : none;
+
+                &:focus {
+                    border-bottom: 1px solid #ccc;
+                }
+            }
+        }
+    }
+}

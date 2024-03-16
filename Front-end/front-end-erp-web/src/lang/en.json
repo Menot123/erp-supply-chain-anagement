@@ -33,5 +33,6 @@
     "login-form.toast-empty-password": "Please enter your password!",
     "login-form.toast-invalid-password": "Password must be at least 6 characters!",
     "login-form.toast-axios-error": "You don't have permission to access this resource...",
-    "login-form.toast-login-failed": "Your email or password is incorrect!"
+    "login-form.toast-login-failed": "Your email or password is incorrect!",
+    "nav.manage-account-app": "Employees"
 }

@@ -34,5 +34,6 @@
     "login-form.toast-empty-password": "Vui lòng nhập vào mật khẩu của bạn!",
     "login-form.toast-invalid-password": "Mật khẩu bắt buộc ít nhất 6 kí tự!",
     "login-form.toast-axios-error": "Bạn không có quyền truy cập tài nguyên này...",
-    "login-form.toast-login-failed": "Email hoặc mật khẩu của bạn không đúng!"
+    "login-form.toast-login-failed": "Email hoặc mật khẩu của bạn không đúng!",
+    "nav.manage-account-app": "Nhân viên"
 }

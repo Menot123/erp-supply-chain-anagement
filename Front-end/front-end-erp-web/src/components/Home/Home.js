@@ -7,14 +7,21 @@ import ban_hang from '../../../src/assets/img/ban_hang.png'
 import ke_toan from '../../../src/assets/img/ke_toan.png'
 import tai_khoan from '../../../src/assets/img/account.png'
 import { useIntl, FormattedMessage } from 'react-intl'
+import { useHistory } from 'react-router-dom'
+import back_ground from '../../assets/img/background-light.svg'
 
 
 function Home() {
 
     const intl = useIntl();
+    const history = useHistory()
+
+    const handleRedirectManageAccount = () => {
+        history.push('/manage-accounts')
+    }
 
     return (
-        <div className='wrapper-homepage'>
+        <div className='wrapper-homepage' style={{ backgroundImage: `url(${back_ground})` }}>
             <div className='container home-container '>
                 <div className='search-input-wrap '>
                     <div className='d-flex form-control item-search'>
@@ -94,7 +101,7 @@ function Home() {
                         </div>
                     </div>
 
-                    <div className='col-4 app-item'>
+                    <div onClick={() => handleRedirectManageAccount()} className='col-4 app-item'>
                         <div className='wrap-img-app'>
                             <img className='img-element-app' src={tai_khoan} alt='img-element-app' />
                         </div>

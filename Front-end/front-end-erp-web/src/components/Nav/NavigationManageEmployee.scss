@@ -1,0 +1,23 @@
+.nav-manage-employees {
+
+    .nav-link-me-employees,
+    .nav-link-me-department {
+        padding: 0 4px;
+
+        &:hover {
+            background-color: #53304a;
+        }
+    }
+}
+
+.logo-employee-page {
+    width      : 30px;
+    height     : 26px;
+    margin-left: 8px;
+
+    .img-logo-employee-app {
+        height    : 100%;
+        width     : 100%;
+        object-fit: cover;
+    }
+}

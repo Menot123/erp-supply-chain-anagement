@@ -1,3 +1,42 @@
 body {
     margin: 0;
 }
+
+.search-input-wrap {
+    width : 100%;
+    height: 60px;
+
+    .item-search {
+        margin-top: 8px;
+        width     : 50%;
+        float     : right;
+        padding   : 6px;
+
+        .input-search-text {
+            border : none;
+            outline: none;
+            width  : 100%;
+        }
+
+        .icon-search {
+            &:hover {
+                cursor : pointer;
+                opacity: 0.8;
+            }
+        }
+    }
+}
+
+.btn-main {
+    background-color: #714B67 !important;
+    border-color    : #714B67 !important;
+
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+.hover-item {
+    cursor : pointer;
+    opacity: 0.8;
+}

@@ -11,12 +11,13 @@ import { useEffect } from 'react'
 import Home from './components/Home/Home';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { path } from './utils/constant'
+import ManageEmployeeRoute from './routes/ManageEmployeeRoute';
 
 function App() {
 
   const location = useLocation();
   const url = location.pathname;
-
 
   useEffect(() => {
     document.title = 'Ứng dụng - ERP Viet';
@@ -26,21 +27,18 @@ function App() {
     <div className='app-container'>
       {url === '/login' || url === '/forgot-password' ? ' ' : <Navigation />}
       <Switch>
-        <Route path="/news">
-          <h4>News</h4>
+        <Route path={path.MANAGE_EMPLOYEES} component={ManageEmployeeRoute}>
         </Route>
-        <Route path="/about">
-          <h4>About</h4>
-        </Route>
-        <Route path="/login" exact>
+        <Route path={path.SIGN_IN} exact>
           <SignIn />
         </Route>
-        <Route path={['/', '/home']} exact>
+        <Route path={[path.HOME, path.HOME2]} exact>
           <Home />
         </Route>
         <Route path="*" exact>
           <NotFound404 />
         </Route>
+
       </Switch>
       <ToastContainer
         position="bottom-right"
