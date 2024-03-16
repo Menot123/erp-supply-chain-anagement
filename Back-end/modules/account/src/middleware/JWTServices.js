@@ -24,7 +24,7 @@ const verifyToken = (token) => {
     return dataDecoded;
 }
 
-const passCheckMiddleWare = ['/login', '/forgot-password'];
+const passCheckMiddleWare = ['/login', '/forgot-password', '/checking-otp', '/change-password'];
 const checkUserJWT = (req, res, next) => {
     if (passCheckMiddleWare.includes(req.path)) {
         return next()
