@@ -1,4 +1,6 @@
 {
+    "btn-save": "Lưu",
+    "btn-cancel": "Hủy bỏ",
     "homepage.language": "Ngôn ngữ hiện tại:",
     "homepage.app": "Ứng dụng",
     "homepage.search": "Tìm ...",
@@ -34,5 +36,15 @@
     "login-form.toast-invalid-password": "Mật khẩu bắt buộc ít nhất 6 kí tự!",
     "login-form.toast-axios-error": "Bạn không có quyền truy cập tài nguyên này...",
     "login-form.toast-login-failed": "Email hoặc mật khẩu của bạn không đúng!",
-    "nav.manage-account-app": "Nhân viên"
+    "nav.manage-account-app": "Nhân viên",
+    "nav.manage-account-department": "Phòng/Ban",
+    "nav.manage-account-title": "Thêm nhân viên mới",
+    "nav.manage-account-employee.name": "Tên nhân viên",
+    "nav.manage-account-employee.position": "Chức vụ",
+    "nav.manage-account-employee.phone": "Điện thoại",
+    "nav.manage-account-employee.email": "Email",
+    "nav.manage-account-employee.year": "Năm sinh",
+    "nav.manage-account-employee.department": "Bộ phận",
+    "nav.manage-account-employee.gender": "Giới tính",
+    "nav.manage-account-employee.address": "Địa chỉ"
 }

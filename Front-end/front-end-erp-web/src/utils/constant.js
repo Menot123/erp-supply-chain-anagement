@@ -11,3 +11,4 @@ export const path = {
     CREATE_EMPLOYEE: '/manage-accounts/create'
 
 };
+

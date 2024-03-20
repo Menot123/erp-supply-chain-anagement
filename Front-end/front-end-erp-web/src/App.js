@@ -46,6 +46,7 @@ function App() {
       </Switch>
       <ToastContainer
         position="bottom-right"
+        style={{ minWidth: "fit-content" }}
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}

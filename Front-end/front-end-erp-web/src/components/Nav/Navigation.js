@@ -91,8 +91,8 @@ const Navigation = (props) => {
                                     </div>
                                     <NavLink className="navbar-brand ms-1 current-app" to='/manage-accounts'><FormattedMessage id='nav.manage-account-app' /></NavLink>
                                     <div className='nav-manage-employees'>
-                                        <NavLink className='nav-link-me-employees' to='/manage-accounts'>Nhân viên</NavLink>
-                                        <NavLink className='nav-link-me-department' to='/manage-accounts/department'>Phòng/Ban</NavLink>
+                                        <NavLink className='nav-link-me-employees' to='/manage-accounts'><FormattedMessage id='nav.manage-account-app' /></NavLink>
+                                        <NavLink className='nav-link-me-department' to='/manage-accounts/department'><FormattedMessage id='nav.manage-account-department' /></NavLink>
                                     </div>
                                 </>
                                 :

@@ -1,6 +1,5 @@
 import React from 'react'
 import './ManageAccount.scss'
-import temp_ava from './d37.png'
 import FilterHeader from '../FilterHeader/FilterHeader';
 import { MdEmail } from "react-icons/md";
 import { FaPhoneAlt } from "react-icons/fa";
@@ -8,10 +7,28 @@ import {
     useLocation
 } from "react-router-dom";
 import { IoMdMore } from "react-icons/io";
+import { useEffect, useState } from 'react'
+import { getAllEmployee } from '../../services/userServices'
+import { toast } from 'react-toastify';
 
 function ManageAccount() {
     const location = useLocation();
     const url = location.pathname;
+
+    const [employees, setEmployees] = useState([])
+
+    useEffect(() => {
+        const fetchEmployees = async () => {
+            const response = await getAllEmployee()
+            if (+response.EC === 0) {
+                setEmployees(response.DT)
+            } else {
+                toast.error(response.EM)
+            }
+        }
+
+        fetchEmployees()
+    }, [])
 
     return (
         <>
@@ -26,44 +43,24 @@ function ManageAccount() {
                     <div className='manage-employees-container container mt-3'>
 
                         <div className='employee-items-wrap row'>
-                            <div className='employee-item d-flex col-3  '>
-                                <div className='avatar-employee'>
-                                    <img className='img-employee' src={temp_ava} alt='avatar-employee' />
-                                </div>
-                                <div className='des-employee'>
-                                    <span className='name-employee '>Abigail Peterson</span>
-                                    <span className='position-employee'>Tư vấn viên</span>
-                                    <span className='email-employee'><MdEmail /> test@gmail.com</span>
-                                    <span className='phone-employee'><FaPhoneAlt className='icon-phone' />09999999</span>
-                                </div>
+                            {employees && employees.length > 0 &&
+                                employees.map((item, index) => {
+                                    return (
+                                        <div className='employee-item d-flex col-4  '>
+                                            <div className='avatar-employee'>
+                                                <img className='img-employee' src={item.avatar} alt='avatar-employee' />
+                                            </div>
+                                            <div className='des-employee'>
+                                                <span className='name-employee '>{item.name}</span>
+                                                <span className='position-employee'>{item.position}</span>
+                                                <span className='email-employee'><MdEmail />{item.email}</span>
+                                                <span className='phone-employee'><FaPhoneAlt className='icon-phone' />{item.phone}</span>
+                                            </div>
 
-                            </div>
-
-                            <div className='employee-item d-flex col-3  '>
-                                <div className='avatar-employee'>
-                                    <img className='img-employee' src={temp_ava} alt='avatar-employee' />
-                                </div>
-                                <div className='des-employee'>
-                                    <span className='name-employee '>Abigail Peterson</span>
-                                    <span className='position-employee'>Tư vấn viên</span>
-                                    <span className='email-employee'><MdEmail /> test@gmail.com</span>
-                                    <span className='phone-employee'><FaPhoneAlt className='icon-phone' />09999999</span>
-                                </div>
-
-                            </div>
-
-                            <div className='employee-item d-flex col-3  '>
-                                <div className='avatar-employee'>
-                                    <img className='img-employee' src={temp_ava} alt='avatar-employee' />
-                                </div>
-                                <div className='des-employee'>
-                                    <span className='name-employee '>Abigail Peterson</span>
-                                    <span className='position-employee'>Tư vấn viên</span>
-                                    <span className='email-employee'><MdEmail /> test@gmail.com</span>
-                                    <span className='phone-employee'><FaPhoneAlt className='icon-phone' />09999999</span>
-                                </div>
-
-                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
                         </div>
 
                     </div>

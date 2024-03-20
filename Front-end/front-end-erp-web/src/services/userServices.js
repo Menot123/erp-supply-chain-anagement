@@ -20,4 +20,19 @@ const resetPassword = (email, newPass) => {
     return axios.post('/api/change-password', { email, newPass })
 }
 
-export { loginService, logoutService, getOTPCode, checkingOTP, resetPassword }
+const createNewEmployeeService = (data) => {
+    return axios.post('/api/create-user', data)
+}
+
+const getAllType = (type) => {
+    return axios.get(`/api/get-allType?type=${type}`)
+}
+
+const getAllEmployee = () => {
+    return axios.get(`/api/employees`)
+}
+
+export {
+    loginService, logoutService, getOTPCode, checkingOTP, resetPassword, createNewEmployeeService,
+    getAllType, getAllEmployee
+}
