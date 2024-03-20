@@ -1,6 +1,6 @@
 'use strict';
 module.exports = {
-    up: async(queryInterface, Sequelize) => {
+    up: async (queryInterface, Sequelize) => {
         await queryInterface.createTable('Users', {
             id: {
                 allowNull: false,
@@ -10,7 +10,6 @@ module.exports = {
             },
             idCard: {
                 allowNull: false,
-                primaryKey: true,
                 type: Sequelize.STRING
             },
             role: {
@@ -33,10 +32,13 @@ module.exports = {
                 type: Sequelize.STRING
             },
             birth: {
-                type: Sequelize.DATE
+                type: Sequelize.STRING
             },
             address: {
                 type: Sequelize.STRING
+            },
+            avatar: {
+                type: Sequelize.BLOB('long')
             },
             status: {
                 type: Sequelize.STRING,
@@ -52,7 +54,7 @@ module.exports = {
             }
         });
     },
-    down: async(queryInterface, Sequelize) => {
+    down: async (queryInterface, Sequelize) => {
         await queryInterface.dropTable('Users');
     }
 };

@@ -4,6 +4,7 @@ import homeController from '../controllers/homeController'
 import loginController from '../controllers/loginController'
 import userController from '../controllers/userController'
 import jwt from '../middleware/JWTServices';
+import apiController from '../controllers/apiController'
 
 let router = express.Router();
 
@@ -18,12 +19,17 @@ router.use(
 
 let initApiRoutes = (app) => {
 
-    router.all('*', jwt.checkUserJWT);
     router.get('/', homeController.getHomePage);
 
     // Login and logout
     router.post('/login', loginController.handleLogin);
     router.post('/logout', loginController.handleLogoutAccount);
+
+    // Get position employee
+    router.get('/get-allType', apiController.getAllTypeByType)
+
+    // Authenticated
+    router.all('*', jwt.checkUserJWT);
 
     // Forgot password
     router.post('/forgot-password', loginController.handleForgotPassword);
@@ -31,13 +37,13 @@ let initApiRoutes = (app) => {
     router.post('/change-password', loginController.handleChangePassword);
 
     // CRUD user
-    router.get('/users', userController.handleGetUsers);
+    router.get('/employees', userController.handleGetEmployees);
     router.get('/users/:id', userController.handleGetUser);
-    router.post('/users', userController.handleCreateUser);
+    router.post('/create-user', userController.handleCreateUser);
     router.put('/users/:id', userController.handleUpdateUser);
     router.delete('/users/:id', userController.handleDeleteUser);
 
-    return app.use("/api", router)
+    return app.use("/api/", router)
 }
 
 module.exports = initApiRoutes;

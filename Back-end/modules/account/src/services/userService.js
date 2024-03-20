@@ -4,10 +4,10 @@ const { Op } = require("sequelize");
 
 const salt = bcrypt.genSaltSync(Number(process.env.SALT_HASH_CODE));
 
-const handleGetAllUsersService = async() => {
+const handleGetEmployeesService = async () => {
     try {
         let res = {}
-        let user = await db.User.findAll({
+        let employees = await db.User.findAll({
             order: [
                 ['createdAt', 'DESC']
             ],
@@ -21,12 +21,12 @@ const handleGetAllUsersService = async() => {
             },
             attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
         });
-        if (user) {
+        if (employees) {
             res.EC = 0
-            res.EM = 'Get all users successfully'
-            res.DT = user
+            res.EM = 'Get employees successfully'
+            res.DT = employees
         } else {
-            res.EM = 'Get all users failed'
+            res.EM = 'Get employees failed'
             res.EC = 1
             res.DT = ''
         }
@@ -36,7 +36,7 @@ const handleGetAllUsersService = async() => {
     }
 }
 
-const handleGetUserService = async(idCard) => {
+const handleGetUserService = async (idCard) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -66,7 +66,7 @@ const handleGetUserService = async(idCard) => {
     }
 }
 
-let hashUserPassword = async(password) => {
+let hashUserPassword = async (password) => {
     try {
         const hashPassword = await bcrypt.hash(password, salt);
         return hashPassword;
@@ -75,37 +75,41 @@ let hashUserPassword = async(password) => {
     }
 };
 
-const handleCreateUserService = async(data) => {
+const handleCreateUserService = async (data) => {
     try {
         let res = {}
         let user = await db.User.findOne({
             where: {
-                [Op.or]: [
-                    { idCard: data.idCard },
-                    { email: data.email },
-                    { phone: data.phone }
-                ]
-            },
+                email: data.email
+            }
         });
         if (user) {
             res.EC = -1
             res.EM = 'User is existing'
             res.DT = ''
         } else {
-            let hashPassword = await hashUserPassword(data.password)
-            data.password = hashPassword
-            let newUser = await db.User.create(data)
+            await db.User.create({
+                name: data.nameEmployee,
+                role: data.position,
+                password: '123123',
+                phone: data.phone,
+                email: data.email,
+                gender: data.gender,
+                avatar: data.avatar,
+                birth: data.year,
+                address: data.address
+            })
             res.EM = 'Create user successfully'
-            res.EC = 1
+            res.EC = 0
             res.DT = ''
         }
         return res
     } catch (e) {
-        console.log('>>> error: ', e)
+        console.log('>>> error when create new employee: ', e)
     }
 }
 
-const handleUpdateUserService = async(idCard, data) => {
+const handleUpdateUserService = async (idCard, data) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -120,7 +124,7 @@ const handleUpdateUserService = async(idCard, data) => {
             },
         });
         if (user) {
-            let editUser = await user.update({...data })
+            let editUser = await user.update({ ...data })
             res.EM = 'Update user successfully'
             res.EC = 1
             res.DT = ''
@@ -135,7 +139,7 @@ const handleUpdateUserService = async(idCard, data) => {
     }
 }
 
-const handleDeleteUserService = async(idCard) => {
+const handleDeleteUserService = async (idCard) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -166,7 +170,7 @@ const handleDeleteUserService = async(idCard) => {
 }
 
 module.exports = {
-    handleGetAllUsersService,
+    handleGetEmployeesService,
     handleGetUserService,
     handleCreateUserService,
     handleUpdateUserService,
