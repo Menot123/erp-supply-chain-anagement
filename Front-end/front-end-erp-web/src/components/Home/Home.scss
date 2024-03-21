@@ -1,6 +1,7 @@
 .wrapper-homepage {
-    height    : 100vh;
-    background: #f3f4f6;
+    height               : 100vh;
+    background-size      : cover;
+    background-attachment: fixed;
 
     .home-container {
         .search-input-wrap {

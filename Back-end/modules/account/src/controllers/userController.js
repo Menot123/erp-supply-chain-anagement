@@ -1,7 +1,7 @@
 import userService from '../services/userService';
-let handleGetUsers = async(req, res) => {
+let handleGetEmployees = async (req, res) => {
     try {
-        let data = await userService.handleGetAllUsersService()
+        let data = await userService.handleGetEmployeesService()
         return res.status(200).json({
             EM: data.EM,
             EC: data.EC,
@@ -10,7 +10,7 @@ let handleGetUsers = async(req, res) => {
 
     } catch (e) {
         return res.status(500).json({
-            EM: 'error from server in getUsers controller',
+            EM: 'error from server in get employees controller',
             EC: -1,
             DT: ''
         })
@@ -19,7 +19,7 @@ let handleGetUsers = async(req, res) => {
 }
 
 // Get user with id
-const handleGetUser = async(req, res, next) => {
+const handleGetUser = async (req, res, next) => {
     try {
         let userIdCard = req.params.id
         let data = await userService.handleGetUserService(userIdCard)
@@ -38,7 +38,7 @@ const handleGetUser = async(req, res, next) => {
 }
 
 // Create new user
-const handleCreateUser = async(req, res, next) => {
+const handleCreateUser = async (req, res, next) => {
     try {
         let userData = req.body;
         let response = await userService.handleCreateUserService(userData);
@@ -57,7 +57,7 @@ const handleCreateUser = async(req, res, next) => {
 }
 
 // Update user data
-const handleUpdateUser = async(req, res, next) => {
+const handleUpdateUser = async (req, res, next) => {
     try {
         let userData = req.body;
         let userIdCard = req.params.id;
@@ -77,7 +77,7 @@ const handleUpdateUser = async(req, res, next) => {
 }
 
 // Delete user with id
-const handleDeleteUser = async(req, res, next) => {
+const handleDeleteUser = async (req, res, next) => {
     try {
         let userIdCard = req.params.id;
         let response = await userService.handleDeleteUserService(userIdCard);
@@ -96,8 +96,7 @@ const handleDeleteUser = async(req, res, next) => {
 }
 
 module.exports = {
-    handleGetUsers,
-    handleGetUsers,
+    handleGetEmployees,
     handleGetUser,
     handleUpdateUser,
     handleCreateUser,

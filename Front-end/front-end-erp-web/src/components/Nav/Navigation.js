@@ -1,10 +1,12 @@
 import React from 'react'
 import './Navigation.scss'
-import { NavLink } from 'react-router-dom'
+import './NavigationManageEmployee.scss'
+import { NavLink, useLocation } from 'react-router-dom'
 import { HiSquares2X2 } from "react-icons/hi2";
 import { FaBell } from "react-icons/fa6";
 import tempAvatar from './tempAva.jpeg'
 import logo from '../../assets/img/logo.png'
+import logo_manage_employees from '../../assets/img/employee_app.png'
 import { FormattedMessage } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { translate } from '../../redux-toolkit/slices/langSlice'
@@ -13,12 +15,16 @@ import { LANGUAGES } from '../../utils/constant'
 import { useRef, useEffect, useState } from 'react'
 import { logoutService } from '../../services/userServices'
 import { toast } from 'react-toastify';
+import { path } from '../../utils/constant'
+
 
 
 const Navigation = (props) => {
 
     const language = useSelector(state => state.language.value)
     const userLogin = useSelector(state => state.user.isLogin)
+    const location = useLocation();
+    const url = location.pathname;
     const dispatch = useDispatch()
     const [isShowMenuApp, setIsShowMenuApp] = useState(false)
     const [isShowMenuUser, setIsShowMenuUser] = useState(false)
@@ -77,10 +83,33 @@ const Navigation = (props) => {
                             <div ref={dropdownMenuRef} onClick={() => handleShowMenuApp(isShowMenuApp)} className='icon-header'>
                                 <HiSquares2X2 />
                             </div>
-                            <div className='logo-page ms-2'>
-                                <img className='img-avatar' src={logo} alt='img-logo-page' />
-                            </div>
-                            <NavLink className="navbar-brand ms-3 current-app" to='/'><FormattedMessage id='homepage.app' /></NavLink>
+
+                            {url.includes(path.MANAGE_EMPLOYEES) ?
+                                <>
+                                    <div className='logo-employee-page ms-4'>
+                                        <img className='img-logo-employee-app' src={logo_manage_employees} alt='img-logo-page' />
+                                    </div>
+                                    <NavLink className="navbar-brand ms-1 current-app" to='/manage-accounts'><FormattedMessage id='nav.manage-account-app' /></NavLink>
+                                    <div className='nav-manage-employees'>
+                                        <NavLink className='nav-link-me-employees' to='/manage-accounts'><FormattedMessage id='nav.manage-account-app' /></NavLink>
+                                        <NavLink className='nav-link-me-department' to='/manage-accounts/department'><FormattedMessage id='nav.manage-account-department' /></NavLink>
+                                    </div>
+                                </>
+                                :
+                                ''
+                            }
+                            {url === path.HOME || url === path.HOME2 ?
+                                <>
+                                    <div className='logo-page ms-2'>
+                                        <img className='img-avatar' src={logo} alt='img-logo-page' />
+                                    </div>
+                                    <NavLink className="navbar-brand ms-3 current-app" to='/'><FormattedMessage id='homepage.app' /></NavLink>
+                                </>
+                                :
+                                ''
+                            }
+
+
                         </div>
 
                         <div className="content-right d-flex align-items-center">

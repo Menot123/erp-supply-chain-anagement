@@ -3,6 +3,7 @@ import session from "express-session"
 import loginController from '../controllers/loginController'
 import userController from '../controllers/userController'
 import jwt from '../middleware/JWTServices';
+import apiController from '../controllers/apiController'
 
 let router = express.Router();
 
@@ -62,6 +63,12 @@ let initApiRoutes = (app) => {
      * 
      */
     router.post('/logout', loginController.handleLogoutAccount);
+
+    // Get position employee
+    router.get('/get-allType', apiController.getAllTypeByType)
+
+    // Authenticated
+    router.all('*', jwt.checkUserJWT);
 
     // Forgot password
     /**
@@ -146,7 +153,7 @@ let initApiRoutes = (app) => {
     // CRUD user
     /**
      * @swagger
-     * /api/users:
+     * /api/employees:
      *  get:
      *      tags:
      *          - Account
@@ -159,7 +166,7 @@ let initApiRoutes = (app) => {
      *              description: Error from server.
      * 
      */
-    router.get('/users', userController.handleGetUsers);
+    router.get('/employees', userController.handleGetEmployees);
 
     /**
      * @swagger
@@ -180,7 +187,7 @@ let initApiRoutes = (app) => {
 
     /**
      * @swagger
-     * /api/users:
+     * /api/create-user:
      *  post:
      *      tags:
      *          - Account
@@ -217,7 +224,7 @@ let initApiRoutes = (app) => {
      *              description: Error from server.
      * 
      */
-    router.post('/users', userController.handleCreateUser);
+    router.post('/create-user', userController.handleCreateUser);
 
     /**
      * @swagger
@@ -277,7 +284,7 @@ let initApiRoutes = (app) => {
      */
     router.delete('/users/:id', userController.handleDeleteUser);
 
-    return app.use("/api", router)
+    return app.use("/api/", router)
 }
 
 // Example Schema in Database

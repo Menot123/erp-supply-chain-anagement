@@ -7,6 +7,10 @@ import { store } from './redux-toolkit/store'
 import { Provider } from 'react-redux'
 import Wrapper from './HOC/Wrapper'
 import { BrowserRouter } from "react-router-dom";
+import { PersistGate } from 'redux-persist/integration/react'
+import { persistStore } from 'redux-persist'
+
+let persisUser = persistStore(store)
 
 
 ReactDOM.render(
@@ -14,8 +18,9 @@ ReactDOM.render(
     <Wrapper>
       <React.StrictMode>
         <BrowserRouter>
-
-          <App />
+          <PersistGate persistor={persisUser}>
+            <App />
+          </PersistGate>
         </BrowserRouter>
 
       </React.StrictMode>

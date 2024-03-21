@@ -1,0 +1,93 @@
+.body-manage-employees {
+    background-color: #f9f9f9;
+
+
+    .manage-department-container {
+        height: 100vh;
+
+        .row {
+            gap: 8px;
+
+            .department-items-wrap {
+                display         : flex;
+                flex-direction  : column;
+                height          : 140px;
+                border          : 1px solid #ccc;
+                background-color: #fff;
+                border-radius   : 2px;
+                width           : calc(25% - 8px);
+
+                .title-department-item {
+                    margin         : 12px 0;
+                    display        : flex;
+                    justify-content: space-between;
+
+                    .more-action-department {
+                        &:hover {
+                            cursor : pointer;
+                            opacity: 0.8;
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    .manage-employees-container {
+        height: 100vh;
+
+        .employee-items-wrap {
+            display: flex;
+            gap    : 8px;
+
+            .employee-item {
+                width           : calc(33% - 8px);
+                height          : 100px;
+                border          : 1px solid #ccc;
+                border-radius   : 2px;
+                margin          : 8px 0 0;
+                padding         : 0px !important;
+                background-color: #fff;
+
+                &:hover {
+                    cursor : pointer;
+                    opacity: 0.8;
+                }
+
+                .avatar-employee {
+
+                    .img-employee {
+                        height    : 100%;
+                        width     : 90px;
+                        object-fit: cover;
+                    }
+                }
+
+                .des-employee {
+                    margin-left   : 8px;
+                    display       : flex;
+                    flex-direction: column;
+                    padding       : 4px;
+                    width         : 100%;
+
+                    .location-employee {
+                        font-size: 13px;
+                    }
+
+                    .phone-employee {
+                        display    : flex;
+                        align-items: center;
+
+                        .icon-phone {
+                            font-size   : 13px;
+                            margin-right: 8px;
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+}

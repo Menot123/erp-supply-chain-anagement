@@ -7,10 +7,10 @@ import { toast } from 'react-toastify'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { translate } from '../../redux-toolkit/slices/langSlice'
-import { loginSuccess } from '../../redux-toolkit/slices/userSlice'
+// import { loginSuccess } from '../../redux-toolkit/slices/userSlice'
 import { LANGUAGES } from '../../utils/constant'
 import { useEffect } from 'react'
-import { loginService, getOTPCode, checkingOTP, resetPassword } from '../../services/userServices'
+import { getOTPCode, checkingOTP, resetPassword } from '../../services/userServices'
 import { useHistory } from 'react-router-dom'
 
 
@@ -187,11 +187,11 @@ const ForgotPassword = (props) => {
     }
 
     // Enter Confirm OTP
-    const handleEnterConfirmOTP = (e) => {
-        if (e.charCode === 13 && e.code === "Enter") {
-            validateOTP()
-        }
-    }
+    // const handleEnterConfirmOTP = (e) => {
+    //     if (e.charCode === 13 && e.code === "Enter") {
+    //         validateOTP()
+    //     }
+    // }
 
     // Enter Reset Password
     const handleEnterResetPassword = (e) => {

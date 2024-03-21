@@ -28,6 +28,20 @@
                 .current-app {
                     color: #fff !important;
                 }
+
+                .nav-manage-employees {
+                    margin-left: 48px;
+                    display    : flex;
+                    gap        : 16px;
+
+                    .nav-link-me-employees,
+                    .nav-link-me-department {
+                        text-decoration: none !important;
+                        color          : #fff;
+                    }
+
+                }
+
             }
 
             .content-right {
