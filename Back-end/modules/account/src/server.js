@@ -5,7 +5,7 @@ import viewEngine from './config/viewEngine'
 import initWebRoutes from './route/web'
 import initApiRoutes from './route/api'
 import connectDB from './config/connectDB';
-import { createJWT, verifyToken } from './middleware/JWTServices';
+import setupSwagger from './middleware/swagger'
 require('dotenv').config();
 
 let app = express();
@@ -34,12 +34,13 @@ app.use(function(req, res, next) {
     next();
 });
 
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 
-
+setupSwagger(app);
 
 
 viewEngine(app);
