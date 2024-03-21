@@ -88,10 +88,12 @@ const handleCreateUserService = async (data) => {
             res.EM = 'User is existing'
             res.DT = ''
         } else {
+            const password = await hashUserPassword('123123');
+            console.log(password)
             await db.User.create({
                 name: data.nameEmployee,
                 role: data.position,
-                password: '123123',
+                password: password,
                 phone: data.phone,
                 email: data.email,
                 gender: data.gender,
