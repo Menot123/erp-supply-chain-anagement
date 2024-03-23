@@ -16,6 +16,7 @@ import { useRef, useEffect, useState } from 'react'
 import { logoutService } from '../../services/userServices'
 import { toast } from 'react-toastify';
 import { path } from '../../utils/constant'
+import ResetPassword from './ResetPassword';
 import { openModalProfile } from '../../redux-toolkit/slices/userSlice'
 
 
@@ -33,6 +34,7 @@ const Navigation = (props) => {
     const dropdownMenuRef = useRef(null);
     const dropdownUserRef = useRef(null);
 
+    const history = useHistory();
 
     const handleChangeLanguage = (key) => {
         dispatch(translate(key))
@@ -43,6 +45,8 @@ const Navigation = (props) => {
         if (res.EC !== 0) {
             toast.error(res.EM)
         } else {
+            toast.success('Logout successful')
+            history.push('/login')
             dispatch(logOut())
         }
     }
@@ -86,6 +90,9 @@ const Navigation = (props) => {
 
     return (
         <>
+
+
+
             <div className='wrap-navigation-home'>
                 <nav className="navbar navbar-expand-lg navbar-light navigation-home">
                     <div className="container-fluid">
@@ -159,8 +166,11 @@ const Navigation = (props) => {
 
                 <div className={isShowMenuUser === false ? 'drop-down-user-apps d-none' : 'drop-down-user-apps'}>
                     <span onClick={() => handleShowModalProfile()} className='item-app-user'><FormattedMessage id='navigation.dropdown-user-personal' /></span>
+                    {/* <span onClick={() => handleShowResetPasswordModal()} className='item-app-user'>Đổi mật khẩu</span> */}
+                    <ResetPassword />
                     <span onClick={() => handleLogout()} className='item-app-user'><FormattedMessage id='navigation.dropdown-user-logout' /></span>
                 </div>
+
             </div>
         </>
     )

@@ -24,7 +24,9 @@
         "jsonwebtoken": "8.5.1",
         "mysql2": "^2.2.5",
         "nodemailer": "^6.9.8",
-        "sequelize": "^6.6.2"
+        "sequelize": "^6.6.2",
+        "swagger-jsdoc": "^6.2.8",
+        "swagger-ui-express": "^5.0.0"
     },
     "devDependencies": {
         "@babel/core": "^7.12.10",

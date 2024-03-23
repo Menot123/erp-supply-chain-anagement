@@ -1,35 +1,39 @@
 import axios from "../axios/axiosCustom";
 
 const loginService = (data) => {
-    return axios.post('/api/login', data)
+    return axios.post('/account/api/login', data)
 }
 
 const logoutService = () => {
-    return axios.post('/api/logout')
+    return axios.post('/account/api/logout')
 }
 
 const getOTPCode = (email) => {
-    return axios.post('/api/forgot-password', { email })
+    return axios.post('/account/api/forgot-password', { email })
 }
 
 const checkingOTP = (email, otp) => {
-    return axios.post('/api/checking-otp', { email, otp })
+    return axios.post('/account/api/checking-otp', { email, otp })
 }
 
 const resetPassword = (email, newPass) => {
-    return axios.post('/api/change-password', { email, newPass })
+    return axios.post('/account/api/change-password', { email, newPass })
 }
 
 const createNewEmployeeService = (data) => {
-    return axios.post('/api/create-user', data)
+    return axios.post('/account/api/create-user', data)
 }
 
 const getAllType = (type) => {
-    return axios.get(`/api/get-allType?type=${type}`)
+    return axios.get(`/account/api/get-allType?type=${type}`)
 }
 
 const getAllEmployee = () => {
-    return axios.get(`/api/employees`)
+    return axios.get(`/account/api/employees`)
+}
+
+const resetPasswordLoggedIn = (email, oldPass, newPass) => {
+    return axios.post('/account/api/reset-password', { email, oldPass, newPass })
 }
 
 const updateProfileService = (dataProfile) => {
@@ -37,6 +41,13 @@ const updateProfileService = (dataProfile) => {
 }
 
 export {
-    loginService, logoutService, getOTPCode, checkingOTP, resetPassword, createNewEmployeeService,
-    getAllType, getAllEmployee, updateProfileService
+    loginService,
+    logoutService,
+    getOTPCode,
+    checkingOTP,
+    resetPassword,
+    createNewEmployeeService,
+    getAllType,
+    getAllEmployee,
+    resetPasswordLoggedIn, updateProfileService
 }

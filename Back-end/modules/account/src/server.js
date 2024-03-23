@@ -5,13 +5,13 @@ import viewEngine from './config/viewEngine'
 import initWebRoutes from './route/web'
 import initApiRoutes from './route/api'
 import connectDB from './config/connectDB';
-import { createJWT, verifyToken } from './middleware/JWTServices';
+import setupSwagger from './middleware/swagger'
 require('dotenv').config();
 
 let app = express();
 let port = process.env.PORT || 8085;
 
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
 
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', process.env.REACT_URL);
@@ -34,12 +34,13 @@ app.use(function (req, res, next) {
     next();
 });
 
+
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.use(cookieParser());
 
-
+setupSwagger(app);
 
 
 viewEngine(app);

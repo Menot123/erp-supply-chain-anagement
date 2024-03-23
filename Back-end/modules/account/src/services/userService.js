@@ -97,11 +97,13 @@ const handleCreateUserService = async (data) => {
             } else {
                 firstName = data.nameEmployee
             }
+            const password = await hashUserPassword('123123');
+            console.log(password)
             await db.User.create({
                 firstName: firstName,
                 lastName: lastName,
                 role: data.position,
-                password: '123123',
+                password: password,
                 phone: data.phone,
                 email: data.email,
                 gender: data.gender,
@@ -188,10 +190,64 @@ const handleDeleteUserService = async (idCard) => {
     }
 }
 
+const resetPasswordService = async (userEmail, oldPwd, newPwd) => {
+    try {
+        let res = {}
+        let email = userEmail
+        let user = await db.User.findOne({
+            where: {
+                email: email,
+            }
+        })
+        if (user) {
+            let checkPass = true
+            if (user.email !== 'admin@gmail.com') {
+                checkPass = bcrypt.compareSync(oldPwd, user.password);
+            } else {
+                if (oldPwd !== user.password)
+                    checkPass = false;
+            }
+            if (checkPass) {
+                let newPassword = ''
+                if (user.email !== 'admin@gmail.com') {
+                    newPassword = await hashUserPassword(newPwd)
+                } else {
+                    newPassword = newPwd
+                }
+                await user.update({ password: newPassword })
+                res.EC = 0
+                res.EM = `Reset password user ${userEmail} successfully`
+                res.DT = {}
+            } else {
+                res.EC = -1
+                res.EM = `Password is incorrect`
+                res.DT = {}
+            }
+
+        } else {
+            res.EC = 1
+            res.EM = `Not found user ${userEmail} `
+            res.DT = {}
+        }
+
+        return res
+
+    } catch (e) {
+        console.log('>>> error from service: ', e)
+        return {
+            EM: 'Something wrong with reset password user service',
+            EC: 1,
+            DT: ''
+        }
+    }
+}
+
+
 module.exports = {
     handleGetEmployeesService,
     handleGetUserService,
     handleCreateUserService,
     handleUpdateEmployeeService,
-    handleDeleteUserService
+    handleDeleteUserService,
+    resetPasswordService
 }

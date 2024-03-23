@@ -47,7 +47,7 @@ function ManageAccount() {
                             {employees && employees.length > 0 &&
                                 employees.map((item, index) => {
                                     return (
-                                        <div className='employee-item d-flex col-4  '>
+                                        <div key={index} className='employee-item d-flex col-4  '>
                                             <div className='avatar-employee'>
                                                 <img className='img-employee' src={item.avatar} alt='avatar-employee' />
                                             </div>
