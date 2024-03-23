@@ -18,6 +18,7 @@
     "navigation.dropdown-app-purchase": "Purchase",
     "navigation.dropdown-app-sales": "Sales",
     "navigation.dropdown-app-employees": "Employees",
+    "navigation.dropdown-app-home": "Apps",
     "navigation.dropdown-app-accounting": "Accounting",
     "navigation.dropdown-user-personal": "Personal customization",
     "navigation.dropdown-user-logout": "Log out",

@@ -1,0 +1,103 @@
+.modal-backdrop {
+    z-index: 800 !important;
+}
+
+.name-avatar {
+    display        : flex;
+    justify-content: space-between;
+
+    .inf-left {
+        display       : flex;
+        flex-direction: column;
+
+        .change-password {
+            color: #017E84;
+
+            &:hover {
+                cursor : pointer;
+                opacity: 0.8;
+            }
+        }
+    }
+
+    .inf-right {
+        .avatar {
+            // width          : 25%;
+            display        : flex;
+            justify-content: flex-end;
+
+            .upload-avatar {
+                .icon-upload {
+                    color        : #ccc;
+                    // border    : 1px solid #ccc;
+                    // float  : right;
+                    height       : 50px;
+                    width        : 50px;
+                    padding      : 4px;
+                }
+
+                .label-upload {
+                    // padding         : 5px;
+                    border-radius   : 4px;
+                    margin-right    : 4px;
+                    // background   : #ddd;
+                    cursor          : pointer;
+
+                    &:hover {
+                        opacity: 0.9;
+                    }
+                }
+            }
+
+            .preview-image {
+                padding              : 4px;
+                height               : 50px;
+                width                : 50px;
+                // width          : 20%;
+                // border            : 1px solid #ddd;
+                background           : center center no-repeat;
+                background-size      : contain;
+                cursor               : pointer;
+            }
+        }
+
+    }
+
+
+}
+
+.main-inf {
+    .col-6 {
+        .input-profile {
+            border : none;
+            outline: none;
+            width  : 60%;
+
+            &:focus {
+                border-bottom: 1px solid #e7e9ed !important;
+            }
+        }
+
+        .email-profile {
+            color: #9c9797;
+        }
+
+        .select-gender-profile {
+            outline         : none !important;
+            border          : none !important;
+            background-image: none;
+            width           : unset;
+
+            &:focus {
+                outline         : none !important;
+                border          : none !important;
+                box-shadow      : none;
+                background-image: none;
+            }
+        }
+
+        .profile-select-position {
+            border: none !important;
+        }
+    }
+}

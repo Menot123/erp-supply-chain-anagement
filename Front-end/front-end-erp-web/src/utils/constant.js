@@ -8,7 +8,8 @@ export const path = {
     HOME2: '/home',
     MANAGE_EMPLOYEES: '/manage-accounts',
     SIGN_IN: '/login',
-    CREATE_EMPLOYEE: '/manage-accounts/create'
+    CREATE_EMPLOYEE: '/manage-accounts/create',
+    PROFILE: '/profile',
 
 };
 

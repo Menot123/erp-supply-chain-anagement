@@ -32,7 +32,11 @@ const getAllEmployee = () => {
     return axios.get(`/api/employees`)
 }
 
+const updateProfileService = (dataProfile) => {
+    return axios.patch('/api/update-profile-employee', dataProfile)
+}
+
 export {
     loginService, logoutService, getOTPCode, checkingOTP, resetPassword, createNewEmployeeService,
-    getAllType, getAllEmployee
+    getAllType, getAllEmployee, updateProfileService
 }

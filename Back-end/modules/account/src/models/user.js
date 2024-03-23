@@ -11,14 +11,15 @@ module.exports = (sequelize, DataTypes) => {
     User.init({
         idCard: DataTypes.STRING,
         role: DataTypes.STRING,
-        name: DataTypes.STRING,
+        firstName: DataTypes.STRING,
+        lastName: DataTypes.STRING,
         email: DataTypes.STRING,
         password: DataTypes.STRING,
         phone: DataTypes.STRING,
         gender: DataTypes.STRING,
         birth: DataTypes.STRING,
         address: DataTypes.STRING,
-        avatar: DataTypes.BLOB('long'),
+        avatar: DataTypes.TEXT('long'),
         status: DataTypes.STRING
     }, {
         sequelize,

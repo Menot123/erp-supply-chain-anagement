@@ -275,7 +275,6 @@ function CreateNewEmployee() {
                             isOpen: false
                         }))
                     }
-
                 />
             }
         </div >

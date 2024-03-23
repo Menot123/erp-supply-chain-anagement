@@ -1,7 +1,7 @@
 import React from 'react'
 import './Navigation.scss'
 import './NavigationManageEmployee.scss'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useLocation, useHistory } from 'react-router-dom'
 import { HiSquares2X2 } from "react-icons/hi2";
 import { FaBell } from "react-icons/fa6";
 import tempAvatar from './tempAva.jpeg'
@@ -16,6 +16,7 @@ import { useRef, useEffect, useState } from 'react'
 import { logoutService } from '../../services/userServices'
 import { toast } from 'react-toastify';
 import { path } from '../../utils/constant'
+import { openModalProfile } from '../../redux-toolkit/slices/userSlice'
 
 
 
@@ -24,6 +25,7 @@ const Navigation = (props) => {
     const language = useSelector(state => state.language.value)
     const userLogin = useSelector(state => state.user.isLogin)
     const location = useLocation();
+    const history = useHistory()
     const url = location.pathname;
     const dispatch = useDispatch()
     const [isShowMenuApp, setIsShowMenuApp] = useState(false)
@@ -72,6 +74,14 @@ const Navigation = (props) => {
 
     const handleShowMenuUser = (status) => {
         setIsShowMenuUser(!status)
+    }
+
+    const redirectDropdownApp = (path) => {
+        history.push(path)
+    }
+
+    const handleShowModalProfile = () => {
+        dispatch(openModalProfile())
     }
 
     return (
@@ -139,15 +149,16 @@ const Navigation = (props) => {
                     </div>
                 </nav >
                 <div className={isShowMenuApp === false ? 'drop-down-menu-apps d-none' : 'drop-down-menu-apps'}>
-                    <span className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-inventory' /></span>
-                    <span className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-purchase' /></span>
-                    <span className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-sales' /></span>
-                    <span className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-accounting' /></span>
-                    <span className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-employees' /></span>
+                    <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-inventory' /></span>
+                    <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-purchase' /></span>
+                    <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-sales' /></span>
+                    <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-accounting' /></span>
+                    <span onClick={() => redirectDropdownApp('/manage-accounts')} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-employees' /></span>
+                    <span onClick={() => redirectDropdownApp('/home')} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-home' /></span>
                 </div>
 
                 <div className={isShowMenuUser === false ? 'drop-down-user-apps d-none' : 'drop-down-user-apps'}>
-                    <span className='item-app-user'><FormattedMessage id='navigation.dropdown-user-personal' /></span>
+                    <span onClick={() => handleShowModalProfile()} className='item-app-user'><FormattedMessage id='navigation.dropdown-user-personal' /></span>
                     <span onClick={() => handleLogout()} className='item-app-user'><FormattedMessage id='navigation.dropdown-user-logout' /></span>
                 </div>
             </div>

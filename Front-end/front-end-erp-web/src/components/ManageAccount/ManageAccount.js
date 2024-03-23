@@ -32,6 +32,7 @@ function ManageAccount() {
 
     return (
         <>
+            {/* Nav manage account servive*/}
             {url === '/manage-accounts'
                 ?
                 <div className='body-manage-employees'>
@@ -68,6 +69,8 @@ function ManageAccount() {
                 :
                 ''
             }
+            {/* Nav manage account by department servive*/}
+
             {url === '/manage-accounts/department'
                 ?
                 <div className='body-manage-employees'>

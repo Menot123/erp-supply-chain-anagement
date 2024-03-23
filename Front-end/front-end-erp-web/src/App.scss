@@ -40,3 +40,12 @@ body {
     cursor : pointer;
     opacity: 0.8;
 }
+
+.btn-purple {
+    background-color: #861e6b !important;
+    border-color    : #861e6b !important;
+
+    &:hover {
+        opacity: 0.8;
+    }
+}

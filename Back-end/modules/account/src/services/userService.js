@@ -88,8 +88,18 @@ const handleCreateUserService = async (data) => {
             res.EM = 'User is existing'
             res.DT = ''
         } else {
+            let firstName = ''
+            let lastName = ''
+            if (data.nameEmployee && data.nameEmployee.length > 0) {
+                let arrName = data.nameEmployee.split(' ')
+                firstName = arrName[arrName.length - 1]
+                lastName = arrName.slice(0, -1).join(' ');
+            } else {
+                firstName = data.nameEmployee
+            }
             await db.User.create({
-                name: data.nameEmployee,
+                firstName: firstName,
+                lastName: lastName,
                 role: data.position,
                 password: '123123',
                 phone: data.phone,
@@ -102,6 +112,7 @@ const handleCreateUserService = async (data) => {
             res.EM = 'Create user successfully'
             res.EC = 0
             res.DT = ''
+
         }
         return res
     } catch (e) {
@@ -109,7 +120,7 @@ const handleCreateUserService = async (data) => {
     }
 }
 
-const handleUpdateUserService = async (idCard, data) => {
+const handleUpdateEmployeeService = async (data) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -119,14 +130,22 @@ const handleUpdateUserService = async (idCard, data) => {
                 },
                 status: {
                     [Op.not]: 'deleted'
-                },
-                idCard: idCard
+                }
             },
         });
         if (user) {
-            let editUser = await user.update({ ...data })
+            let dataUpdate = {
+                role: data.position,
+                phone: data.phone,
+                email: data.email,
+                gender: data.gender,
+                avatar: data.avatar,
+                birth: data.year,
+                address: data.address
+            }
+            await user.update({ ...dataUpdate })
             res.EM = 'Update user successfully'
-            res.EC = 1
+            res.EC = 0
             res.DT = ''
         } else {
             res.EC = -1
@@ -173,6 +192,6 @@ module.exports = {
     handleGetEmployeesService,
     handleGetUserService,
     handleCreateUserService,
-    handleUpdateUserService,
+    handleUpdateEmployeeService,
     handleDeleteUserService
 }

@@ -85,7 +85,7 @@ const SignIn = (props) => {
 
             let res = await loginService({ email: username, password: password })
             if (res.EC === 0) {
-                dispatch(loginSuccess())
+                dispatch(loginSuccess({ email: username, firstName: res.DT?.firstName, lastName: res.DT?.lastName }))
                 history.push('/home')
             } else {
                 toast.error(<FormattedMessage id='login-form.toast-login-failed' />)

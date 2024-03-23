@@ -38,10 +38,10 @@ let initApiRoutes = (app) => {
 
     // CRUD user
     router.get('/employees', userController.handleGetEmployees);
-    router.get('/users/:id', userController.handleGetUser);
+    router.get('/get-employee/:id', userController.handleGetUser);
     router.post('/create-user', userController.handleCreateUser);
-    router.put('/users/:id', userController.handleUpdateUser);
-    router.delete('/users/:id', userController.handleDeleteUser);
+    router.patch('/update-profile-employee', userController.handleUpdateEmployee);
+    // router.delete('/users/:id', userController.handleDeleteUser);
 
     return app.use("/api/", router)
 }

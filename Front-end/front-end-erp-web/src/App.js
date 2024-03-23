@@ -14,6 +14,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { path } from './utils/constant'
 import ManageEmployeeRoute from './routes/ManageEmployeeRoute';
+import ModalProfile from './components/ProfileEmployee/ModalProfile';
 
 function App() {
 
@@ -39,11 +40,14 @@ function App() {
         <Route path={[path.HOME, path.HOME2]} exact>
           <Home />
         </Route>
+        <Route path={path.PROFILE} component={ModalProfile}>
+        </Route>
         <Route path="*" exact>
           <NotFound404 />
         </Route>
 
       </Switch>
+      <ModalProfile show={true} />
       <ToastContainer
         position="bottom-right"
         style={{ minWidth: "fit-content" }}

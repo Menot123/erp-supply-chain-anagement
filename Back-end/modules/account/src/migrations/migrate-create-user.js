@@ -16,7 +16,10 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.STRING
             },
-            name: {
+            firstName: {
+                type: Sequelize.STRING
+            },
+            lastName: {
                 type: Sequelize.STRING
             },
             email: {
@@ -38,7 +41,7 @@ module.exports = {
                 type: Sequelize.STRING
             },
             avatar: {
-                type: Sequelize.BLOB('long')
+                type: Sequelize.TEXT('long')
             },
             status: {
                 type: Sequelize.STRING,

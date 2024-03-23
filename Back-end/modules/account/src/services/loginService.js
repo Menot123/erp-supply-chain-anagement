@@ -8,7 +8,7 @@ const { Op } = require("sequelize");
 const salt = bcrypt.genSaltSync(Number(process.env.SALT_HASH_CODE));
 
 
-const handleUserLogin = async(email, pwd) => {
+const handleUserLogin = async (email, pwd) => {
     try {
         let user = await db.User.findOne({
             where: {
@@ -26,7 +26,8 @@ const handleUserLogin = async(email, pwd) => {
             if (checkPass) {
                 let payload = {
                     email: user.email,
-                    name: user.email === 'admin@gmail.com' ? 'Admin' : user.name
+                    firstName: user.email === 'admin@gmail.com' ? 'Admin' : user.firstName,
+                    lastName: user.email === 'admin@gmail.com' ? ' ' : user.lastName,
                 }
                 let token = createJWT(payload)
                 return {
@@ -35,7 +36,8 @@ const handleUserLogin = async(email, pwd) => {
                     DT: {
                         access_token: token,
                         email: user.email,
-                        name: user.name,
+                        firstName: user?.firstName,
+                        lastName: user?.lastName,
                     }
                 }
             }
@@ -55,7 +57,7 @@ const handleUserLogin = async(email, pwd) => {
     }
 }
 
-const sendOTPCodeService = async(email) => {
+const sendOTPCodeService = async (email) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -96,7 +98,7 @@ const sendOTPCodeService = async(email) => {
     }
 }
 
-const chekingOTPService = async(email) => {
+const chekingOTPService = async (email) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -136,7 +138,7 @@ const chekingOTPService = async(email) => {
 }
 
 // Hash password function
-let hashUserPassword = async(password) => {
+let hashUserPassword = async (password) => {
     try {
         const hashPassword = await bcrypt.hash(password, salt);
         return hashPassword;
@@ -145,7 +147,7 @@ let hashUserPassword = async(password) => {
     }
 };
 
-const changePasswordService = async(userEmail, newPwd) => {
+const changePasswordService = async (userEmail, newPwd) => {
     try {
         let res = {}
         let email = userEmail
