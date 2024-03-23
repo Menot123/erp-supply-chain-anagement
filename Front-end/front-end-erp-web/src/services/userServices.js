@@ -32,6 +32,10 @@ const getAllEmployee = () => {
     return axios.get(`/account/api/employees`)
 }
 
+const resetPasswordLoggedIn = (email, oldPass, newPass) => {
+    return axios.post('/account/api/reset-password', { email, oldPass, newPass })
+}
+
 export {
     loginService,
     logoutService,
@@ -40,5 +44,6 @@ export {
     resetPassword,
     createNewEmployeeService,
     getAllType,
-    getAllEmployee
+    getAllEmployee,
+    resetPasswordLoggedIn
 }

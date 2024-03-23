@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 
 const salt = bcrypt.genSaltSync(Number(process.env.SALT_HASH_CODE));
 
-const handleGetEmployeesService = async () => {
+const handleGetEmployeesService = async() => {
     try {
         let res = {}
         let employees = await db.User.findAll({
@@ -36,7 +36,7 @@ const handleGetEmployeesService = async () => {
     }
 }
 
-const handleGetUserService = async (idCard) => {
+const handleGetUserService = async(idCard) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -66,7 +66,7 @@ const handleGetUserService = async (idCard) => {
     }
 }
 
-let hashUserPassword = async (password) => {
+let hashUserPassword = async(password) => {
     try {
         const hashPassword = await bcrypt.hash(password, salt);
         return hashPassword;
@@ -75,7 +75,7 @@ let hashUserPassword = async (password) => {
     }
 };
 
-const handleCreateUserService = async (data) => {
+const handleCreateUserService = async(data) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -111,7 +111,7 @@ const handleCreateUserService = async (data) => {
     }
 }
 
-const handleUpdateUserService = async (idCard, data) => {
+const handleUpdateUserService = async(idCard, data) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -126,7 +126,7 @@ const handleUpdateUserService = async (idCard, data) => {
             },
         });
         if (user) {
-            let editUser = await user.update({ ...data })
+            let editUser = await user.update({...data })
             res.EM = 'Update user successfully'
             res.EC = 1
             res.DT = ''
@@ -141,7 +141,7 @@ const handleUpdateUserService = async (idCard, data) => {
     }
 }
 
-const handleDeleteUserService = async (idCard) => {
+const handleDeleteUserService = async(idCard) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -171,10 +171,64 @@ const handleDeleteUserService = async (idCard) => {
     }
 }
 
+const resetPasswordService = async(userEmail, oldPwd, newPwd) => {
+    try {
+        let res = {}
+        let email = userEmail
+        let user = await db.User.findOne({
+            where: {
+                email: email,
+            }
+        })
+        if (user) {
+            let checkPass = true
+            if (user.email !== 'admin@gmail.com') {
+                checkPass = bcrypt.compareSync(oldPwd, user.password);
+            } else {
+                if (oldPwd !== user.password)
+                    checkPass = false;
+            }
+            if (checkPass) {
+                let newPassword = ''
+                if (user.email !== 'admin@gmail.com') {
+                    newPassword = await hashUserPassword(newPwd)
+                } else {
+                    newPassword = newPwd
+                }
+                await user.update({ password: newPassword })
+                res.EC = 0
+                res.EM = `Reset password user ${userEmail} successfully`
+                res.DT = {}
+            } else {
+                res.EC = -1
+                res.EM = `Password is incorrect`
+                res.DT = {}
+            }
+
+        } else {
+            res.EC = 1
+            res.EM = `Not found user ${userEmail} `
+            res.DT = {}
+        }
+
+        return res
+
+    } catch (e) {
+        console.log('>>> error from service: ', e)
+        return {
+            EM: 'Something wrong with reset password user service',
+            EC: 1,
+            DT: ''
+        }
+    }
+}
+
+
 module.exports = {
     handleGetEmployeesService,
     handleGetUserService,
     handleCreateUserService,
     handleUpdateUserService,
-    handleDeleteUserService
+    handleDeleteUserService,
+    resetPasswordService
 }

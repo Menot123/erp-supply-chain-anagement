@@ -150,6 +150,36 @@ let initApiRoutes = (app) => {
      */
     router.post('/change-password', loginController.handleChangePassword);
 
+    // User reset password while in user account
+    /**
+     * @swagger
+     * /api/reset-password:
+     *  post:
+     *      tags:
+     *          - Account
+     *      summary: Reset password (Reset password)
+     *      description: Change password for user account when they want to reset their password
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          email:
+     *                              type: string
+     *                          oldPass:
+     *                              type: string  
+     *                          newPass:
+     *                              type: string                  
+     *      responses:
+     *          200:
+     *              description: Return status of reset password.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/reset-password', userController.handleResetPassword);
+
     // CRUD user
     /**
      * @swagger
