@@ -34,7 +34,6 @@ const Navigation = (props) => {
     const dropdownMenuRef = useRef(null);
     const dropdownUserRef = useRef(null);
 
-    const history = useHistory();
 
     const handleChangeLanguage = (key) => {
         dispatch(translate(key))

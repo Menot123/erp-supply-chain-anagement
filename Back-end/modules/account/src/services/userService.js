@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 
 const salt = bcrypt.genSaltSync(Number(process.env.SALT_HASH_CODE));
 
-const handleGetEmployeesService = async () => {
+const handleGetEmployeesService = async() => {
     try {
         let res = {}
         let employees = await db.User.findAll({
@@ -36,7 +36,7 @@ const handleGetEmployeesService = async () => {
     }
 }
 
-const handleGetUserService = async (idCard) => {
+const handleGetUserService = async(id) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -47,7 +47,7 @@ const handleGetUserService = async (idCard) => {
                 status: {
                     [Op.not]: 'deleted'
                 },
-                idCard: idCard
+                id: id
             },
             attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
         });
@@ -66,7 +66,7 @@ const handleGetUserService = async (idCard) => {
     }
 }
 
-let hashUserPassword = async (password) => {
+let hashUserPassword = async(password) => {
     try {
         const hashPassword = await bcrypt.hash(password, salt);
         return hashPassword;
@@ -75,7 +75,7 @@ let hashUserPassword = async (password) => {
     }
 };
 
-const handleCreateUserService = async (data) => {
+const handleCreateUserService = async(data) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -122,7 +122,7 @@ const handleCreateUserService = async (data) => {
     }
 }
 
-const handleUpdateEmployeeService = async (data) => {
+const handleUpdateEmployeeService = async(data) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -145,7 +145,7 @@ const handleUpdateEmployeeService = async (data) => {
                 birth: data.year,
                 address: data.address
             }
-            await user.update({ ...dataUpdate })
+            await user.update({...dataUpdate })
             res.EM = 'Update user successfully'
             res.EC = 0
             res.DT = ''
@@ -160,7 +160,7 @@ const handleUpdateEmployeeService = async (data) => {
     }
 }
 
-const handleDeleteUserService = async (idCard) => {
+const handleDeleteUserService = async(idCard) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -190,7 +190,7 @@ const handleDeleteUserService = async (idCard) => {
     }
 }
 
-const resetPasswordService = async (userEmail, oldPwd, newPwd) => {
+const resetPasswordService = async(userEmail, oldPwd, newPwd) => {
     try {
         let res = {}
         let email = userEmail

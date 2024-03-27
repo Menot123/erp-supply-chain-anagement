@@ -1,5 +1,5 @@
 import userService from '../services/userService';
-let handleGetEmployees = async (req, res) => {
+let handleGetEmployees = async(req, res) => {
     try {
         let data = await userService.handleGetEmployeesService()
         return res.status(200).json({
@@ -21,10 +21,10 @@ let handleGetEmployees = async (req, res) => {
 
 
 // Get user with id
-const handleGetUser = async (req, res, next) => {
+const handleGetUser = async(req, res, next) => {
     try {
-        let userIdCard = req.params.id
-        let data = await userService.handleGetUserService(userIdCard)
+        let id = req.params.id
+        let data = await userService.handleGetUserService(id)
         return res.status(200).json({
             EM: data.EM,
             EC: data.EC,
@@ -40,7 +40,7 @@ const handleGetUser = async (req, res, next) => {
 }
 
 // Create new user
-const handleCreateUser = async (req, res, next) => {
+const handleCreateUser = async(req, res, next) => {
     try {
         let userData = req.body;
         let response = await userService.handleCreateUserService(userData);
@@ -59,7 +59,7 @@ const handleCreateUser = async (req, res, next) => {
 }
 
 // Update user data
-const handleUpdateEmployee = async (req, res, next) => {
+const handleUpdateEmployee = async(req, res, next) => {
     try {
         let dataEmployee = req.body;
         let response = await userService.handleUpdateEmployeeService(dataEmployee);
@@ -78,7 +78,7 @@ const handleUpdateEmployee = async (req, res, next) => {
 }
 
 // Delete user with id
-const handleDeleteUser = async (req, res, next) => {
+const handleDeleteUser = async(req, res, next) => {
     try {
         let userIdCard = req.params.id;
         let response = await userService.handleDeleteUserService(userIdCard);
@@ -97,7 +97,7 @@ const handleDeleteUser = async (req, res, next) => {
 }
 
 // Reset user password if they already logged in
-const handleResetPassword = async (req, res, next) => {
+const handleResetPassword = async(req, res, next) => {
     try {
         // let userData = req.body.data
         if (req.body.email) {

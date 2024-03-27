@@ -14,6 +14,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { path } from './utils/constant'
 import ManageEmployeeRoute from './routes/ManageEmployeeRoute';
+import ManageInventoryRoute from './routes/ManageInventoryRoute';
 import ModalProfile from './components/ProfileEmployee/ModalProfile';
 
 function App() {
@@ -30,6 +31,8 @@ function App() {
       {url === '/login' || url === '/forgot-password' ? ' ' : <Navigation />}
       <Switch>
         <Route path={path.MANAGE_EMPLOYEES} component={ManageEmployeeRoute}>
+        </Route>
+        <Route path={path.MANAGE_INVENTORY} component={ManageInventoryRoute}>
         </Route>
         <Route path={path.SIGN_IN} exact>
           <SignIn />
