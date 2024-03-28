@@ -10,6 +10,6 @@ export const path = {
     SIGN_IN: '/login',
     CREATE_EMPLOYEE: '/manage-accounts/create',
     PROFILE: '/profile',
-    MANAGE_INVENTORY: 'manage-inventory',
-    MANAGE_PRODUCTS: 'manage-products',
+    MANAGE_INVENTORY: '/manage-inventory',
+    MANAGE_PRODUCTS: '/manage-inventory/products',
 };

@@ -13,6 +13,7 @@ function ManageEmployeeRoute() {
             <Switch>
                 <Route exact path={path.MANAGE_EMPLOYEES} component={ManageAccount} />
                 <Route path={path.CREATE_EMPLOYEE} component={CreateNewEmployee} />
+                <Route path='/manage-accounts/department' component={ManageAccount} />
             </Switch>
 
         </>
