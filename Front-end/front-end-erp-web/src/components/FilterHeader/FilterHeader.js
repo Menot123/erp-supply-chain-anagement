@@ -14,6 +14,8 @@ function FilterHeader(props) {
     const history = useHistory()
     const location = useLocation();
     const url = location.pathname;
+    const isNoneAction = (location.pathname === '/manage-inventory')
+
     const handleCreateNewItem = () => {
         history.push(props.urlNewItem ? props.urlNewItem : '/home')
     }
@@ -23,8 +25,12 @@ function FilterHeader(props) {
             <div className='content-left-item'>
                 <span className='title-create-item'>{props?.namePage}</span>
                 <div className='action-import d-flex'>
-                    <button onClick={() => handleCreateNewItem()} className='btn btn-primary btn-create-item'>Tạo</button>
-                    <button className='ms-1 btn btn-outline-secondary'>Nhập</button>
+                    {isNoneAction
+                        ? ''
+                        : <>
+                            <button onClick={() => handleCreateNewItem()} className='btn btn-primary btn-create-item'>Tạo</button>
+                            <button className='ms-1 btn btn-outline-secondary'>Nhập</button>
+                        </>}
                 </div>
             </div>
             <div className='search-input-wrap d-flex flex-column'>
@@ -51,8 +57,6 @@ function FilterHeader(props) {
             </div>
 
         </div>
-
-
     )
 }
 

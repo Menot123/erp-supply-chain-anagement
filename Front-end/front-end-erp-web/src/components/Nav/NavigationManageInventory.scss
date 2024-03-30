@@ -1,0 +1,25 @@
+.nav-manage-inventory {
+    margin-left: 48px;
+    display: flex;
+    gap: 16px;
+    .nav-link-me-inventory,
+    .nav-link-me-products {
+        text-decoration: none !important;
+        color: #fff;
+        padding: 0 4px;
+        &:hover {
+            background-color: #53304a;
+        }
+    }
+}
+
+.logo-inventory-page {
+    width: 30px;
+    height: 26px;
+    margin-left: 8px;
+    .img-logo-inventory-app {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+}

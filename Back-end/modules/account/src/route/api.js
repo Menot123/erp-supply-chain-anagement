@@ -65,6 +65,28 @@ let initApiRoutes = (app) => {
     router.post('/logout', loginController.handleLogoutAccount);
 
     // Get position employee
+    /**
+     * @swagger
+     * /api/get-allType:
+     *  get:
+     *      tags:
+     *          - Account
+     *      summary: Get all users
+     *      description: Get all information about users
+     *      parameters:
+     *          - in: query
+     *            name: type     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: Name of type you want to get (position)               
+     *      responses:
+     *          200:
+     *              description: Return status and list of users if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
     router.get('/get-allType', apiController.getAllTypeByType)
 
     // Authenticated
@@ -217,12 +239,19 @@ let initApiRoutes = (app) => {
 
     /**
      * @swagger
-     * /api/users/{id}:
+     * /api/get-employee/{id}:
      *  get:
      *      tags:
      *          - Account
      *      summary: Get user with id
-     *      description: Get information about user with id            
+     *      description: Get information about user with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of user you want to get information     
      *      responses:
      *          200:
      *              description: Return status and info of users if exist.
@@ -275,12 +304,19 @@ let initApiRoutes = (app) => {
 
     /**
      * @swagger
-     * /api/users/{id}:
-     *  put:
+     * /api/update-profile-employee/{id}:
+     *  patch:
      *      tags:
      *          - Account
      *      summary: Update user
      *      description: Update user information for ERP system
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of user you want to get update   
      *      requestBody:
      *          content:
      *              application/json:
@@ -321,7 +357,14 @@ let initApiRoutes = (app) => {
      *      tags:
      *          - Account
      *      summary: Delete user with id
-     *      description: Delete user from account with id            
+     *      description: Delete user from account with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of user you want to delete               
      *      responses:
      *          200:
      *              description: Return status of delete user.

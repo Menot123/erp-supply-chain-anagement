@@ -19,6 +19,9 @@ function Home() {
     const handleRedirectManageAccount = () => {
         history.push('/manage-accounts')
     }
+    const handleRedirectManageInventory = () => {
+        history.push('/manage-inventory')
+    }
 
     return (
         <div className='wrapper-homepage' style={{ backgroundImage: `url(${back_ground})` }}>
@@ -31,7 +34,7 @@ function Home() {
                 </div>
 
                 <div className='row apps'>
-                    <div className='col-4 app-item'>
+                    <div onClick={() => handleRedirectManageInventory()} className='col-4 app-item'>
                         <div className='wrap-img-app'>
                             <img className='img-element-app' src={inventory} alt='img-element-app' />
                         </div>

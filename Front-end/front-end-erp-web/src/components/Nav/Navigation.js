@@ -1,11 +1,13 @@
 import React from 'react'
 import './Navigation.scss'
 import './NavigationManageEmployee.scss'
+import './NavigationManageInventory.scss'
 import { NavLink, useLocation, useHistory } from 'react-router-dom'
 import { HiSquares2X2 } from "react-icons/hi2";
 import { FaBell } from "react-icons/fa6";
 import logo from '../../assets/img/logo.png'
 import logo_manage_employees from '../../assets/img/employee_app.png'
+import logo_manage_inventory from '../../assets/img/inventory_app.png'
 import { FormattedMessage } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { translate } from '../../redux-toolkit/slices/langSlice'
@@ -35,6 +37,7 @@ const Navigation = (props) => {
     const [isShowMenuUser, setIsShowMenuUser] = useState(false)
     const dropdownMenuRef = useRef(null);
     const dropdownUserRef = useRef(null);
+
 
     const handleChangeLanguage = (key) => {
         dispatch(translate(key))
@@ -90,9 +93,6 @@ const Navigation = (props) => {
 
     return (
         <>
-
-
-
             <div className='wrap-navigation-home'>
                 <nav className="navbar navbar-expand-lg navbar-light navigation-home">
                     <div className="container-fluid">
@@ -115,6 +115,20 @@ const Navigation = (props) => {
                                 :
                                 ''
                             }
+                            {url.includes(path.MANAGE_INVENTORY) ?
+                                <>
+                                    <div className='logo-inventory-page ms-4'>
+                                        <img className='img-logo-inventory-app' src={logo_manage_inventory} alt='img-logo-page' />
+                                    </div>
+                                    <NavLink className="navbar-brand ms-1 current-app" to='/manage-inventory'>Kho</NavLink>
+                                    <div className='nav-manage-inventory'>
+                                        <NavLink className='nav-link-me-inventory' to='/manage-inventory'>Tổng quan</NavLink>
+                                        <NavLink className='nav-link-me-products' to='/manage-inventory/products'>Sản phẩm</NavLink>
+                                    </div>
+                                </>
+                                :
+                                ''
+                            }
                             {url === path.HOME || url === path.HOME2 ?
                                 <>
                                     <div className='logo-page ms-2'>
@@ -125,7 +139,6 @@ const Navigation = (props) => {
                                 :
                                 ''
                             }
-
 
                         </div>
 
@@ -159,7 +172,7 @@ const Navigation = (props) => {
                     </div>
                 </nav >
                 <div className={isShowMenuApp === false ? 'drop-down-menu-apps d-none' : 'drop-down-menu-apps'}>
-                    <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-inventory' /></span>
+                    <span onClick={() => redirectDropdownApp('/manage-inventory')} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-inventory' /></span>
                     <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-purchase' /></span>
                     <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-sales' /></span>
                     <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-accounting' /></span>
