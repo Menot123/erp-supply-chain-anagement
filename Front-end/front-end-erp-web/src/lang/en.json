@@ -91,5 +91,17 @@
     "reset-passowrd.toast-wrong-old-password": "Your password is incorrect",
     "reset-passowrd.toast-empty-new-password": "Please enter your new password!",
     "reset-passowrd.toast-invalid-new-password": "New password must be at least 6 characters!",
-    "reset-passowrd.toast-invalid-confirm-password": "Your confirmation password is incorrect or you left it blank!"
+    "reset-passowrd.toast-invalid-confirm-password": "Your confirmation password is incorrect or you left it blank!",
+    "modal-profile.title": "Change personal preferences",
+    "modal-profile.email": "Working email",
+    "modal-profile.phone": "Phone",
+    "modal-profile.address": "Address",
+    "modal-profile.gender": "Gender",
+    "modal-profile.birth": "Year of birth",
+    "modal-profile.btn-save": "Update information",
+    "modal-profile.btn-cancel": "Cancel",
+    "modal-profile.toast-update-success": "Updated profile successfully!",
+    "modal-profile.toast-update-fail": "An error occurred while updating information!",
+    "modal-detail-employee.title": "Employee information",
+    "modal-detail-employee.alert-delete-confirm": "Are you sure you want to remove employees "
 }

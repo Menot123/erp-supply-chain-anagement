@@ -5,14 +5,14 @@ const {
 module.exports = (sequelize, DataTypes) => {
     class User extends Model {
         static associate(models) {
-            // define association here
+            User.belongsTo(models.all_type, { foreignKey: 'role', targetKey: 'keyType', as: 'positionData' })
         }
     };
     User.init({
-        idCard: DataTypes.STRING,
         role: DataTypes.STRING,
         firstName: DataTypes.STRING,
         lastName: DataTypes.STRING,
+        department: DataTypes.STRING,
         email: DataTypes.STRING,
         password: DataTypes.STRING,
         phone: DataTypes.STRING,

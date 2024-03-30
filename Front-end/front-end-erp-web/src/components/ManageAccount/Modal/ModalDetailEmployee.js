@@ -1,34 +1,33 @@
 import React from 'react'
-import './ModalProfile.scss'
+import './ModalDetailEmployee.scss'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { RiImageAddLine } from "react-icons/ri";
-import { useSelector, useDispatch } from 'react-redux';
-import { closeModalProfile } from '../../redux-toolkit/slices/userSlice'
-import { getAllType } from '../../services/userServices'
+import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify';
-import { LANGUAGES } from '../../utils/constant'
-import { FormattedMessage } from 'react-intl'
+import { LANGUAGES } from '../../../utils/constant'
+import { FormattedMessage, useIntl } from 'react-intl'
 import Select from 'react-select'
 import 'react-image-lightbox/style.css';
 import Lightbox from 'react-image-lightbox';
-import { updateProfileService, getInfoEmployeeById } from '../../services/userServices'
+import { updateProfileService, getAllType, deleteEmployee } from '../../../services/userServices'
+import { IoMdSettings } from "react-icons/io";
+import { FaRegTrashCan } from "react-icons/fa6";
 
-function ModalProfile(props) {
+function ModalDetailEmployee(props) {
 
+    const intl = useIntl();
     const language = useSelector(state => state.language.value)
     const email = useSelector(state => state.user.email)
-    const idEmployee = useSelector(state => state.user.id)
-    const dispatch = useDispatch()
-    const show = useSelector(state => state.user.isShowModalInfo)
     const [position, setPosition] = useState([])
     const [selectPositions, setSelectPositions] = useState(null)
     const [elementPositionSelect, setElementPositionSelect] = useState(null)
-    const [currentInfo, setCurrentInfo] = useState(null)
     const [isUpdatingProfile, setIsUpdatingProfile] = useState(false)
+    const [showActionsEmployee, setShowActionsEmployee] = useState(false)
 
-    const defaultProfileEmployee = {
+    const defaultDetailEmployee = {
+        idEmployee: '',
         position: '',
         phone: '',
         email: email,
@@ -37,9 +36,7 @@ function ModalProfile(props) {
         year: '',
         address: '',
     }
-    const [dataProfileEmployee, setDataProfileEmployee] = useState(defaultProfileEmployee)
-
-    const handleClose = () => dispatch(closeModalProfile());
+    const [dataDetailEmployee, setDataDetailEmployee] = useState(defaultDetailEmployee)
 
     const defaultImgPreview = {
         urlReview: '',
@@ -61,42 +58,35 @@ function ModalProfile(props) {
         fetchDataPosition()
     }, [])
 
-    useEffect(() => {
-        const fetchDataEmployee = async () => {
-            let res = await getInfoEmployeeById(idEmployee)
-            if (res.EC === 0) {
-                let positionBuild = {}
-                if (position && position.length > 0) {
-                    position.forEach((item) => {
-                        if (item.keyType === res?.DT?.role) {
-                            positionBuild.label = language === LANGUAGES.VI ? item.valueVi : item.valueEn
-                            positionBuild.value = item.keyType
-                        }
-                    })
-                }
-                const dataFillInModal = {
-                    position: res?.DT?.role,
-                    phone: res?.DT?.phone,
-                    email: res?.DT?.email,
-                    gender: res?.DT?.gender,
-                    avatar: res?.DT?.avatar,
-                    year: res?.DT?.birth,
-                    address: res?.DT?.address,
-                }
-                Promise.all([setDataProfileEmployee(dataFillInModal), setCurrentInfo(res.DT), setElementPositionSelect(positionBuild)])
-                if (res?.DT?.avatar) {
-                    setImgPreview(prevState => ({
-                        ...prevState,
-                        urlReview: res?.DT?.avatar.replace(/"/g, '')
-                    }));
-                }
-            } else {
-                toast.error('Error when get current info employee')
-            }
-        }
 
-        fetchDataEmployee()
-    }, [idEmployee, language, position])
+    useEffect(() => {
+        if (props?.infoEmployeeDetail && props?.infoEmployeeDetail?.avatar && props?.infoEmployeeDetail?.id) {
+            setImgPreview(prevState => ({
+                ...prevState,
+                urlReview: props?.infoEmployeeDetail?.avatar
+            }));
+            setDataDetailEmployee({
+                idEmployee: props?.infoEmployeeDetail?.id,
+                position: props?.infoEmployeeDetail?.role,
+                phone: props?.infoEmployeeDetail?.phone,
+                email: props?.infoEmployeeDetail?.email,
+                gender: props?.infoEmployeeDetail?.gender,
+                avatar: props?.infoEmployeeDetail?.avatar,
+                year: props?.infoEmployeeDetail?.birth,
+                address: props?.infoEmployeeDetail?.address,
+            })
+            let positionBuild = {}
+            if (position && position.length > 0) {
+                position.forEach((item) => {
+                    if (item.keyType === props?.infoEmployeeDetail?.role) {
+                        positionBuild.label = language === LANGUAGES.VI ? item.valueVi : item.valueEn
+                        positionBuild.value = item.keyType
+                    }
+                })
+            }
+            setElementPositionSelect(positionBuild)
+        }
+    }, [props?.infoEmployeeDetail, language, position])
 
     useEffect(() => {
         const buildDataSelect = () => {
@@ -117,13 +107,13 @@ function ModalProfile(props) {
 
     const handleChangeInput = (type, value) => {
         if (type === 'position') {
-            setDataProfileEmployee((prevState) => ({
+            setDataDetailEmployee((prevState) => ({
                 ...prevState,
                 [type]: value.value
             }));
             setElementPositionSelect(value)
         } else {
-            setDataProfileEmployee((prevState) => ({
+            setDataDetailEmployee((prevState) => ({
                 ...prevState,
                 [type]: value
             }));
@@ -149,7 +139,7 @@ function ModalProfile(props) {
                 ...prevState,
                 urlReview: objUrl
             }));
-            setDataProfileEmployee((prevState) => ({
+            setDataDetailEmployee((prevState) => ({
                 ...prevState,
                 avatar: imgBase64
             }));
@@ -168,15 +158,45 @@ function ModalProfile(props) {
 
     const handleUpdateProfile = async () => {
         setIsUpdatingProfile(true)
-        let status = await updateProfileService(dataProfileEmployee)
+        let status = await updateProfileService(dataDetailEmployee)
         if (status.EC === 0) {
             setTimeout(() => {
                 setIsUpdatingProfile(false)
+                props?.closeModal()
+                props?.reloadData()
                 toast.success(<FormattedMessage id='modal-profile.toast-update-success' />)
-                handleClose()
+
             }, 2000)
         } else {
             toast.error(<FormattedMessage id='modal-profile.toast-update-fail' />)
+        }
+    }
+
+    const handleShowActions = () => {
+        let currentStatus = showActionsEmployee
+        setShowActionsEmployee(!currentStatus)
+    }
+
+    const handleCloseDropdownAction = () => {
+        if (showActionsEmployee) {
+            setShowActionsEmployee(false)
+        }
+    }
+
+    const handleDeleteEmployee = async () => {
+        let nameEmployeeDelete = language === LANGUAGES.VI ? `${props?.infoEmployeeDetail?.lastName} ${props?.infoEmployeeDetail?.firstName}`
+            :
+            `${props?.infoEmployeeDetail?.firstName} ${props?.infoEmployeeDetail?.lastName}`
+        const result = window.confirm(intl.formatMessage({ id: "modal-detail-employee.alert-delete-confirm" }) + nameEmployeeDelete);
+        if (result) {
+            let resDelete = await deleteEmployee(props?.infoEmployeeDetail?.id)
+            if (resDelete && resDelete.EC === 0) {
+                props?.closeModal()
+                props?.reloadData()
+                toast.success(`Delete employee ${props?.infoEmployeeDetail?.firstName} ${props?.infoEmployeeDetail?.lastName} successfully`)
+            } else {
+                toast.error(`Error when delete employee ${props?.infoEmployeeDetail?.firstName} ${props?.infoEmployeeDetail?.lastName} `)
+            }
         }
     }
 
@@ -190,22 +210,29 @@ function ModalProfile(props) {
                 </div>
                 : ''
             }
-            <Modal show={show}
-                onHide={handleClose}
+            <Modal show={props?.isShowModalDetailEmployee}
+                onHide={props?.closeModal}
                 backdrop="static"
                 keyboard={false}
                 size="lg"
                 style={{ zIndex: '900' }}
+                onClick={() => handleCloseDropdownAction()}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title><FormattedMessage id='modal-profile.title' /></Modal.Title>
+                    <Modal.Title><FormattedMessage id='modal-detail-employee.title' />
+                        <IoMdSettings className='hover-item' onClick={() => handleShowActions()} />
+                        <div className='dropdown-action-employee'>
+                            <span onClick={() => handleDeleteEmployee()} className={showActionsEmployee ? 'action-delete-employee' : 'action-delete-employee d-none'}><FaRegTrashCan />Xóa nhân viên</span>
+                        </div>
+                    </Modal.Title>
+
                 </Modal.Header>
                 <Modal.Body>
                     <div className='name-avatar'>
                         <div className='inf-left'>
-                            <h1 className='name-profile'>{language === LANGUAGES.VI ? currentInfo?.lastName + ' ' + currentInfo?.firstName
+                            <h1 className='name-profile'>{language === LANGUAGES.VI ? props?.infoEmployeeDetail?.lastName + ' ' + props?.infoEmployeeDetail?.firstName
                                 :
-                                currentInfo?.firstName + ' ' + currentInfo?.lastName
+                                props?.infoEmployeeDetail?.firstName + ' ' + props?.infoEmployeeDetail?.lastName
                             }</h1>
                         </div>
                         <div className='inf-right'>
@@ -238,22 +265,22 @@ function ModalProfile(props) {
 
                         <div className='col-6 d-flex mt-1 align-items-center'>
                             <label className='label-input fw-bold' htmlFor='email'><FormattedMessage id='modal-profile.email' /></label>
-                            <input value={dataProfileEmployee.email} onChange={(e) => handleChangeInput('email', e.target.value)} className='input-profile email-profile ms-2 flex-fill' id='email' type='text' />
+                            <input value={dataDetailEmployee?.email} onChange={(e) => handleChangeInput('email', e.target.value)} className='input-profile email-profile ms-2 flex-fill' id='email' type='text' />
                         </div>
 
                         <div className='col-6 d-flex mt-3'>
                             <label className='label-input fw-bold' htmlFor='phone'><FormattedMessage id='modal-profile.phone' /></label>
-                            <input value={dataProfileEmployee.phone} onChange={(e) => handleChangeInput('phone', e.target.value)} className='input-profile ms-2 flex-fill' id='phone' type='text' />
+                            <input value={dataDetailEmployee?.phone} onChange={(e) => handleChangeInput('phone', e.target.value)} className='input-profile ms-2 flex-fill' id='phone' type='text' />
                         </div>
 
                         <div className='col-6 d-flex mt-3'>
                             <label className='label-input fw-bold' htmlFor='address'><FormattedMessage id='modal-profile.address' /></label>
-                            <input value={dataProfileEmployee.address} onChange={(e) => handleChangeInput('address', e.target.value)} className='input-profile ms-2 flex-fill' id='address' type='text' />
+                            <input value={dataDetailEmployee?.address} onChange={(e) => handleChangeInput('address', e.target.value)} className='input-profile ms-2 flex-fill' id='address' type='text' />
                         </div>
 
                         <div className='col-6 d-flex mt-3 d-flex align-items-center'>
                             <label className='label-input fw-bold' htmlFor='gender'><FormattedMessage id='modal-profile.gender' /></label>
-                            <select onChange={(e) => handleChangeInput('gender', e.target.value)} value={dataProfileEmployee.gender}
+                            <select onChange={(e) => handleChangeInput('gender', e.target.value)} value={dataDetailEmployee?.gender}
                                 id='select-gender' className="form-select select-gender-profile flex-fill ">
                                 <option disabled value=''>  </option>
                                 <option value="S1">Nam</option>
@@ -264,13 +291,13 @@ function ModalProfile(props) {
 
                         <div className='col-6 d-flex mt-3 d-flex align-items-center'>
                             <label className='label-input fw-bold' htmlFor='yearOfBirth'><FormattedMessage id='modal-profile.birth' /></label>
-                            <input value={dataProfileEmployee.year} onChange={(e) => handleChangeInput('year', e.target.value)} className='input-profile ms-2 flex-fill' id='yearOfBirth' type='text' />
+                            <input value={dataDetailEmployee?.year} onChange={(e) => handleChangeInput('year', e.target.value)} className='input-profile ms-2 flex-fill' id='yearOfBirth' type='text' />
                         </div>
 
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" onClick={props?.closeModal}>
                         <FormattedMessage id='modal-profile.btn-cancel' />
                     </Button>
                     <Button onClick={() => handleUpdateProfile()} className='btn-purple' variant="primary" >
@@ -295,4 +322,4 @@ function ModalProfile(props) {
     );
 }
 
-export default ModalProfile
+export default ModalDetailEmployee

@@ -8,12 +8,11 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            idCard: {
+            role: {
                 allowNull: false,
                 type: Sequelize.STRING
             },
-            role: {
-                allowNull: false,
+            department: {
                 type: Sequelize.STRING
             },
             firstName: {

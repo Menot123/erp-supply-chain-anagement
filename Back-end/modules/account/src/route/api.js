@@ -18,7 +18,7 @@ router.use(
 
 let initApiRoutes = (app) => {
 
-    router.all('*', jwt.checkUserJWT);
+    // router.all('*', jwt.checkUserJWT);
     // Login and logout
     /**
      * @swagger
@@ -199,6 +199,23 @@ let initApiRoutes = (app) => {
     router.get('/employees', userController.handleGetEmployees);
 
     /**
+    * @swagger
+    * /api/employees/:department:
+    *  get:
+    *      tags:
+    *          - Account
+    *      summary: Get all employees by department
+    *      description: Get all information about employees              
+    *      responses:
+    *          200:
+    *              description: Return status and list of employees following department if exist.
+    *          404:
+    *              description: Error from server.
+    * 
+    */
+    router.get('/employees/:department', apiController.getEmployeesByDepartment);
+
+    /**
      * @swagger
      * /api/users/{id}:
      *  get:
@@ -213,7 +230,7 @@ let initApiRoutes = (app) => {
      *              description: Error from server.
      * 
      */
-    router.get('/get-employee/:id', userController.handleGetUser);
+    router.get('/get-employee', userController.handleGetEmployee);
 
     /**
      * @swagger
@@ -312,7 +329,8 @@ let initApiRoutes = (app) => {
      *              description: Error from server.
      * 
      */
-    // router.delete('/users/:id', userController.handleDeleteUser);
+    router.delete('/user', userController.handleDeleteUser);
+
 
     return app.use("/api/", router)
 }

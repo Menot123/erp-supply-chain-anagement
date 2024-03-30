@@ -1,5 +1,5 @@
 import loginService from '../services/loginService';
-let handleLogin = async(req, res) => {
+let handleLogin = async (req, res) => {
     try {
         let { email, password } = req.body;
 
@@ -47,14 +47,14 @@ const handleLogoutAccount = (req, res, next) => {
     }
 }
 
-const handleForgotPassword = async(req, res, next) => {
+const handleForgotPassword = async (req, res, next) => {
     try {
         // let userData = req.body.data
         req.session.canChangePassword = false
         let response = await loginService.sendOTPCodeService(req.body.email)
         if (response.EC == 0) {
             req.session.otp = response.DT.OTP
-            setTimeout(function() {
+            setTimeout(function () {
                 req.session.destroy();
             }, 70000);
         }
@@ -74,7 +74,7 @@ const handleForgotPassword = async(req, res, next) => {
     }
 }
 
-const handleCheckingOTP = async(req, res, next) => {
+const handleCheckingOTP = async (req, res, next) => {
     try {
         let response = await loginService.chekingOTPService(req.body.email)
         if (response.EC == 0) {
@@ -109,7 +109,7 @@ const handleCheckingOTP = async(req, res, next) => {
     }
 }
 
-const handleChangePassword = async(req, res, next) => {
+const handleChangePassword = async (req, res, next) => {
     try {
         // let userData = req.body.data
         if (req.session.canChangePassword) {

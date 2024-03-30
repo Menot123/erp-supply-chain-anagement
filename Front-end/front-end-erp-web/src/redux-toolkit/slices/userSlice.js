@@ -5,11 +5,10 @@ const initialState = {
     firstName: '',
     lastName: '',
     email: '',
+    id: '',
+    avatar: '',
     isShowModalInfo: false
 }
-
-
-
 
 export const userSlice = createSlice({
     name: 'user',
@@ -17,9 +16,11 @@ export const userSlice = createSlice({
     reducers: {
         loginSuccess: (state, action) => {
             state.isLogin = true
-            state.email = action.payload.email
-            state.firstName = action.payload.firstName
-            state.lastName = action.payload.lastName
+            state.email = action.payload?.email
+            state.firstName = action.payload?.firstName
+            state.lastName = action.payload?.lastName
+            state.id = action.payload?.id
+            state.avatar = action.payload?.avatar
         },
         logOut: (state, action) => {
             state.isLogin = false

@@ -19,7 +19,10 @@ const handleGetEmployeesService = async () => {
                     [Op.not]: 'deleted'
                 },
             },
-            attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
+            attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+            include: [
+                { model: db.all_type, as: 'positionData', attributes: ['valueVi', 'valueEn'] },
+            ]
         });
         if (employees) {
             res.EC = 0
@@ -36,27 +39,31 @@ const handleGetEmployeesService = async () => {
     }
 }
 
-const handleGetUserService = async (idCard) => {
+const handleGetEmployeeService = async (idEmployee) => {
     try {
         let res = {}
-        let user = await db.User.findOne({
+
+        let employee = await db.User.findOne({
             where: {
-                email: {
-                    [Op.not]: 'admin@gmail.com'
-                },
+                // email: {
+                //     [Op.not]: 'admin@gmail.com'
+                // },
                 status: {
                     [Op.not]: 'deleted'
                 },
-                idCard: idCard
+                id: idEmployee
             },
-            attributes: { exclude: ['password', 'createdAt', 'updatedAt'] }
+            attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+            include: [
+                { model: db.all_type, as: 'positionData', attributes: ['valueVi', 'valueEn'] },
+            ]
         });
-        if (user) {
+        if (employee) {
             res.EC = 0
-            res.EM = 'Get user successfully'
-            res.DT = user
+            res.EM = 'Get employee successfully'
+            res.DT = employee
         } else {
-            res.EM = 'Get user failed'
+            res.EM = 'Get employee failed'
             res.EC = 1
             res.DT = ''
         }
@@ -98,7 +105,6 @@ const handleCreateUserService = async (data) => {
                 firstName = data.nameEmployee
             }
             const password = await hashUserPassword('123123');
-            console.log(password)
             await db.User.create({
                 firstName: firstName,
                 lastName: lastName,
@@ -132,7 +138,8 @@ const handleUpdateEmployeeService = async (data) => {
                 },
                 status: {
                     [Op.not]: 'deleted'
-                }
+                },
+                id: data.idEmployee
             },
         });
         if (user) {
@@ -160,7 +167,7 @@ const handleUpdateEmployeeService = async (data) => {
     }
 }
 
-const handleDeleteUserService = async (idCard) => {
+const handleDeleteUserService = async (userId) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -171,11 +178,11 @@ const handleDeleteUserService = async (idCard) => {
                 status: {
                     [Op.not]: 'deleted'
                 },
-                idCard: idCard
+                id: userId
             },
         });
         if (user) {
-            let deleteUser = await user.update({ status: 'deleted' })
+            await user.update({ status: 'deleted' })
             res.EC = 0
             res.EM = 'Delete user successfully'
             res.DT = ''
@@ -245,7 +252,7 @@ const resetPasswordService = async (userEmail, oldPwd, newPwd) => {
 
 module.exports = {
     handleGetEmployeesService,
-    handleGetUserService,
+    handleGetEmployeeService,
     handleCreateUserService,
     handleUpdateEmployeeService,
     handleDeleteUserService,

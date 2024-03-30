@@ -6,14 +6,14 @@ import { HiSquares2X2 } from "react-icons/hi2";
 import { MdViewList } from "react-icons/md";
 import { FaSearch } from "react-icons/fa";
 import { useIntl } from 'react-intl'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 
 
 function FilterHeader(props) {
     const intl = useIntl();
     const history = useHistory()
-
-
+    const location = useLocation();
+    const url = location.pathname;
     const handleCreateNewItem = () => {
         history.push(props.urlNewItem ? props.urlNewItem : '/home')
     }
@@ -51,6 +51,8 @@ function FilterHeader(props) {
             </div>
 
         </div>
+
+
     )
 }
 

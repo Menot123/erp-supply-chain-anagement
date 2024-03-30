@@ -4,7 +4,6 @@ import './NavigationManageEmployee.scss'
 import { NavLink, useLocation, useHistory } from 'react-router-dom'
 import { HiSquares2X2 } from "react-icons/hi2";
 import { FaBell } from "react-icons/fa6";
-import tempAvatar from './tempAva.jpeg'
 import logo from '../../assets/img/logo.png'
 import logo_manage_employees from '../../assets/img/employee_app.png'
 import { FormattedMessage } from 'react-intl'
@@ -25,6 +24,9 @@ const Navigation = (props) => {
 
     const language = useSelector(state => state.language.value)
     const userLogin = useSelector(state => state.user.isLogin)
+    const firstName = useSelector(state => state.user.firstName)
+    const lastName = useSelector(state => state.user.lastName)
+    const avatar = useSelector(state => state.user.avatar)
     const location = useLocation();
     const history = useHistory()
     const url = location.pathname;
@@ -33,8 +35,6 @@ const Navigation = (props) => {
     const [isShowMenuUser, setIsShowMenuUser] = useState(false)
     const dropdownMenuRef = useRef(null);
     const dropdownUserRef = useRef(null);
-
-    const history = useHistory();
 
     const handleChangeLanguage = (key) => {
         dispatch(translate(key))
@@ -137,9 +137,12 @@ const Navigation = (props) => {
                                     </div>
                                     <div ref={dropdownUserRef} onClick={() => handleShowMenuUser(isShowMenuUser)} className='d-flex user-profile align-items-center'>
                                         <div className='avatar-user '>
-                                            <img className='img-avatar' src={tempAvatar} alt='avatar User' />
+                                            <img className='img-avatar' src={avatar ? avatar : ''} alt='avatar User' />
                                         </div>
-                                        <span className='name-user'>Joan Felix</span>
+                                        <span className='name-user'>{language === LANGUAGES.VI ? (lastName === 'NULL' ? '' : lastName) + ' ' + firstName
+                                            :
+                                            firstName + ' ' + (lastName === 'NULL' ? '' : lastName)
+                                        }</span>
 
                                     </div>
                                 </>

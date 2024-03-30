@@ -1,0 +1,26 @@
+.row-wrapper {
+    padding: 8px 16px;
+
+    .department-wrapper {
+        border : 1px solid #ccc;
+        height : 140px;
+        width  : calc(33.33% - 16px);
+        padding: 8px 16px;
+        margin : 4px 8px;
+
+        .title-department {
+            display        : flex;
+            justify-content: space-between;
+
+            .name-department {}
+
+            .more-actions-department {}
+        }
+
+        .button-employees {
+            margin-top: 8px;
+
+            .btn-view-employees {}
+        }
+    }
+}

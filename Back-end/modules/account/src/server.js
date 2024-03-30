@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import viewEngine from './config/viewEngine'
+import configViewEngine from './config/configViewEngine.js'
 import initWebRoutes from './route/web'
 import initApiRoutes from './route/api'
 import connectDB from './config/connectDB';
@@ -11,7 +11,7 @@ require('dotenv').config();
 let app = express();
 let port = process.env.PORT || 8085;
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', process.env.REACT_URL);
@@ -43,7 +43,7 @@ app.use(cookieParser());
 setupSwagger(app);
 
 
-viewEngine(app);
+configViewEngine(app);
 initApiRoutes(app);
 initWebRoutes(app);
 

@@ -37,17 +37,23 @@ const resetPasswordLoggedIn = (email, oldPass, newPass) => {
 }
 
 const updateProfileService = (dataProfile) => {
-    return axios.patch('/api/update-profile-employee', dataProfile)
+    return axios.patch('/account/api/update-profile-employee', dataProfile)
+}
+
+const getInfoEmployeeById = (idEmployee) => {
+    return axios.get(`/account/api/get-employee?id=${idEmployee}`)
+}
+
+const deleteEmployee = (idEmployee) => {
+    return axios.delete(`/account/api/user?id=${idEmployee}`)
+}
+
+const getAllEmployeesByDepartment = (department) => {
+    return axios.get(`/account/api/employees/${department}`);
 }
 
 export {
-    loginService,
-    logoutService,
-    getOTPCode,
-    checkingOTP,
-    resetPassword,
-    createNewEmployeeService,
-    getAllType,
-    getAllEmployee,
-    resetPasswordLoggedIn, updateProfileService
+    loginService, logoutService, getOTPCode, checkingOTP, resetPassword, createNewEmployeeService,
+    getAllType, getAllEmployee, resetPasswordLoggedIn, updateProfileService, getInfoEmployeeById,
+    deleteEmployee, getAllEmployeesByDepartment
 }

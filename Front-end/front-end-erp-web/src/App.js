@@ -47,7 +47,7 @@ function App() {
         </Route>
 
       </Switch>
-      <ModalProfile show={true} />
+      <ModalProfile />
       <ToastContainer
         position="bottom-right"
         style={{ minWidth: "fit-content" }}

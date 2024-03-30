@@ -33,6 +33,41 @@ const getAllTypeService = async (type) => {
     }
 }
 
+const getEmployeesByDepartment = async (params) => {
+    try {
+
+        let res = {}
+        let departmentFind = params?.department
+        if (department) {
+            let data = await db.User.findAll({
+                where: {
+                    department: departmentFind,
+                    keyType: {
+                        [Op.not]: 'P5'
+                    }
+                }
+            })
+            if (data) {
+                res.EC = 0
+                res.EM = 'Get all employee by department successfully'
+                res.DT = data
+            } else {
+                res.EM = 'Get all employee by department failed'
+                res.EC = 2
+                res.DT = ''
+            }
+        } else {
+            res.EM = 'Error when get all employee by department service'
+            res.EC = 1
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
+
 module.exports = {
-    getAllTypeService,
+    getAllTypeService, getEmployeesByDepartment
 }

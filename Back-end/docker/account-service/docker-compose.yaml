@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  db-account:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_DATABASE=erp_account
+      - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - '3307:3306'
+    expose:
+      - 3306
+  backend-account:
+    build:
+      context: ../../modules/account
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - DB_PORT=3306
+      - DB_HOST=db-account
+    ports:
+      - 8085:8085

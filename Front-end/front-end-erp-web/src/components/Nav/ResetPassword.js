@@ -11,6 +11,8 @@ import { logOut } from '../../redux-toolkit/slices/userSlice'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import { useSelector } from 'react-redux';
+
 
 const ResetPassword = (props) => {
 
@@ -18,7 +20,8 @@ const ResetPassword = (props) => {
     const dispatch = useDispatch()
     const intl = useIntl();
     // const language = useSelector(state => state.language.value)
-    const email = "user2@gmail.com";
+    const email = useSelector(state => state.user.email)
+
 
     const [showPassword, setShowPassword] = useState(false);
     const [oldPassword, setOldPassword] = useState("");
@@ -31,13 +34,13 @@ const ResetPassword = (props) => {
 
     // Reset Password
     const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
-    const handleCloseResetPassowrdModal = () => setShowResetPasswordModal(false);
+    const handleCloseResetPasswordModal = () => setShowResetPasswordModal(false);
     const handleShowResetPasswordModal = () => setShowResetPasswordModal(true);
 
     const handleChangePassword = async () => {
         // is old password empty
         if (!oldPassword) {
-            toast.error(<FormattedMessage id='reset-passowrd.toast-empty-old-password' />)
+            toast.error(<FormattedMessage id='reset-password.toast-empty-old-password' />)
             if (oldPasswordRef.current) {
                 oldPasswordRef.current.focus();
             }
@@ -46,7 +49,7 @@ const ResetPassword = (props) => {
 
         // is old password less than 6 character
         if (oldPassword.length < 6) {
-            toast.error(<FormattedMessage id='reset-passowrd.toast-invalid-old-password' />)
+            toast.error(<FormattedMessage id='reset-password.toast-invalid-old-password' />)
             if (oldPasswordRef.current) {
                 oldPasswordRef.current.focus();
             }
@@ -55,7 +58,7 @@ const ResetPassword = (props) => {
 
         // is new password empty
         if (!newPassword) {
-            toast.error(<FormattedMessage id='reset-passowrd.toast-empty-new-password' />)
+            toast.error(<FormattedMessage id='reset-password.toast-empty-new-password' />)
             if (newPasswordRef.current) {
                 newPasswordRef.current.focus();
             }
@@ -64,7 +67,7 @@ const ResetPassword = (props) => {
 
         // is new password less than 6 character
         if (newPassword.length < 6) {
-            toast.error(<FormattedMessage id='reset-passowrd.toast-invalid-new-password' />)
+            toast.error(<FormattedMessage id='reset-password.toast-invalid-new-password' />)
             if (newPasswordRef.current) {
                 newPasswordRef.current.focus();
             }
@@ -81,20 +84,20 @@ const ResetPassword = (props) => {
                     dispatch(logOut())
                 }
                 else {
-                    toast.error(<FormattedMessage id='reset-passowrd.toast-wrong-old-password' />)
+                    toast.error(<FormattedMessage id='reset-password.toast-wrong-old-password' />)
                     if (oldPasswordRef.current) {
                         oldPasswordRef.current.focus();
                     }
                 }
             } catch (error) {
-                toast.error(<FormattedMessage id='reset-passowrd.toast-wrong-old-password' />)
+                toast.error(<FormattedMessage id='reset-password.toast-wrong-old-password' />)
                 if (oldPasswordRef.current) {
                     oldPasswordRef.current.focus();
                 }
             }
         }
         else {
-            toast.error(<FormattedMessage id='reset-passowrd.toast-invalid-confirm-password' />)
+            toast.error(<FormattedMessage id='reset-password.toast-invalid-confirm-password' />)
             if (confirmPasswordRef.current) {
                 confirmPasswordRef.current.focus();
             }
@@ -105,7 +108,7 @@ const ResetPassword = (props) => {
         <>
             <Modal
                 show={showResetPasswordModal}
-                onHide={handleCloseResetPassowrdModal}
+                onHide={handleCloseResetPasswordModal}
                 backdrop="static"
                 keyboard={false}
             >
@@ -151,7 +154,7 @@ const ResetPassword = (props) => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseResetPassowrdModal}>
+                    <Button variant="secondary" onClick={handleCloseResetPasswordModal}>
                         <FormattedMessage id='reset-password.btn-close-tab' />
                     </Button>
                     <Button variant="primary" onClick={handleChangePassword}><FormattedMessage id='reset-password.btn-confirm' /></Button>

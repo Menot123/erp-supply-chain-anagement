@@ -1,0 +1,26 @@
+.dropdown-action-employee {
+    height          : fit-content;
+    width           : 166px;
+    background-color: #fff;
+    position        : absolute;
+    left            : 240px;
+    border-radius   : 4px;
+    z-index         : 999;
+    box-shadow      : rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
+    .action-delete-employee {
+        font-weight: 400;
+        color      : #374151;
+        width      : 100%;
+        padding    : 3px 20px;
+        font-size  : 0.875rem;
+        display    : flex;
+        align-items: center;
+        gap        : 4px;
+
+        &:hover {
+            background-color: #e9ecef;
+            cursor          : pointer;
+        }
+    }
+}

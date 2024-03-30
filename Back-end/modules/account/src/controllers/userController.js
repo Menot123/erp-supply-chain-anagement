@@ -21,10 +21,10 @@ let handleGetEmployees = async (req, res) => {
 
 
 // Get user with id
-const handleGetUser = async (req, res, next) => {
+const handleGetEmployee = async (req, res, next) => {
     try {
-        let userIdCard = req.params.id
-        let data = await userService.handleGetUserService(userIdCard)
+        let employeeId = req.query?.id
+        let data = await userService.handleGetEmployeeService(employeeId)
         return res.status(200).json({
             EM: data.EM,
             EC: data.EC,
@@ -80,8 +80,8 @@ const handleUpdateEmployee = async (req, res, next) => {
 // Delete user with id
 const handleDeleteUser = async (req, res, next) => {
     try {
-        let userIdCard = req.params.id;
-        let response = await userService.handleDeleteUserService(userIdCard);
+        let userId = req.query?.id;
+        let response = await userService.handleDeleteUserService(userId);
         return res.status(200).json({
             EM: response.EM,
             EC: response.EC,
@@ -136,7 +136,7 @@ const handleResetPassword = async (req, res, next) => {
 
 module.exports = {
     handleGetEmployees,
-    handleGetUser,
+    handleGetEmployee,
     handleUpdateEmployee,
     handleCreateUser,
     handleDeleteUser,

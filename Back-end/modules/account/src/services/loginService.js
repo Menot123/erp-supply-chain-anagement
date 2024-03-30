@@ -38,6 +38,8 @@ const handleUserLogin = async (email, pwd) => {
                         email: user.email,
                         firstName: user?.firstName,
                         lastName: user?.lastName,
+                        id: user?.id,
+                        avatar: user.avatar
                     }
                 }
             }
