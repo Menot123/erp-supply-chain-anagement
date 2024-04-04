@@ -1,5 +1,6 @@
 import React from 'react'
 import ManageInventory from '../components/ManageInventory/ManageInventory';
+import CreateNewProduct from '../components/ManageInventory/CreateNewProduct';
 import {
     Switch,
     Route,
@@ -13,6 +14,7 @@ function ManageEmployeeRoute() {
             <Switch>
                 <Route exact path={path.MANAGE_INVENTORY} component={ManageInventory} />
                 <Route path={path.MANAGE_PRODUCTS} component={ManageInventory} />
+                <Route path={path.CREATE_PRODUCT} component={CreateNewProduct} />
             </Switch>
 
         </>

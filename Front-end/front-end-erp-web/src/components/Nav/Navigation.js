@@ -120,10 +120,10 @@ const Navigation = (props) => {
                                     <div className='logo-inventory-page ms-4'>
                                         <img className='img-logo-inventory-app' src={logo_manage_inventory} alt='img-logo-page' />
                                     </div>
-                                    <NavLink className="navbar-brand ms-1 current-app" to='/manage-inventory'>Kho</NavLink>
+                                    <NavLink className="navbar-brand ms-1 current-app" to='/manage-inventory'><FormattedMessage id='nav.manage-inventory-app' /></NavLink>
                                     <div className='nav-manage-inventory'>
-                                        <NavLink className='nav-link-me-inventory' to='/manage-inventory'>Tổng quan</NavLink>
-                                        <NavLink className='nav-link-me-products' to='/manage-inventory/products'>Sản phẩm</NavLink>
+                                        <NavLink className='nav-link-me-inventory' to='/manage-inventory'><FormattedMessage id='nav.manage-inventory-overview' /></NavLink>
+                                        <NavLink className='nav-link-me-products' to='/manage-inventory/products'><FormattedMessage id='nav.manage-inventory-product' /></NavLink>
                                     </div>
                                 </>
                                 :

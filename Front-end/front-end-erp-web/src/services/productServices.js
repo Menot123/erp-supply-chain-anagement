@@ -1,6 +1,8 @@
 import axios from "../axios/axiosCustom";
 
-
+const getAllCode = (type) => {
+    return axios.get(`/inventory/api/get-allCode?type=${type}`)
+}
 
 const createNewProduct = (data) => {
     return axios.post('/inventory/api/products', data)
@@ -22,5 +24,6 @@ export {
     createNewProduct,
     getAllProducts,
     getProductWithId,
-    updateProductInformation
+    updateProductInformation,
+    getAllCode
 }
