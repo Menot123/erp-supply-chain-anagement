@@ -29,6 +29,10 @@
         width : 666px;
         height: fit-content;
 
+        .advance-filter {
+            height: 30px;
+        }
+
         .item-search {
             width: 100% !important;
         }
@@ -50,13 +54,19 @@
 
                 .view-option-rectangle,
                 .view-option-rows {
-                    padding      : 4px;
+                    padding      : 2px 4px 4px 4px;
                     border       : 1px solid #ccc;
                     border-radius: 3px;
 
                     &:hover {
                         cursor          : pointer;
                         background-color: #ccc;
+                    }
+
+                    &.active {
+                        color           : #212529;
+                        background-color: #e6e5e5;
+                        border-color    : #dfdfdf;
                     }
                 }
             }

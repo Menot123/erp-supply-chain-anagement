@@ -9,7 +9,7 @@ const handleGetEmployeesService = async () => {
         let res = {}
         let employees = await db.User.findAll({
             order: [
-                ['createdAt', 'DESC']
+                ['firstName', 'DESC']
             ],
             where: {
                 email: {
@@ -22,6 +22,7 @@ const handleGetEmployeesService = async () => {
             attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
             include: [
                 { model: db.all_type, as: 'positionData', attributes: ['valueVi', 'valueEn'] },
+                { model: db.all_type, as: 'departmentData', attributes: ['valueVi', 'valueEn'] },
             ]
         });
         if (employees) {
@@ -36,6 +37,52 @@ const handleGetEmployeesService = async () => {
         return res
     } catch (e) {
         console.log('>>> error: ', e)
+    }
+}
+
+const getEmployeesPaginationService = async (page, limit) => {
+    try {
+        let offset = (page - 1) * limit
+        let { count, rows } = await db.User.findAndCountAll({
+            offset: offset,
+            limit: +limit,
+            order: [['firstName', 'DESC']],
+            where: {
+                email: {
+                    [Op.not]: 'admin@gmail.com'
+                },
+                status: {
+                    [Op.not]: 'deleted'
+                }
+            },
+            attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+            include: [
+                { model: db.all_type, as: 'positionData', attributes: ['valueVi', 'valueEn'] },
+                { model: db.all_type, as: 'departmentData', attributes: ['valueVi', 'valueEn'] },
+            ]
+        })
+
+        let pages = Math.ceil(count / limit)
+
+        let response = {
+            totalRows: count,
+            totalPage: pages,
+            employees: rows
+        }
+
+        return {
+            EM: 'Get employees pagination successfully',
+            EC: 0,
+            DT: response
+        }
+
+    } catch (e) {
+        console.log('>>> error from service: ', e)
+        return {
+            EM: 'Something wrong with getEmployeesPagination service',
+            EC: 1,
+            DT: {}
+        }
     }
 }
 
@@ -87,7 +134,7 @@ const handleCreateUserService = async (data) => {
         let res = {}
         let user = await db.User.findOne({
             where: {
-                email: data.email
+                email: data?.email
             }
         });
         if (user) {
@@ -97,25 +144,26 @@ const handleCreateUserService = async (data) => {
         } else {
             let firstName = ''
             let lastName = ''
-            if (data.nameEmployee && data.nameEmployee.length > 0) {
-                let arrName = data.nameEmployee.split(' ')
+            if (data?.nameEmployee && data?.nameEmployee.length > 0) {
+                let arrName = data?.nameEmployee.split(' ')
                 firstName = arrName[arrName.length - 1]
                 lastName = arrName.slice(0, -1).join(' ');
             } else {
-                firstName = data.nameEmployee
+                firstName = data?.nameEmployee
             }
             const password = await hashUserPassword('123123');
             await db.User.create({
                 firstName: firstName,
                 lastName: lastName,
-                role: data.position,
+                role: data?.position,
                 password: password,
-                phone: data.phone,
-                email: data.email,
-                gender: data.gender,
-                avatar: data.avatar,
-                birth: data.year,
-                address: data.address
+                phone: data?.phone,
+                email: data?.email,
+                gender: data?.gender,
+                avatar: data?.avatar,
+                birth: data?.year,
+                address: data?.address,
+                department: data?.department
             })
             res.EM = 'Create user successfully'
             res.EC = 0
@@ -150,7 +198,7 @@ const handleUpdateEmployeeService = async (data) => {
                 gender: data.gender,
                 avatar: data.avatar,
                 birth: data.year,
-                address: data.address
+                address: data.address,
             }
             await user.update({ ...dataUpdate })
             res.EM = 'Update user successfully'
@@ -256,5 +304,6 @@ module.exports = {
     handleCreateUserService,
     handleUpdateEmployeeService,
     handleDeleteUserService,
-    resetPasswordService
+    resetPasswordService,
+    getEmployeesPaginationService
 }

@@ -117,5 +117,20 @@
     "modal-profile.toast-update-success": "Cập nhật thông tin thành công!",
     "modal-profile.toast-update-fail": "Có lỗi xảy ra khi cập nhật thông tin!",
     "modal-detail-employee.title": "Thông tin nhân viên",
-    "modal-detail-employee.alert-delete-confirm": "Bạn có chắc chắn muốn xóa nhân viên "
+    "modal-detail-employee.alert-delete-confirm": "Bạn có chắc chắn muốn xóa nhân viên ",
+    "Manage-account.empty-list": "Hiện chưa có nhân viên cho phòng ban này",
+    "Manage-account.loading-data": "Đang tải dữ liệu, vui lòng chờ....",
+    "filter-header.create": "Tạo",
+    "filter-header.import": "Nhập",
+    "filter-header-title.department": "Phòng/Ban",
+    "filter-header-title.employee": "Nhân viên",
+    "filter-header-import.file": "Tải lên tệp",
+    "filter-header-import.cancel": "Hủy",
+    "filter-header-import.sub-title": "Import một tệp tin",
+    "filter-header-empty-employee": "Không có nhân viên nào thuộc phòng ban này",
+    "import-body-title-main": "Tải lên tệp Excel hoặc CSV để nhập",
+    "import-body-title-recommend": "Khuyên dùng tệp Excel vì định dạng tự động.",
+    "import-body-title-help": "Cần giúp đỡ?",
+    "import-body-btn-example-data": "Nhận mẫu nhân viên",
+    "department-btn.employees": "Nhân viên"
 }

@@ -303,6 +303,41 @@ let initApiRoutes = (app) => {
     router.post('/create-user', userController.handleCreateUser);
 
     /**
+    * @swagger
+    * /api/users:
+    *  post:
+    *      tags:
+    *          - Account
+    *      summary: Create users 
+    *      description: Create users by import file
+    *      requestBody:
+    *          content:
+    *              application/json:
+    *                  schema:
+    *                      type: object
+    *                      properties: 
+    *                          firstName:
+    *                              type: string
+    *                          lastName:
+    *                              type: string
+    *                          email:
+    *                              type: string
+    *                          phone:
+    *                              type: string
+    *                          birth:
+    *                              type: string
+    *                          address:
+    *                              type: string                  
+    *      responses:
+    *          200:
+    *              description: Return status of create new users.
+    *          404:
+    *              description: Error from server.
+    * 
+    */
+    router.post('/users', apiController.handleCreateUsers);
+
+    /**
      * @swagger
      * /api/update-profile-employee/{id}:
      *  patch:

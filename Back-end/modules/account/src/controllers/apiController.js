@@ -20,7 +20,7 @@ const getAllTypeByType = async (req, res) => {
 
 const getEmployeesByDepartment = async (req, res) => {
     try {
-        let data = await apiService.getEmployeesByDepartmentService(req?.params)
+        let data = await apiService.getEmployeesByDepartmentService(req?.params, req?.query)
         return res.status(200).json({
             EM: data.EM,
             EC: data.EC,
@@ -36,6 +36,24 @@ const getEmployeesByDepartment = async (req, res) => {
     }
 }
 
+const handleCreateUsers = async (req, res, next) => {
+    try {
+        let usersData = req.body;
+        let response = await apiService.handleCreateUsersService(usersData);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in createUser controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 module.exports = {
-    getAllTypeByType, getEmployeesByDepartment
+    getAllTypeByType, getEmployeesByDepartment, handleCreateUsers
 };

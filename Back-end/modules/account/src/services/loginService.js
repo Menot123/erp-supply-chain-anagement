@@ -119,7 +119,7 @@ const chekingOTPService = async (email) => {
         })
         if (user) {
             res.EC = 0
-            res.EM = `User is found`
+            res.EM = `OTP OK`
             res.DT = {}
         } else {
             res.EC = 1

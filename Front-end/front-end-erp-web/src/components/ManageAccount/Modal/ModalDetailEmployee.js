@@ -19,7 +19,6 @@ function ModalDetailEmployee(props) {
 
     const intl = useIntl();
     const language = useSelector(state => state.language.value)
-    const email = useSelector(state => state.user.email)
     const [position, setPosition] = useState([])
     const [selectPositions, setSelectPositions] = useState(null)
     const [elementPositionSelect, setElementPositionSelect] = useState(null)
@@ -30,13 +29,14 @@ function ModalDetailEmployee(props) {
         idEmployee: '',
         position: '',
         phone: '',
-        email: email,
+        email: '',
         gender: '',
         avatar: '',
         year: '',
         address: '',
     }
     const [dataDetailEmployee, setDataDetailEmployee] = useState(defaultDetailEmployee)
+
 
     const defaultImgPreview = {
         urlReview: '',
@@ -60,7 +60,7 @@ function ModalDetailEmployee(props) {
 
 
     useEffect(() => {
-        if (props?.infoEmployeeDetail && props?.infoEmployeeDetail?.avatar && props?.infoEmployeeDetail?.id) {
+        if (props?.infoEmployeeDetail && props?.infoEmployeeDetail?.id) {
             setImgPreview(prevState => ({
                 ...prevState,
                 urlReview: props?.infoEmployeeDetail?.avatar
