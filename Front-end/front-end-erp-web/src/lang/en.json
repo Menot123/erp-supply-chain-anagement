@@ -103,5 +103,20 @@
     "modal-profile.toast-update-success": "Updated profile successfully!",
     "modal-profile.toast-update-fail": "An error occurred while updating information!",
     "modal-detail-employee.title": "Employee information",
-    "modal-detail-employee.alert-delete-confirm": "Are you sure you want to remove employees "
+    "modal-detail-employee.alert-delete-confirm": "Are you sure you want to remove employees",
+    "Manage-account.empty-list": "There are currently no staff for this department",
+    "Manage-account.loading-data": "Loading data, please wait....",
+    "filter-header.create": "Create",
+    "filter-header.import": "Import",
+    "filter-header-title.department": "Department",
+    "filter-header-title.employee": "Employee",
+    "filter-header-import.file": "Upload File",
+    "filter-header-import.cancel": "Cancel",
+    "filter-header-import.sub-title": "Import a File",
+    "filter-header-empty-employee": "There are no employees in this department",
+    "import-body-title-main": "Upload an Excel or CSV file to import",
+    "import-body-title-recommend": "Excel files are recommended as formatting is automatic.",
+    "import-body-title-help": "Need Help?",
+    "import-body-btn-example-data": "Import Template for Employees",
+    "department-btn.employees": "Employees"
 }

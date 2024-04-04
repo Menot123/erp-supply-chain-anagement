@@ -7,14 +7,16 @@ import {
 import ManageAccount from '../components/ManageAccount/ManageAccount';
 import { path } from '../utils/constant'
 import Departments from '../components/ManageAccount/Departments/Departments';
+import ImportFile from '../components/ImportFile/ImportFile';
 
 function ManageEmployeeRoute() {
     return (
         <>
             <Switch>
-                <Route exact path={path.MANAGE_EMPLOYEES} component={ManageAccount} />
-                <Route path={path.CREATE_EMPLOYEE} component={CreateNewEmployee} />
+                <Route exact path={path.CREATE_EMPLOYEE} component={CreateNewEmployee} />
+                <Route exact path={path.IMPORT_EMPLOYEE} component={ImportFile} />
                 <Route path={path.MANAGE_EMPLOYEES_BY_DEPARTMENT} component={Departments} />
+                <Route path={path.MANAGE_EMPLOYEES} component={ManageAccount} />
             </Switch>
 
         </>

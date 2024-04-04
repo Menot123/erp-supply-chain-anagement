@@ -32,6 +32,10 @@ const getAllEmployee = () => {
     return axios.get(`/account/api/employees`)
 }
 
+const getEmployeesPagination = (page, limit) => {
+    return axios.get(`/account/api/employees?page=${page}&limit=${limit}`)
+}
+
 const resetPasswordLoggedIn = (email, oldPass, newPass) => {
     return axios.post('/account/api/reset-password', { email, oldPass, newPass })
 }
@@ -48,12 +52,16 @@ const deleteEmployee = (idEmployee) => {
     return axios.delete(`/account/api/user?id=${idEmployee}`)
 }
 
-const getAllEmployeesByDepartment = (department) => {
-    return axios.get(`/account/api/employees/${department}`);
+const getAllEmployeesByDepartment = (department, page, limit) => {
+    return axios.get(`/account/api/employees/${department}?page=${page}&limit=${limit}`);
+}
+
+const postDataUsersFromFile = (dataUsers) => {
+    return axios.post(`/account/api/users`, dataUsers)
 }
 
 export {
     loginService, logoutService, getOTPCode, checkingOTP, resetPassword, createNewEmployeeService,
     getAllType, getAllEmployee, resetPasswordLoggedIn, updateProfileService, getInfoEmployeeById,
-    deleteEmployee, getAllEmployeesByDepartment
+    deleteEmployee, getAllEmployeesByDepartment, postDataUsersFromFile, getEmployeesPagination
 }
