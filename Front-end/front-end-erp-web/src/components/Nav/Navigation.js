@@ -48,7 +48,6 @@ const Navigation = (props) => {
         if (res.EC !== 0) {
             toast.error(res.EM)
         } else {
-            toast.success('Logout successful')
             history.push('/login')
             dispatch(logOut())
         }

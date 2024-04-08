@@ -18,8 +18,8 @@ function ImportFile() {
 
     const csvDataExample = [
         ["firstName", "lastName", "email", "phone", "birth", "address", "role", "department"],
-        ["Duy", "Huỳnh Khánh", "khanhduy1@gmail.com", "+84368887763", "2002", "Quận 7, Tp.HCM", "R1", "D1"],
-        ["Đạt", "Nguyễn Tiến", "ngjyentiend@gmail.com", "+8434353622", "2002", "Quận 7, Tp.HCM", "R1", "D4"],
+        ["Duy", "Huỳnh Khánh", "khanhduy1@gmail.com", "+84368887763", "2002", "Quận 7, Tp.HCM", "P1", "D1"],
+        ["Đạt", "Nguyễn Tiến", "ngjyentiend@gmail.com", "+8434353622", "2002", "Quận 7, Tp.HCM", "P1", "D4"],
     ];
 
     const handleImportFile = (e) => {
@@ -38,10 +38,7 @@ function ImportFile() {
                 skipEmptyLines: true,
                 complete: async function (res) {
                     if (res?.data?.length === 0) {
-                        setTimeout(() => {
-                            setIsImportingData(false);
-                            toast.error('Your file is empty or incorrect template')
-                        }, 1000);
+                        handleTimeoutAndToast(<FormattedMessage id="import-toast-error-empty-file" />)
                         return
                     } else {
                         const dataSend = res?.data
@@ -49,13 +46,18 @@ function ImportFile() {
                         if (resBulkCreate && +resBulkCreate?.EC === 0) {
                             setTimeout(() => {
                                 setIsImportingData(false);
-                                toast.success(resBulkCreate?.EM)
+                                toast.success(<FormattedMessage id="import-toast-success" />)
                             }, 1000);
+                        } else if (resBulkCreate && +resBulkCreate?.EC === -1) {
+                            handleTimeoutAndToast(<FormattedMessage id="import-toast-error-wrong-header" />)
+                        }
+                        else if (resBulkCreate && +resBulkCreate?.EC === -3) {
+                            handleTimeoutAndToast(<FormattedMessage id="import-toast-error-all-existing" />)
+                        }
+                        else if (resBulkCreate && +resBulkCreate?.EC === -4) {
+                            handleTimeoutAndToast(<FormattedMessage id="import-toast-error-missing-email" />)
                         } else {
-                            setTimeout(() => {
-                                setIsImportingData(false);
-                                toast.error(resBulkCreate?.EM)
-                            }, 1000);
+                            handleTimeoutAndToast(<FormattedMessage id="import-toast-error-something-wrong" />)
                         }
                     }
                 }
@@ -64,6 +66,13 @@ function ImportFile() {
                 setIsImportingData(false);
             }, 1000);
         }
+    }
+
+    const handleTimeoutAndToast = (message) => {
+        setTimeout(() => {
+            setIsImportingData(false);
+            toast.error(message)
+        }, 1000);
     }
 
     return (

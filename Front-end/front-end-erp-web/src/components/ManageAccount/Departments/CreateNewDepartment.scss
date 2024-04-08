@@ -1,0 +1,78 @@
+.wrapper-create-department {
+    .header-create-department {
+        padding      : 8px 16px 16px;
+        border-bottom: 1px solid #d8dadd;
+        display      : flex;
+        align-items  : center;
+        gap          : 4px;
+
+        .btn-actions {
+            .btn-create-department {
+                color       : #714B67;
+                border-color: #714B67;
+                font-weight : 500;
+                line-height : 1.5;
+
+                &:hover {
+                    background-color: #714B67;
+                    color           : white;
+                }
+            }
+        }
+
+        .wrapper-text-header {
+            display       : flex;
+            flex-direction: column;
+
+            .title-department {
+                color      : #01585c;
+                font-weight: 500;
+                line-height: 1.25
+            }
+        }
+    }
+
+    .wrap-body-create-department {
+        padding: 8px 16px 0 16px;
+
+        .body-content-create-department {
+            border       : 1px solid #d8dadd;
+            border-radius: 4px;
+            height       : 200px;
+            padding      : 24px;
+
+            .wrap-name-department,
+            .wrap-code-department {
+                margin-bottom: 8px;
+
+                .label-name-department-vi,
+                .label-name-department-en,
+                .label-code-department {
+                    width      : 16%;
+                    font-size  : 0.875rem;
+                    line-height: 1.5;
+                    font-weight: 500;
+                }
+
+                .input-name-department-vi,
+                .input-name-department-en,
+                .input-code-department {
+                    width        : 34%;
+                    outline      : none;
+                    border       : none;
+                    border-bottom: 1px solid #fff;
+
+                    &:focus {
+                        border-bottom: 1px solid #ccc;
+                    }
+                }
+
+                .manager-select {
+                    width  : 34%;
+                    outline: none !important;
+                    border : none !important;
+                }
+            }
+        }
+    }
+}

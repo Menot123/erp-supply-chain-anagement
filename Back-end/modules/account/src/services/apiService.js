@@ -118,7 +118,7 @@ const handleCreateUsersService = async (usersData) => {
             } else {
                 usersData.forEach((item) => {
                     if (!item.email) {
-                        res.EM = 'Missing an email number in your employee list'
+                        res.EM = 'Missing an email in your employee list'
                         res.EC = -4
                         res.DT = ''
                         return res
@@ -168,7 +168,63 @@ const handleCreateUsersService = async (usersData) => {
     }
 }
 
+const handleCreateDepartmentService = async (dataDepartment) => {
+    try {
+        if (!dataDepartment?.nameVi || !dataDepartment?.nameEn || !dataDepartment?.departmentCode || !dataDepartment?.managerId) {
+            res.EC = -1
+            res.EM = 'Missing parameters of department'
+            res.DT = ''
+            return res
+        }
+        let res = {}
+        let department = await db.Department.findOne({
+            where: {
+                departmentCode: dataDepartment?.departmentCode
+            }
+        });
+        if (department) {
+            res.EC = -2
+            res.EM = 'Department is existing'
+            res.DT = ''
+        } else {
+            await db.Department.create(dataDepartment)
+            res.EM = 'Create a new department successfully'
+            res.EC = 0
+            res.DT = ''
+
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error when create new department: ', e)
+    }
+}
+
+const handleGetAllDepartmentsService = async () => {
+    try {
+        let res = {}
+        const departments = await db.Department.findAll({
+            where: {
+                status: 'active',
+            }
+        })
+        if (departments) {
+            res.EC = 0
+            res.EM = 'Get all departments successfully'
+            res.DT = departments
+        } else {
+            res.EM = 'Get all departments failed'
+            res.EC = 2
+            res.DT = ''
+        }
+
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
 
 module.exports = {
-    getAllTypeService, getEmployeesByDepartmentService, handleCreateUsersService
+    getAllTypeService, getEmployeesByDepartmentService, handleCreateUsersService, handleCreateDepartmentService,
+    handleGetAllDepartmentsService
 }

@@ -54,6 +54,43 @@ const handleCreateUsers = async (req, res, next) => {
     }
 }
 
+const handleCreateDepartment = async (req, res, next) => {
+    try {
+        let departmentData = req.body;
+        let response = await apiService.handleCreateDepartmentService(departmentData);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in create a new department controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const handleGetAllDepartments = async (req, res, next) => {
+    try {
+        let resDepartments = await apiService.handleGetAllDepartmentsService()
+        return res.status(200).json({
+            EM: resDepartments.EM,
+            EC: resDepartments.EC,
+            DT: resDepartments.DT
+        })
+
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in getAllDepartments controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 module.exports = {
-    getAllTypeByType, getEmployeesByDepartment, handleCreateUsers
+    getAllTypeByType, getEmployeesByDepartment, handleCreateUsers, handleCreateDepartment,
+    handleGetAllDepartments
 };
