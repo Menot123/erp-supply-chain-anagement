@@ -10,14 +10,15 @@ let router = express.Router();
 
 let initApiRoutes = (app) => {
 
+    // All Code api
     /**
      * @swagger
      * /api/get-allCode:
      *  get:
      *      tags:
      *          - All code
-     *      summary: Get all users
-     *      description: Get all information about users
+     *      summary: Get all code api by type
+     *      description: Get all information about all code api by type
      *      parameters:
      *          - in: query
      *            name: type     
@@ -27,12 +28,63 @@ let initApiRoutes = (app) => {
      *            description: Name of type you want to get (position)               
      *      responses:
      *          200:
-     *              description: Return status and list of users if exist.
+     *              description: Return status and list of code by type.
      *          404:
      *              description: Error from server.
      * 
      */
     router.get('/get-allCode', apiController.getAllCodeByType)
+
+    /**
+     * @swagger
+     * /api/create-new-product-group:
+     *  post:
+     *      tags:
+     *          - All code
+     *      summary: Create new product group
+     *      description: Create new product group
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          valueVi:
+     *                              type: string
+     *                          valueEn:
+     *                              type: string              
+     *      responses:
+     *          200:
+     *              description: Return status of create new product group.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/create-new-product-group', apiController.createNewProductGroup)
+
+    /**
+     * @swagger
+     * /api/delete-product-group/{keyType}:
+     *  delete:
+     *      tags:
+     *          - All code
+     *      summary: Delete product group
+     *      description: Delete information of product group
+     *      parameters:
+     *          - in: path
+     *            name: keyType     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: Key type of group you want to delete              
+     *      responses:
+     *          200:
+     *              description: Return status of deleteProductGroup.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.delete('/delete-product-group/:keyType', apiController.deleteProductGroup)
 
     // Product api
     /**
