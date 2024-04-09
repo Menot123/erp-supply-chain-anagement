@@ -1,7 +1,5 @@
 import React from 'react'
 import './FilterHeader.scss'
-import { IoFilterSharp } from "react-icons/io5";
-import { GoTriangleDown } from "react-icons/go";
 import { HiSquares2X2 } from "react-icons/hi2";
 import { MdViewList } from "react-icons/md";
 import { FaSearch } from "react-icons/fa";
@@ -17,7 +15,6 @@ function FilterHeader(props) {
     const intl = useIntl();
     const history = useHistory()
     const location = useLocation();
-    const url = location.pathname;
     const isNoneAction = (location.pathname === '/manage-inventory')
     const [inputSearch, setInputSearch] = useState('')
 

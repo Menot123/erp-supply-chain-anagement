@@ -1,7 +1,6 @@
-.nav-manage-employees {
+.nav-sales {
 
-    .nav-link-me-employees,
-    .nav-link-me-department {
+    .nav-link-me-sales {
         padding: 0 4px;
 
         &:hover {
@@ -11,12 +10,12 @@
     }
 }
 
-.logo-employee-page {
+.logo-sales-page {
     width      : 30px;
     height     : 26px;
     margin-left: 8px;
 
-    .img-logo-employee-app {
+    .img-logo-sales-app {
         height    : 100%;
         width     : 100%;
         object-fit: cover;

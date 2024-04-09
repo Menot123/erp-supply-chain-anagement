@@ -2,12 +2,14 @@ import React from 'react'
 import './Navigation.scss'
 import './NavigationManageEmployee.scss'
 import './NavigationManageInventory.scss'
+import './NavigationSales.scss'
 import { NavLink, useLocation, useHistory } from 'react-router-dom'
 import { HiSquares2X2 } from "react-icons/hi2";
 import { FaBell } from "react-icons/fa6";
 import logo from '../../assets/img/logo.png'
 import logo_manage_employees from '../../assets/img/employee_app.png'
 import logo_manage_inventory from '../../assets/img/inventory_app.png'
+import logo_sales from '../../assets/img/logo_sales.png'
 import { FormattedMessage } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { translate } from '../../redux-toolkit/slices/langSlice'
@@ -19,8 +21,6 @@ import { toast } from 'react-toastify';
 import { path } from '../../utils/constant'
 import ResetPassword from './ResetPassword';
 import { openModalProfile } from '../../redux-toolkit/slices/userSlice'
-
-
 
 const Navigation = (props) => {
 
@@ -123,6 +123,22 @@ const Navigation = (props) => {
                                     <div className='nav-manage-inventory'>
                                         <NavLink className='nav-link-me-inventory' to='/manage-inventory'><FormattedMessage id='nav.manage-inventory-overview' /></NavLink>
                                         <NavLink className='nav-link-me-products' to='/manage-inventory/products'><FormattedMessage id='nav.manage-inventory-product' /></NavLink>
+                                    </div>
+                                </>
+                                :
+                                ''
+                            }
+                            {url.includes(path.SALE_ORDER) ?
+                                <>
+                                    <div className='logo-sales-page ms-4'>
+                                        <img className='img-logo-sales-app' src={logo_sales} alt='img-logo-sale' />
+                                    </div>
+                                    <NavLink className="navbar-brand ms-1 current-app" to='/manage-sales'><FormattedMessage id='sales-nav-name-app' /></NavLink>
+                                    <div className='nav-sales'>
+                                        <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-orders' /></NavLink>
+                                        <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-to-invoices' /></NavLink>
+                                        <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-products' /></NavLink>
+                                        <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-reporting' /></NavLink>
                                     </div>
                                 </>
                                 :

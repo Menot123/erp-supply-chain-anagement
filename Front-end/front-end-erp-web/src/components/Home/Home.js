@@ -16,11 +16,8 @@ function Home() {
     const intl = useIntl();
     const history = useHistory()
 
-    const handleRedirectManageAccount = () => {
-        history.push('/manage-accounts')
-    }
-    const handleRedirectManageInventory = () => {
-        history.push('/manage-inventory')
+    const handleRedirectRoute = (url) => {
+        history.push(url)
     }
 
     return (
@@ -34,7 +31,7 @@ function Home() {
                 </div>
 
                 <div className='row apps'>
-                    <div onClick={() => handleRedirectManageInventory()} className='col-4 app-item'>
+                    <div onClick={() => handleRedirectRoute('/manage-inventory')} className='col-4 app-item'>
                         <div className='wrap-img-app'>
                             <img className='img-element-app' src={inventory} alt='img-element-app' />
                         </div>
@@ -70,7 +67,7 @@ function Home() {
 
                     </div>
 
-                    <div className='col-4 app-item'>
+                    <div onClick={() => handleRedirectRoute('/sale-order')} className='col-4 app-item'>
                         <div className='wrap-img-app'>
                             <img className='img-element-app' src={ban_hang} alt='img-element-app' />
                         </div>
@@ -104,7 +101,7 @@ function Home() {
                         </div>
                     </div>
 
-                    <div onClick={() => handleRedirectManageAccount()} className='col-4 app-item'>
+                    <div onClick={() => handleRedirectRoute('/manage-accounts')} className='col-4 app-item'>
                         <div className='wrap-img-app'>
                             <img className='img-element-app' src={tai_khoan} alt='img-element-app' />
                         </div>
