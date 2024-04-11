@@ -7,11 +7,28 @@ import third_step from '../../assets/img/step3.png'
 import four_step from '../../assets/img/step4.png'
 import img_file from '../../assets/img/smiling_face.svg'
 import { FormattedMessage } from 'react-intl'
+import DataCompanyModal from './Modal/DataCompanyModal';
+import { useState } from 'react'
 
 function SaleOrder() {
+
+    const [showModalDataCompany, setShowModalDataCompany] = useState(true)
+
+    const handleShowModalStep1 = () => {
+        setShowModalDataCompany(true)
+    }
+
+    const handleCloseModalStep1 = () => {
+        setShowModalDataCompany(false)
+    }
+
     return (
         <>
             <SalesHeader />
+            <DataCompanyModal
+                show={showModalDataCompany}
+                handleClose={handleCloseModalStep1}
+            />
             <div className='wrapper-config-data'>
                 <div className='config-data'>
                     <div className='icon-close'>
@@ -26,13 +43,13 @@ function SaleOrder() {
                                 <img className='element-logo-first-step' src={first_step} alt='element-logo-first-step' />
                             </div>
                             <div className='first-step-content'>
-                                <span className='main-content'>
+                                <span onClick={() => handleShowModalStep1()} className='main-content'>
                                     <FormattedMessage id="sales-title-step1" />
                                 </span>
                                 <span className='sub-content'>
                                     <FormattedMessage id="sales-sub-title-step1" />
                                 </span>
-                                <button className='btn btn-step1'><FormattedMessage id="sales-btn-step1" /></button>
+                                <button onClick={() => handleShowModalStep1()} className='btn btn-step1'><FormattedMessage id="sales-btn-step1" /></button>
                             </div>
                         </div>
 

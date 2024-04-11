@@ -1,0 +1,76 @@
+.name-company-logo {
+    .name-company {
+        width: 85%;
+
+        .label-name-company {
+            font-size  : 0.875rem;
+            line-height: 1.5;
+            font-weight: 500;
+            color      : #111827;
+        }
+
+        .input-name-company {
+            outline: none;
+            border : none;
+
+            &:hover,
+            &:focus {
+                border-bottom: 1px solid #000;
+            }
+        }
+    }
+
+    .wrap-img-logo {
+        .label-upload {
+            padding: 2px;
+            border : 1px solid #ccc;
+        }
+    }
+}
+
+.wrap-content-body {
+    margin-top: 32px;
+
+    .heading-content-body {
+        .two-blocks {
+            border-bottom: 1px solid #d8dadd;
+            margin       : 0px -16px;
+
+            .general-inf {
+                margin     : 0 -1px 0 0;
+                margin-left: 16px;
+            }
+
+            .general-inf,
+            .branch {
+                padding: 8px 16px;
+                border : 1px solid #ccc;
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+
+            .active {
+                border-top         : 1px solid #714B67;
+                border-bottom-color: white;
+                margin-bottom      : -1px;
+            }
+        }
+
+    }
+}
+
+.btn-cancel-data-company {
+    color           : #374151 !important;
+    background-color: #e7e9ed !important;
+    border-color    : #e7e9ed !important;
+    font-weight     : 500 !important;
+    line-height     : 1.5 !important;
+
+    &:hover {
+        color           : #1F2937 !important;
+        background-color: #d8dadd !important;
+        border-color    : #d8dadd !important;
+    }
+}
