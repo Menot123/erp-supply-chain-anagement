@@ -20,10 +20,15 @@ const updateProductInformation = (id, data) => {
     return axios.put(`/inventory/api/products/${id}`, data)
 }
 
+const deleteProduct = (id) => {
+    return axios.delete(`/inventory/api/products/${id}`)
+}
+
 export {
     createNewProduct,
     getAllProducts,
     getProductWithId,
     updateProductInformation,
-    getAllCode
+    getAllCode,
+    deleteProduct
 }

@@ -15,4 +15,5 @@ export const path = {
     MANAGE_INVENTORY: '/manage-inventory',
     MANAGE_PRODUCTS: '/manage-inventory/products',
     CREATE_PRODUCT: '/manage-inventory/products/create',
+    ID_PRODUCT: '/manage-inventory/products/:id',
 };

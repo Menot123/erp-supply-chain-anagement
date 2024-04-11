@@ -4,12 +4,12 @@ import { RiImageAddLine } from "react-icons/ri";
 import { useState, useEffect } from 'react'
 import 'react-image-lightbox/style.css';
 import Lightbox from 'react-image-lightbox';
-import { createNewProduct, getAllCode } from '../../services/productServices'
+import { createNewProduct, getAllCode } from '../../../services/productServices'
 import { useHistory } from 'react-router-dom'
 import Select from 'react-select'
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
-import { LANGUAGES } from '../../utils/constant'
+import { LANGUAGES } from '../../../utils/constant'
 import { FormattedMessage, useIntl } from 'react-intl'
 
 
@@ -203,7 +203,11 @@ function CreateNewProduct() {
     return (
         <div className='wrapper-create-product'>
             <div className='header-create'>
-                <span className='title-create'><FormattedMessage id='nav.manage-inventory-create-product-title' /></span>
+                <span className='title-create'>
+                    <span onClick={() => handleCancelCreateProduct()} className='bold'>{language === LANGUAGES.EN ? 'Product' : 'Sản phẩm'}</span>
+                    <span> / </span>
+                    <span><FormattedMessage id='nav.manage-inventory-create-product-title' /></span>
+                </span>
                 <div className='btn-actions'>
                     <button onClick={() => handleCreateProduct()} className='btn btn-primary btn-main'><FormattedMessage id='btn-save' /></button>
                     <button onClick={() => handleCancelCreateProduct()} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='btn-cancel' /></button>
@@ -265,13 +269,13 @@ function CreateNewProduct() {
                     </div>
 
                     <div className='col-6 mt-2 mb-1'>
-                        <label className='label-input' htmlFor='cost'><FormattedMessage id='nav.manage-inventory-create-product-cost' /></label>
+                        <label className='label-input' htmlFor='cost'><FormattedMessage id='nav.manage-inventory-create-product-cost' /> (VNĐ)</label>
                         <input onChange={(e) => handleChangeInput('cost', e.target.value)} value={dataProduct.cost} className='input-inf bg-body-secondary' id='cost' type='cost' />
                     </div>
 
 
                     <div className='col-6 mt-2 mb-1'>
-                        <div class="d-flex align-items-start">
+                        <div className="d-flex align-items-start">
                             <label className='label-input' htmlFor='expiry'><FormattedMessage id='nav.manage-inventory-create-product-expiry' /></label>
                             <input onChange={(e) => handleChangeInput('expiry', e.target.value)} value={dataProduct.expiry} className='input-inf bg-body-secondary' id='expiry' type='expiry' />
                         </div>
