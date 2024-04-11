@@ -16,6 +16,7 @@ import { path } from './utils/constant'
 import ManageEmployeeRoute from './routes/ManageEmployeeRoute';
 import ManageInventoryRoute from './routes/ManageInventoryRoute';
 import ModalProfile from './components/ProfileEmployee/ModalProfile';
+import SaleOrder from './components/Sales/SaleOrder';
 
 function App() {
 
@@ -31,6 +32,8 @@ function App() {
       {url === '/login' || url === '/forgot-password' ? ' ' : <Navigation />}
       <Switch>
         <Route path={path.MANAGE_EMPLOYEES} component={ManageEmployeeRoute}>
+        </Route>
+        <Route path={path.SALE_ORDER} component={SaleOrder}>
         </Route>
         <Route path={path.MANAGE_INVENTORY} component={ManageInventoryRoute}>
         </Route>

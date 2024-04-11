@@ -31,7 +31,7 @@ function ManageAccount() {
     const [currentView, setCurrentView] = useState('block')
     const [sortEmployees, setSortEmployees] = useState(true)
     const [totalPage, setTotalPage] = useState(0)
-    const [currentLimit, setCurrentLimit] = useState(3)
+    const [currentLimit, setCurrentLimit] = useState(12)
     const [currentPage, setCurrentPage] = useState(1)
 
     useEffect(() => {

@@ -409,6 +409,55 @@ let initApiRoutes = (app) => {
      */
     router.delete('/user', userController.handleDeleteUser);
 
+    /**
+   * @swagger
+   * /api/department:
+   *  post:
+   *      tags:
+   *          - Account
+   *      summary: Create a department 
+   *      description: Create a new department
+   *      requestBody:
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties: 
+   *                          nameVi:
+   *                              type: string
+   *                          nameEn:
+   *                              type: string
+   *                          departmentCode:
+   *                              type: string
+   *                          managerId:
+   *                              type: integer              
+   *      responses:
+   *          200:
+   *              description: Return status of create new department.
+   *          404:
+   *              description: Error from server.
+   * 
+   */
+    router.post('/department', apiController.handleCreateDepartment);
+
+
+    /**
+     * @swagger
+     * /api/departments:
+     *  get:
+     *      tags:
+     *          - Account
+     *      summary: Get all departments
+     *      description: Get all departments in database             
+     *      responses:
+     *          200:
+     *              description: Return status and list of departments if status is active.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/departments', apiController.handleGetAllDepartments);
+
 
     return app.use("/api/", router)
 }

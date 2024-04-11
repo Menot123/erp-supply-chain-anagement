@@ -60,8 +60,21 @@ const postDataUsersFromFile = (dataUsers) => {
     return axios.post(`/account/api/users`, dataUsers)
 }
 
+const getListEmployee = () => {
+    return axios.get('/account/api/employees')
+}
+
+const postDataNewDepartment = (dataDepartment) => {
+    return axios.post('/account/api/department', dataDepartment)
+}
+
+const getAllDepartments = () => {
+    return axios.get('/account/api/departments')
+}
+
 export {
     loginService, logoutService, getOTPCode, checkingOTP, resetPassword, createNewEmployeeService,
     getAllType, getAllEmployee, resetPasswordLoggedIn, updateProfileService, getInfoEmployeeById,
-    deleteEmployee, getAllEmployeesByDepartment, postDataUsersFromFile, getEmployeesPagination
+    deleteEmployee, getAllEmployeesByDepartment, postDataUsersFromFile, getEmployeesPagination,
+    getListEmployee, postDataNewDepartment, getAllDepartments
 }

@@ -29,6 +29,10 @@
         width : 666px;
         height: fit-content;
 
+        &.h-60 {
+            height: 60px;
+        }
+
         .advance-filter {
             height: 30px;
         }

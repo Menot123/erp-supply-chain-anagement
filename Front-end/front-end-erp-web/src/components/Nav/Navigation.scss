@@ -29,13 +29,15 @@
                     color: #fff !important;
                 }
 
-                .nav-manage-employees {
+                .nav-manage-employees,
+                .nav-sales {
                     margin-left: 48px;
                     display    : flex;
                     gap        : 16px;
 
                     .nav-link-me-employees,
-                    .nav-link-me-department {
+                    .nav-link-me-department,
+                    .nav-link-me-sales {
                         text-decoration: none !important;
                         color          : #fff;
                     }
