@@ -24,6 +24,11 @@ export const userSlice = createSlice({
         },
         logOut: (state, action) => {
             state.isLogin = false
+            state.email = ''
+            state.firstName = ''
+            state.lastName = ''
+            state.id = ''
+            state.avatar = ''
         },
         openModalProfile: (state, action) => {
             state.isShowModalInfo = true

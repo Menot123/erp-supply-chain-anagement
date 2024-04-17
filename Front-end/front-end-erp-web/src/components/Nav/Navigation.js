@@ -48,10 +48,12 @@ const Navigation = (props) => {
         if (res.EC !== 0) {
             toast.error(res.EM)
         } else {
-            history.push('/login')
             dispatch(logOut())
+            localStorage.removeItem('persist:root')
+            history.push('/login')
         }
     }
+
 
     useEffect(() => {
         dispatch(translate(language))
@@ -189,7 +191,7 @@ const Navigation = (props) => {
                 <div className={isShowMenuApp === false ? 'drop-down-menu-apps d-none' : 'drop-down-menu-apps'}>
                     <span onClick={() => redirectDropdownApp('/manage-inventory')} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-inventory' /></span>
                     <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-purchase' /></span>
-                    <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-sales' /></span>
+                    <span onClick={() => redirectDropdownApp('/sale-order')} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-sales' /></span>
                     <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-accounting' /></span>
                     <span onClick={() => redirectDropdownApp('/manage-accounts')} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-employees' /></span>
                     <span onClick={() => redirectDropdownApp('/home')} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-home' /></span>

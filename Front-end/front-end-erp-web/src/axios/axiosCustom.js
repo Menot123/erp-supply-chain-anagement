@@ -32,7 +32,6 @@ instance.interceptors.response.use(function (response) {
 
     const status = (error && error.response && error.response.status) || 500;
     switch (status) {
-
         case 403: {
             toast.error(<FormattedMessage id='login-form.toast-axios-error' />)
             return Promise.reject(error);
@@ -41,6 +40,7 @@ instance.interceptors.response.use(function (response) {
             return Promise.reject(error);
         }
     }
+
 });
 
 export default instance

@@ -17,6 +17,7 @@ import ManageEmployeeRoute from './routes/ManageEmployeeRoute';
 import ManageInventoryRoute from './routes/ManageInventoryRoute';
 import ModalProfile from './components/ProfileEmployee/ModalProfile';
 import SaleOrder from './components/Sales/SaleOrder';
+import PrivateRoute from './routes/PrivateRoute'
 
 function App() {
 
@@ -31,12 +32,12 @@ function App() {
     <div className='app-container'>
       {url === '/login' || url === '/forgot-password' ? ' ' : <Navigation />}
       <Switch>
-        <Route path={path.MANAGE_EMPLOYEES} component={ManageEmployeeRoute}>
-        </Route>
-        <Route path={path.SALE_ORDER} component={SaleOrder}>
-        </Route>
-        <Route path={path.MANAGE_INVENTORY} component={ManageInventoryRoute}>
-        </Route>
+        <PrivateRoute path={path.MANAGE_EMPLOYEES} component={ManageEmployeeRoute}>
+        </PrivateRoute>
+        <PrivateRoute path={path.SALE_ORDER} component={SaleOrder}>
+        </PrivateRoute>
+        <PrivateRoute path={path.MANAGE_INVENTORY} component={ManageInventoryRoute}>
+        </PrivateRoute>
         <Route path={path.SIGN_IN} exact>
           <SignIn />
         </Route>
@@ -46,8 +47,8 @@ function App() {
         <Route path={[path.HOME, path.HOME2]} exact>
           <Home />
         </Route>
-        <Route path={path.PROFILE} component={ModalProfile}>
-        </Route>
+        <PrivateRoute path={path.PROFILE} component={ModalProfile}>
+        </PrivateRoute>
         <Route path="*" exact>
           <NotFound404 />
         </Route>
