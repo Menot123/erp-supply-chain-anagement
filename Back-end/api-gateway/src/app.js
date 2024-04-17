@@ -7,7 +7,7 @@ const routes = require("./routes");
 
 const app = express();
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');

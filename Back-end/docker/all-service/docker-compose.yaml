@@ -1,5 +1,12 @@
 version: '3.8'
 services:
+  # api-gateway:
+  #   build:
+  #     context: ../../api-gateway
+  #     dockerfile: Dockerfile
+  #   restart: unless-stopped
+  #   ports:
+  #     - 8000:8000
   db-account:
     image: mysql:8.0
     restart: always

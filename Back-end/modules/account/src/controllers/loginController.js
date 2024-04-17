@@ -13,7 +13,7 @@ let handleLogin = async (req, res) => {
         // Checking email and Password
         let data = await loginService.handleUserLogin(email, password)
         if (data && data.DT.access_token) {
-            res.cookie('jwt', data.DT.access_token, { httpOnly: true, maxAge: 60 * 60 * 1000 });
+            res.cookie('jwt', data.DT.access_token, { httpOnly: true, maxAge: 86400 * 1000 });
         }
         return res.status(200).json({
             EM: data.EM,
@@ -76,7 +76,7 @@ const handleForgotPassword = async (req, res, next) => {
 
 const handleCheckingOTP = async (req, res, next) => {
     try {
-        let response = await loginService.chekingOTPService(req.body.email)
+        let response = await loginService.checkingOTPService(req.body.email)
         if (response.EC == 0) {
             if (req.session.otp == req.body.otp) {
                 req.session.canChangePassword = true

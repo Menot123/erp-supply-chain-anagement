@@ -52,5 +52,5 @@ connectDB();
 
 app.listen(port, () => {
     //callback
-    console.log("Backend Node ERP Account running on the port:", +port);
+    console.log("Backend Node ERP Account running on the port", +port);
 });
