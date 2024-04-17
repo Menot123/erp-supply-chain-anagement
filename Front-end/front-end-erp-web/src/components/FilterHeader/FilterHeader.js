@@ -35,6 +35,9 @@ function FilterHeader(props) {
         if (props?.setCurrentViewEmployee) {
             props?.setCurrentViewEmployee(value)
         }
+        if (props?.setCurrentViewProduct) {
+            props?.setCurrentViewProduct(value)
+        }
     }
 
     const handlePageClick = async (e) => {

@@ -1,15 +1,18 @@
 .wrapper-create-product {
-    background-color: #ccc;
+    background-color: #fff;
     height: 100vh;
     .header-create {
-        padding: 4px 12px;
+        padding: 12px !important;
         height: 84px;
         border-bottom: 1px solid #eee;
-        background-color: #fff;
         .title-create {
-            font-size: 1.3em;
-            font-weight: 500;
-            color: #632c54;
+            color: #714b67 !important;
+            font-size: 18px !important;
+            font-weight: normal !important;
+            .bold {
+                font-weight: bolder !important;
+                cursor: pointer;
+            }
         }
     }
     .create-product-container {
