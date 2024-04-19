@@ -1,13 +1,13 @@
 const { Sequelize } = require('sequelize');
 
 // Option 3: Passing parameters separately (other dialects)
-const sequelize = new Sequelize('erp_sale', 'root', null, {
+const sequelize = new Sequelize('erp_sales', 'root', null, {
     host: 'localhost',
     dialect: 'mysql',
     // logging: false
 });
 
-let connectDB = async() => {
+let connectDB = async () => {
     try {
         await sequelize.authenticate();
         console.log('Connection has been established successfully.');

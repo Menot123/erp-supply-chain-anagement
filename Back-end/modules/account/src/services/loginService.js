@@ -100,7 +100,7 @@ const sendOTPCodeService = async (email) => {
     }
 }
 
-const chekingOTPService = async (email) => {
+const checkingOTPService = async (email) => {
     try {
         let res = {}
         let user = await db.User.findOne({
@@ -188,6 +188,6 @@ const changePasswordService = async (userEmail, newPwd) => {
 module.exports = {
     handleUserLogin,
     sendOTPCodeService,
-    chekingOTPService,
+    checkingOTPService,
     changePasswordService,
 }

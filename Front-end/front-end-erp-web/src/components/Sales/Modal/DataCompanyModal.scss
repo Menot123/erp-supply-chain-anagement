@@ -10,8 +10,9 @@
         }
 
         .input-name-company {
-            outline: none;
-            border : none;
+            outline      : none;
+            border       : none;
+            border-bottom: 1px solid #fff;
 
             &:hover,
             &:focus {
@@ -21,9 +22,45 @@
     }
 
     .wrap-img-logo {
+        width          : 25%;
+        display        : flex;
+        justify-content: flex-end;
+
         .label-upload {
+            height : fit-content;
             padding: 2px;
             border : 1px solid #ccc;
+        }
+
+
+
+        .icon-upload {
+            color     : #ccc;
+            // float  : right;
+            height    : 50px;
+            width     : 50px;
+            padding   : 4px;
+        }
+
+        .label-upload {
+            // padding         : 5px;
+            border-radius   : 4px;
+            margin-right    : 4px;
+            // background   : #ddd;
+            cursor          : pointer;
+
+            &:hover {
+                opacity: 0.9;
+            }
+        }
+
+        .preview-image {
+            padding        : 4px;
+            height         : 58px;
+            width          : 20%;
+            background     : center center no-repeat;
+            background-size: contain;
+            cursor         : pointer;
         }
     }
 }
@@ -43,8 +80,10 @@
 
             .general-inf,
             .branch {
-                padding: 8px 16px;
-                border : 1px solid #ccc;
+                padding     : 8px 16px;
+                border-width: 1px 1px 0 1px;
+                border-style: solid;
+                border-color: #ccc;
 
                 &:hover {
                     cursor: pointer;
@@ -52,12 +91,55 @@
             }
 
             .active {
-                border-top         : 1px solid #714B67;
-                border-bottom-color: white;
-                margin-bottom      : -1px;
+                border-top   : 1px solid #714B67;
+                border-bottom: 1px solid white;
+                margin-bottom: -1px;
             }
+
+
         }
 
+    }
+
+    .body-content {
+        padding: 16px 0;
+
+        .col-6 {
+            margin-bottom: 8px;
+
+            label {
+                width: 20%;
+            }
+
+            input,
+            select {
+                width       : calc(80% - 12px);
+                margin-left : 12px;
+                border      : none;
+                outline     : none;
+                border      : 1px solid #fff;
+                border-width: 0 0 1px 0;
+
+                &:hover {
+                    border      : 1px solid #ccc;
+                    border-width: 0 0 1px 0;
+                }
+
+                &:focus {
+                    border      : 1px solid #017e84;
+                    border-width: 0 0 1px 0;
+                }
+            }
+        }
+    }
+
+    .body-content-sub-company {
+        .table-sub-company {
+            .add-sub-company {
+                color : #017e84;
+                cursor: pointer;
+            }
+        }
     }
 }
 

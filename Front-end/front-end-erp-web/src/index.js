@@ -9,6 +9,10 @@ import Wrapper from './HOC/Wrapper'
 import { BrowserRouter } from "react-router-dom";
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistStore } from 'redux-persist'
+import axios from './axios/axiosCustom'
+import { toast } from 'react-toastify'
+import { logOut } from './redux-toolkit/slices/userSlice'
+import { FormattedMessage } from 'react-intl'
 
 let persisUser = persistStore(store)
 
@@ -27,6 +31,20 @@ ReactDOM.render(
     </Wrapper>
   </Provider>,
   document.getElementById('root')
+);
+
+const { dispatch } = store; // direct access to redux store.
+axios.interceptors.response.use(
+  response => response,
+  error => {
+    const { status } = error.response;
+    if (+status === 401 && window.location.pathname !== '/' && window.location.pathname !== '/login' &&
+      window.location.pathname !== '/forgot-password') {
+      toast.warning(<FormattedMessage id="toast-Unauthorized" />)
+      dispatch(logOut());
+    }
+    return error
+  }
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -12,7 +12,7 @@ import { useState } from 'react'
 
 function SaleOrder() {
 
-    const [showModalDataCompany, setShowModalDataCompany] = useState(true)
+    const [showModalDataCompany, setShowModalDataCompany] = useState(false)
 
     const handleShowModalStep1 = () => {
         setShowModalDataCompany(true)

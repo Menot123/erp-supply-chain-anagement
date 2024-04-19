@@ -57,9 +57,10 @@ function ModalProfile(props) {
                 toast.error('Error when get list position or department')
             }
         }
-
-        fetchDataPosition()
-    }, [])
+        if (idEmployee) {
+            fetchDataPosition()
+        }
+    }, [idEmployee])
 
     useEffect(() => {
         const fetchDataEmployee = async () => {
@@ -94,8 +95,9 @@ function ModalProfile(props) {
                 toast.error('Error when get current info employee')
             }
         }
-
-        fetchDataEmployee()
+        if (idEmployee) {
+            fetchDataEmployee()
+        }
     }, [idEmployee, language, position])
 
     useEffect(() => {
