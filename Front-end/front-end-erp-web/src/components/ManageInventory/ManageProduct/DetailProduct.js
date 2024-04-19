@@ -353,11 +353,11 @@ function DetailProduct() {
                             ?
                             <>
                                 <div className='d-flex align-items-center'>
-                                    <label className='me-1' htmlFor="nameVi">Tên Tiếng Việt</label>
+                                    <label className='me-1' htmlFor="nameVi"><FormattedMessage id="product-view-name-vi" /></label>
                                     <input onChange={(e) => handleChangeInput('nameVi', e.target.value)} value={dataProduct.nameVi} id='nameVi' className="name-product name-product-edit mb-1 bg-body-secondary w-75" type='text' placeholder={intl.formatMessage({ id: "nav.manage-inventory-create-product-name-vi" })} />
                                 </div>
                                 <div className='d-flex align-items-center'>
-                                    <label className='me-1' htmlFor="nameEn">Tên Tiếng Anh</label>
+                                    <label className='me-1' htmlFor="nameEn"><FormattedMessage id="product-view-name-en" /></label>
                                     <input onChange={(e) => handleChangeInput('nameEn', e.target.value)} value={dataProduct.nameEn} className="name-product name-product-edit mb-1 bg-body-secondary w-75" type='text' placeholder={intl.formatMessage({ id: "nav.manage-inventory-create-product-name-en" })} />
                                 </div>
                             </>
@@ -370,7 +370,7 @@ function DetailProduct() {
                         }
 
                         <div className='d-flex align-items-center'>
-                            <label className='me-1' htmlFor="group">Nhóm sản phẩm</label>
+                            <label className='me-1' htmlFor="group"><FormattedMessage id="product-view-group" /></label>
                             <Select onChange={(e) => handleChangeInput('group', e)}
                                 placeholder={<div><FormattedMessage id='nav.manage-inventory-create-product-group' /></div>}
                                 options={selectGroup && selectGroup.length > 0 ? selectGroup : []}

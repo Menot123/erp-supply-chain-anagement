@@ -94,7 +94,18 @@ let initApiRoutes = (app) => {
      *      tags:
      *          - Product
      *      summary: Get all products
-     *      description: Get all information about products            
+     *      description: Get all information about products          
+     *      parameters:
+     *          - in: query
+     *            name: page             
+     *            schema:     
+     *                type: number
+     *            description: Current page (can empty)    
+     *          - in: query
+     *            name: limit             
+     *            schema:     
+     *                type: number
+     *            description: Limit in  (can empty)         
      *      responses:
      *          200:
      *              description: Return status and list of products if exist.
@@ -118,7 +129,7 @@ let initApiRoutes = (app) => {
      *            required: true            
      *            schema:     
      *                type: string
-     *            description: ID of product you want to get information     
+     *            description: ID of product you want to get information 
      *      responses:
      *          200:
      *              description: Return status and info of product if exist.
@@ -172,6 +183,8 @@ let initApiRoutes = (app) => {
      * 
      */
     router.post('/products', productController.handleCreateProduct)
+
+    router.post('/import-products', productController.handleImportProduct)
 
     /**
      * @swagger

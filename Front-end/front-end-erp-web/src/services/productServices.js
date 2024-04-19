@@ -8,8 +8,16 @@ const createNewProduct = (data) => {
     return axios.post('/inventory/api/products', data)
 }
 
+const importNewProducts = (data) => {
+    return axios.post('/inventory/api/import-products', data)
+}
+
 const getAllProducts = () => {
     return axios.get(`/inventory/api/products`)
+}
+
+const getProductsPagination = (page, limit) => {
+    return axios.get(`/inventory/api/products?page=${page}&limit=${limit}`)
 }
 
 const getProductWithId = (id) => {
@@ -26,7 +34,9 @@ const deleteProduct = (id) => {
 
 export {
     createNewProduct,
+    importNewProducts,
     getAllProducts,
+    getProductsPagination,
     getProductWithId,
     updateProductInformation,
     getAllCode,

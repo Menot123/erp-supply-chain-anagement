@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
-import { getAllProducts } from '../../../services/productServices'
+import { getProductsPagination } from '../../../services/productServices'
 import { LANGUAGES } from '../../../utils/constant'
 import { toast } from 'react-toastify';
 import { FormattedMessage } from 'react-intl'
@@ -18,6 +18,9 @@ function ListProduct() {
     const history = useHistory();
     // const url = location.pathname;
     const [currentView, setCurrentView] = useState('block')
+    const [currentLimit] = useState(16)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPage, setTotalPage] = useState(0)
     // const queryParams = new URLSearchParams(location.search);
     // console.log(queryParams.get('type'))
 
@@ -26,16 +29,16 @@ function ListProduct() {
 
     useEffect(() => {
         const fetchProducts = async () => {
-            const response = await getAllProducts()
-            if (+response.EC === 0) {
-                setProducts(response.DT)
+            const response = await getProductsPagination(currentPage, currentLimit)
+            if (response.EC === 0 && response?.DT?.products.length > 0) {
+                Promise.all([setProducts(response?.DT?.products), setTotalPage(response?.DT?.totalPage)])
             } else {
-                toast.error(response.EM)
+                toast.error(response?.EM)
             }
         }
 
         fetchProducts()
-    }, [])
+    }, [currentPage, currentLimit])
 
     const formatCurrency = (number) => {
         const formatter = new Intl.NumberFormat('vi-VN', {
@@ -62,6 +65,9 @@ function ListProduct() {
                     urlNewItem={'/manage-inventory/products/create'}
                     setCurrentViewProduct={setCurrentView}
                     currentView={currentView}
+                    totalPageProduct={totalPage}
+                    setCurrentProductPage={setCurrentPage}
+                    urlImportProduct={'/manage-inventory/products/import'}
                 />
 
 
@@ -78,8 +84,8 @@ function ListProduct() {
                                                 <img className='img-product' src={item.image} alt='product img' />
                                             </div>
                                             <div className='des-product'>
-                                                <span className='name-product '>Sản phẩm: {item.nameVi}</span>
-                                                <span className='barcode-product'><MdBarcodeReader /> Mã vạch: {item.barCode}</span>
+                                                <span className='name-product '><FormattedMessage id="nav.manage-inventory-product" />: {language === LANGUAGES.EN ? item.nameEn : item.nameVi}</span>
+                                                <span className='barcode-product'><MdBarcodeReader /> <FormattedMessage id="product-view-barcode" />: {item.barCode}</span>
                                                 <span className='cost-product'><FaCoins /><FormattedMessage id='nav.manage-inventory-create-product-cost' />: {formatCurrency(item.cost)}</span>
                                             </div>
                                         </div>
@@ -91,17 +97,17 @@ function ListProduct() {
                     </div>
                     :
                     <>
-                        <div className='manage-employees-container'>
+                        <div className='manage-products-container'>
                             <table class="table table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
-                                        <th scope="col"> <span className='hover-item'>Tên sản phẩm</span></th>
-                                        <th scope="col">Mã sản phẩm</th>
-                                        <th scope="col">Loại sản phẩm</th>
-                                        <th scope="col">Nhóm sản phẩm</th>
-                                        <th scope="col">Giá</th>
-                                        <th scope="col">Đơn vị tính</th>
+                                        <th scope="col"> <span className='hover-item'><FormattedMessage id="product-view-name" /></span></th>
+                                        <th scope="col"><FormattedMessage id="product-view-barcode" /></th>
+                                        <th scope="col"><FormattedMessage id="product-view-type" /></th>
+                                        <th scope="col"><FormattedMessage id="product-view-group" /></th>
+                                        <th scope="col"><FormattedMessage id="product-view-cost" /></th>
+                                        <th scope="col"><FormattedMessage id="product-view-unit" /></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -113,10 +119,10 @@ function ListProduct() {
                                                         <th scope="row">{index + 1}</th>
                                                         <td>{language === LANGUAGES.EN ? item.nameEn : item.nameVi}</td>
                                                         <td>{item.productId}</td>
-                                                        <td>{item.type}</td>
-                                                        <td>{item.group}</td>
+                                                        <td>{language === LANGUAGES.EN ? item?.typeData?.valueEn : item?.typeData?.valueVi}</td>
+                                                        <td>{language === LANGUAGES.EN ? item?.groupData?.valueEn : item?.groupData?.valueVi}</td>
                                                         <td>{item.cost}</td>
-                                                        <td>{item.unit}</td>
+                                                        <td>{language === LANGUAGES.EN ? item?.unitData?.valueEn : item?.unitData?.valueVi}</td>
                                                     </tr>
                                                 ));
                                             } else {
@@ -124,7 +130,7 @@ function ListProduct() {
                                                     <tr>
                                                         <td colSpan="6">
                                                             <div className='text-center w-100 fw-bold'>
-                                                                <span>Không có sản phẩm</span>
+                                                                <span><FormattedMessage id="product-view-empty" /></span>
                                                             </div>
                                                         </td>
                                                     </tr>

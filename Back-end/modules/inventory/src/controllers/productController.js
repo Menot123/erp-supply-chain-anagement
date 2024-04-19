@@ -1,12 +1,22 @@
 import productService from '../services/productService';
 let handleGetProducts = async(req, res) => {
     try {
-        let data = await productService.handleGetProductsService()
-        return res.status(200).json({
-            EM: data.EM,
-            EC: data.EC,
-            DT: data.DT
-        })
+        if (req.query.page && req.query.limit) {
+            let { page, limit } = req.query
+            let data = await productService.handleGetProductsPaginationService(+page, +limit)
+            return res.status(200).json({
+                EM: data.EM,
+                EC: data.EC,
+                DT: data.DT
+            })
+        } else {
+            let data = await productService.handleGetProductsService()
+            return res.status(200).json({
+                EM: data.EM,
+                EC: data.EC,
+                DT: data.DT
+            })
+        }
 
     } catch (e) {
         return res.status(500).json({
@@ -49,6 +59,26 @@ const handleCreateProduct = async(req, res, next) => {
     } catch (e) {
         return res.status(500).json({
             EM: 'error from server in createProduct controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+// Import new products
+const handleImportProduct = async(req, res, next) => {
+    try {
+        console.log(req.body)
+        let dataProduct = req.body;
+        let response = await productService.handleImportProductService(dataProduct);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in importProduct controller',
             EC: -1,
             DT: ''
         })
@@ -98,6 +128,7 @@ module.exports = {
     handleGetProducts,
     handleGetProduct,
     handleCreateProduct,
+    handleImportProduct,
     handleUpdateProduct,
     handleDeleteProduct
 }
