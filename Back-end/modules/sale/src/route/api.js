@@ -1,13 +1,170 @@
 import express from "express"
-
+import apiController from '../controllers/apiController'
 
 const router = express.Router()
 
 
 const initApiRoutes = (app) => {
 
+  /**
+ * @swagger
+ * /api/company-data:
+ *  post:
+ *      tags:
+ *          - Sales
+ *      summary: Create info of company
+ *      description: Create the company data
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties: 
+ *                          name:
+ *                              type: string
+ *                          logo:
+ *                              type: string
+ *                          address:
+ *                              type: string
+ *                          phone:
+ *                              type: string  
+ *                           taxId:
+ *                              type: string
+ *                          email:
+ *                              type: string
+ *                          money:
+ *                              type: string    
+ *                          website:
+ *                              type: string  
+ *                          status:
+ *                              type: string    
+ *      responses:
+ *          200:
+ *              description: Return status of create company data.
+ *          500:
+ *              description: Error from server.
+ * 
+ */
+  router.post('/company', apiController.createCompanyData);
 
-    return app.use("/api/", router)
+  /**
+* @swagger
+* /api/company-data-branch:
+*  post:
+*      tags:
+*          - Sales
+*      summary: Create info a branch of company
+*      description: Create the a branch of company data
+*      requestBody:
+*          content:
+*              application/json:
+*                  schema:
+*                      type: object
+*                      properties: 
+*                          name:
+*                              type: string
+*                          mainCompanyId:
+*                              type: integer
+*                          logo:
+*                              type: string
+*                          address:
+*                              type: string
+*                          phone:
+*                              type: string  
+*                           taxId:
+*                              type: string
+*                          email:
+*                              type: string
+*                          money:
+*                              type: string    
+*                          website:
+*                              type: string    
+*                          status:
+*                              type: string   
+*      responses:
+*          200:
+*              description: Return status of create a branch of company data.
+*          500:
+*              description: Error from server.
+* 
+*/
+  router.post('/company-branch', apiController.createBranchCompanyData);
+
+  /**
+* @swagger
+* /api/company-branches:
+*  get:
+*      tags:
+*          - Sales
+*      summary: Get branches company
+*      description: Get list branch of main company   
+*      responses:
+*          200:
+*              description: Return status and data is list branches company.
+*          404:
+*              description: Error from server.
+* 
+*/
+  router.get('/company-branches', apiController.getBranches);
+
+  /**
+* @swagger
+* /api/company-branch:
+*  get:
+*      tags:
+*          - Sales
+*      summary: Get info branch company
+*      description: Get detail info branch of main company   
+*      responses:
+*          200:
+*              description: Return status and data is info branch by id.
+*              description: Error from server.
+* 
+*/
+  router.get('/company-branch', apiController.getBranch);
+
+  /**
+* @swagger
+* /api/company:
+*  get:
+*      tags:
+*          - Sales
+*      summary: Get info company
+*      description: Get detail info company   
+*      responses:
+*          200:
+*              description: Return status and data is info company by id.
+*              description: Error from server.
+* 
+*/
+  router.get('/company', apiController.getDetailCompany);
+
+  /**
+   * @swagger
+   * /api/company:
+   *  delete:
+   *      tags:
+   *          - Sales
+   *      summary: Delete company 
+   *      description: Delete branch of company
+   *      requestBody:
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties: 
+   *                          idCompany:
+   *                              type: string
+   *      responses:
+   *          200:
+   *              description: Return status of delete new company.
+   *          404:
+   *              description: Error from server.
+   * 
+   */
+  router.delete('/company', apiController.handleDeleteCompany);
+
+  return app.use("/api/", router)
 
 }
 

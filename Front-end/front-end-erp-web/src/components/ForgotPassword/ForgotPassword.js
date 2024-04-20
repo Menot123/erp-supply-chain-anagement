@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { translate } from '../../redux-toolkit/slices/langSlice'
-// import { loginSuccess } from '../../redux-toolkit/slices/userSlice'
+import { changeLanguage } from '../../redux-toolkit/slices/userSlice'
 import { LANGUAGES } from '../../utils/constant'
 import { useEffect } from 'react'
 import { getOTPCode, checkingOTP, resetPassword } from '../../services/userServices'
@@ -24,6 +24,7 @@ const ForgotPassword = (props) => {
 
     const handleChangeLanguage = (key) => {
         dispatch(translate(key))
+        dispatch(changeLanguage(key))
     }
 
     useEffect(() => {

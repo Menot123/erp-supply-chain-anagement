@@ -9,7 +9,6 @@ const persistConfig = {
     key: 'root',
     storage,
     whitelist: ['user']
-
 }
 
 const reducer = combineReducers({

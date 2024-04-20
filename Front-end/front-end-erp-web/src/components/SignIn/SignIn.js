@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { translate } from '../../redux-toolkit/slices/langSlice'
-import { loginSuccess } from '../../redux-toolkit/slices/userSlice'
+import { loginSuccess, changeLanguage } from '../../redux-toolkit/slices/userSlice'
 import { LANGUAGES } from '../../utils/constant'
 import { useEffect } from 'react'
 import { loginService } from '../../services/userServices'
@@ -23,7 +23,8 @@ const SignIn = (props) => {
     const history = useHistory();
 
     const handleChangeLanguage = (key) => {
-        dispatch(translate(key))
+        Promise.all([dispatch(translate(key)), dispatch(changeLanguage(key))])
+
     }
 
     useEffect(() => {

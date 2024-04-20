@@ -13,7 +13,7 @@ import logo_sales from '../../assets/img/logo_sales.png'
 import { FormattedMessage } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { translate } from '../../redux-toolkit/slices/langSlice'
-import { logOut } from '../../redux-toolkit/slices/userSlice'
+import { logOut, changeLanguage } from '../../redux-toolkit/slices/userSlice'
 import { LANGUAGES } from '../../utils/constant'
 import { useRef, useEffect, useState } from 'react'
 import { logoutService } from '../../services/userServices'
@@ -40,7 +40,7 @@ const Navigation = (props) => {
 
 
     const handleChangeLanguage = (key) => {
-        dispatch(translate(key))
+        Promise.all([dispatch(translate(key)), dispatch(changeLanguage(key))])
     }
 
     const handleLogout = async () => {
@@ -135,7 +135,7 @@ const Navigation = (props) => {
                                     <div className='logo-sales-page ms-4'>
                                         <img className='img-logo-sales-app' src={logo_sales} alt='img-logo-sale' />
                                     </div>
-                                    <NavLink className="navbar-brand ms-1 current-app" to='/manage-sales'><FormattedMessage id='sales-nav-name-app' /></NavLink>
+                                    <NavLink className="navbar-brand ms-1 current-app" to='/sale-order'><FormattedMessage id='sales-nav-name-app' /></NavLink>
                                     <div className='nav-sales'>
                                         <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-orders' /></NavLink>
                                         <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-to-invoices' /></NavLink>

@@ -72,9 +72,34 @@ const getAllDepartments = () => {
     return axios.get('/account/api/departments')
 }
 
+const postDataCompany = (dataCompany) => {
+    return axios.post('/sale/api/company', dataCompany)
+}
+
+const postDataBranchCompany = (idBranch, dataBranch) => {
+    return axios.post('/sale/api/company-branch', { idBranch: idBranch, ...dataBranch })
+}
+
+const getAllBranches = () => {
+    return axios.get('/sale/api/company-branches')
+}
+
+const getDetailBranch = (idCompany) => {
+    return axios.get(`/sale/api/company-branch?idCompany=${idCompany}`)
+}
+
+const getDetailCompany = () => {
+    return axios.get(`/sale/api/company`)
+}
+
+const deleteBranch = (idBranch) => {
+    return axios.delete(`/sale/api/company?idBranch=${idBranch}`)
+}
+
 export {
     loginService, logoutService, getOTPCode, checkingOTP, resetPassword, createNewEmployeeService,
     getAllType, getAllEmployee, resetPasswordLoggedIn, updateProfileService, getInfoEmployeeById,
     deleteEmployee, getAllEmployeesByDepartment, postDataUsersFromFile, getEmployeesPagination,
-    getListEmployee, postDataNewDepartment, getAllDepartments
+    getListEmployee, postDataNewDepartment, getAllDepartments, postDataCompany, postDataBranchCompany,
+    getAllBranches, getDetailBranch, getDetailCompany, deleteBranch
 }

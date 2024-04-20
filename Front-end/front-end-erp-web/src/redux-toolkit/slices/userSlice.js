@@ -2,12 +2,13 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
     isLogin: false,
+    currentLang: 'vi',
     firstName: '',
     lastName: '',
     email: '',
     id: '',
     avatar: '',
-    isShowModalInfo: false
+    isShowModalInfo: false,
 }
 
 export const userSlice = createSlice({
@@ -21,6 +22,7 @@ export const userSlice = createSlice({
             state.lastName = action.payload?.lastName
             state.id = action.payload?.id
             state.avatar = action.payload?.avatar
+            state.currentLang = 'vi'
         },
         logOut: (state, action) => {
             state.isLogin = false
@@ -29,6 +31,9 @@ export const userSlice = createSlice({
             state.lastName = ''
             state.id = ''
             state.avatar = ''
+        },
+        changeLanguage: (state, action) => {
+            state.currentLang = action.payload
         },
         openModalProfile: (state, action) => {
             state.isShowModalInfo = true
@@ -40,6 +45,6 @@ export const userSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { loginSuccess, logOut, openModalProfile, closeModalProfile } = userSlice.actions
+export const { loginSuccess, logOut, openModalProfile, closeModalProfile, changeLanguage } = userSlice.actions
 
 export default userSlice.reducer

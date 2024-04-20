@@ -6,11 +6,11 @@ import Modal from 'react-bootstrap/Modal';
 import { MdCameraEnhance } from "react-icons/md";
 import Lightbox from 'react-image-lightbox';
 import { validateData } from '../../../utils/functions'
-import { postDataBranchCompany } from '../../../services/userServices'
+import { postDataBranchCompany, getDetailBranch } from '../../../services/userServices'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { toast } from 'react-toastify';
 
-function ModalSubCompany(props) {
+function ModalDetailBranch(props) {
 
     const intl = useIntl();
 
@@ -34,6 +34,26 @@ function ModalSubCompany(props) {
 
     const [dataSubCompany, setDataSubCompany] = useState(defaultDataSubCompany)
     const [imgPreviewSubCompany, setImgPreviewSubCompany] = useState(defaultImgPreviewSubCompany)
+
+    const fetchDataDetailCompany = async (idCompany) => {
+        let res = await getDetailBranch(idCompany)
+        if (res.EC === 0) {
+            setDataSubCompany(res?.DT)
+            setImgPreviewSubCompany(prevState => ({
+                ...prevState,
+                urlReview: res?.DT?.logo.replace(/"/g, '')
+            }));
+        } else {
+            toast.error('Something wrong when get detail data company')
+        }
+    }
+
+    useEffect(() => {
+        if (props?.idCompanyDetail) {
+            fetchDataDetailCompany(props?.idCompanyDetail)
+        }
+
+    }, [props?.idCompanyDetail])
 
     const handleOnchangeInput = (type, e) => {
         if (type) {
@@ -80,19 +100,18 @@ function ModalSubCompany(props) {
         }));
     }
 
-    const clearDataModal = () => {
-        setDataSubCompany(defaultDataSubCompany)
-        setImgPreviewSubCompany(defaultImgPreviewSubCompany)
-    }
-
     const handlePostDataBranch = async () => {
         let fieldCheck = ['name', 'logo', 'idCompany', 'mainCompanyId', 'address', 'phone', 'taxId', 'email', 'money', 'website',]
         const checkEmptyFields = validateData(fieldCheck, dataSubCompany)
         if (checkEmptyFields.length === 0) {
-            const response = await postDataBranchCompany(-10, dataSubCompany)
+            let response = {}
+            // console.log('check dataSubCompany: ', dataSubCompany)
+            console.log('check props?.idCompanyDetail: ', props?.idCompanyDetail)
+            if (props?.idCompanyDetail) {
+                response = await postDataBranchCompany(props?.idCompanyDetail, dataSubCompany)
+            }
             if (response.EC === 0) {
-                clearDataModal()
-                props?.closeSubModal()
+                props?.closeModalDetail()
                 props?.reloadDataBranches()
                 toast.success(intl.formatMessage({ id: "modal-company-toast-branches.success" }))
             } else {
@@ -106,15 +125,15 @@ function ModalSubCompany(props) {
     return (
         <>
             <Modal
-                show={props?.showSubModal}
-                onHide={props?.closeSubModal}
+                show={props?.showModalDetail}
+                onHide={props?.closeModalDetail}
                 backdrop="static"
                 keyboard={false}
                 size={'xl'}
                 style={{ zIndex: '900' }}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title><FormattedMessage id='modal-company-branches.title' /></Modal.Title>
+                    <Modal.Title><FormattedMessage id="modal-company-branches.title.detail" /></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className='name-company-logo d-flex  justify-content-between'>
@@ -217,7 +236,7 @@ function ModalSubCompany(props) {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button className='btn-cancel-data-company' onClick={props?.closeSubModal}>
+                    <Button className='btn-cancel-data-company' onClick={props?.closeModalDetail}>
                         <FormattedMessage id='btn-cancel' />
                     </Button>
                     <Button onClick={handlePostDataBranch} className='btn-purple'>
@@ -241,4 +260,4 @@ function ModalSubCompany(props) {
     )
 }
 
-export default ModalSubCompany
+export default ModalDetailBranch
