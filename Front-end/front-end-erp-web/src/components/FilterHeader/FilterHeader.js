@@ -44,6 +44,9 @@ function FilterHeader(props) {
         if (props?.setCurrentEmployeePage) {
             props?.setCurrentEmployeePage(+e.selected + 1)
         }
+        if (props?.setCurrentProductPage) {
+            props?.setCurrentProductPage(+e.selected + 1)
+        }
     };
 
     return (
@@ -68,7 +71,7 @@ function FilterHeader(props) {
                             ? ''
                             : <>
                                 <button onClick={() => handleCreateNewItem()} className='btn btn-primary btn-create-item'><FormattedMessage id='filter-header.create' /></button>
-                                <NavLink to='/manage-accounts/import' className='ms-1 btn btn-outline-secondary'><FormattedMessage id='filter-header.import' /></NavLink>
+                                <NavLink to={props?.urlImportProduct ? props.urlImportProduct : '/manage-accounts/import'} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='filter-header.import' /></NavLink>
                             </>}
                     </div>
                 </div>
@@ -79,7 +82,7 @@ function FilterHeader(props) {
                     <input value={inputSearch} onChange={(e) => handleChangeFilter(e)} type='text' className='input-search-text' placeholder={intl.formatMessage({ id: "homepage.search" })} />
                     <span className="icon-search"><FaSearch /></span>
                 </div>
-                <div className={props?.totalPageEmployee ? 'advance-filter d-flex justify-content-between mt-1' : 'advance-filter d-flex justify-content-end mt-1'}>
+                <div className={props?.totalPageEmployee ? 'advance-filter d-flex justify-content-between mt-1' : 'advance-filter d-flex justify-content-between mt-1'}>
                     {props?.totalPageEmployee > 0 &&
                         <ReactPaginate
                             nextLabel=">"
@@ -87,6 +90,28 @@ function FilterHeader(props) {
                             pageRangeDisplayed={2}
                             marginPagesDisplayed={2}
                             pageCount={props?.totalPageEmployee}
+                            previousLabel="<"
+                            pageClassName="page-item"
+                            pageLinkClassName="page-link"
+                            previousClassName="page-item"
+                            previousLinkClassName="page-link"
+                            nextClassName="page-item"
+                            nextLinkClassName="page-link"
+                            breakLabel="..."
+                            breakClassName="page-item"
+                            breakLinkClassName="page-link"
+                            containerClassName="pagination"
+                            activeClassName="active"
+                            renderOnZeroPageCount={null}
+                        />
+                    }
+                    {props?.totalPageProduct > 0 &&
+                        <ReactPaginate
+                            nextLabel=">"
+                            onPageChange={handlePageClick}
+                            pageRangeDisplayed={2}
+                            marginPagesDisplayed={2}
+                            pageCount={props?.totalPageProduct}
                             previousLabel="<"
                             pageClassName="page-item"
                             pageLinkClassName="page-link"

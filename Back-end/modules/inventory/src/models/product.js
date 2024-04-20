@@ -5,7 +5,9 @@ const {
 module.exports = (sequelize, DataTypes) => {
     class Product extends Model {
         static associate(models) {
-            // define association here
+            Product.belongsTo(models.all_code, { foreignKey: 'type', targetKey: 'keyType', as: 'typeData' })
+            Product.belongsTo(models.all_code, { foreignKey: 'group', targetKey: 'keyType', as: 'groupData' })
+            Product.belongsTo(models.all_code, { foreignKey: 'unit', targetKey: 'keyType', as: 'unitData' })
         }
 
         static generateProductId(type, group) {
@@ -59,7 +61,7 @@ module.exports = (sequelize, DataTypes) => {
         modelName: 'Product',
         freezeTableName: true,
         hooks: {
-            beforeCreate: async(instance) => {
+            beforeCreate: async (instance) => {
                 instance.productId = await Product.getNextProductId(
                     instance.type,
                     instance.group
