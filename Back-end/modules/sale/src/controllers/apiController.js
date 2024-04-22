@@ -106,7 +106,26 @@ const handleDeleteCompany = async (req, res, next) => {
     }
 }
 
+const updateConfirmQuote
+    = async (req, res, next) => {
+        try {
+            let methodConfirm = req.body;
+            let response = await apiService.updateConfirmQuoteService(methodConfirm?.confirmMethod);
+            return res.status(200).json({
+                EM: response.EM,
+                EC: response.EC,
+                DT: response.DT
+            })
+        } catch (e) {
+            return res.status(500).json({
+                EM: 'error from server in update confirm quote method controller',
+                EC: -1,
+                DT: ''
+            })
+        }
+    }
+
 module.exports = {
     createCompanyData, createBranchCompanyData, getBranches, getBranch, getDetailCompany,
-    handleDeleteCompany
+    handleDeleteCompany, updateConfirmQuote
 }

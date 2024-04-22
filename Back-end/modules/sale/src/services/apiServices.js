@@ -202,7 +202,38 @@ const handleDeleteCompanyService = async (idCompany) => {
     }
 }
 
+const updateConfirmQuoteService = async (methodConfirm) => {
+    try {
+        let res = {}
+        if (methodConfirm) {
+            let company = await db.CompanyInfo.findOne({
+                where: {
+                    status: 'active'
+                }
+            })
+            if (company) {
+                company.update({ confirmQuote: methodConfirm })
+                res.EM = 'Update confirm quote method successfully'
+                res.EC = 0
+                res.DT = ''
+            } else {
+                res.EM = 'Update confirm quote method failed. Not found company info'
+                res.EC = -2
+                res.DT = ''
+            }
+        } else {
+            res.EC = -1
+            res.EM = 'Missing parameters of method confirm'
+            res.DT = ''
+            return res
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error when create new company: ', e)
+    }
+}
+
 module.exports = {
     createCompanyDataService, createBranchCompanyDataService, getBranchesService,
-    getBranchService, getDetailCompanyService, handleDeleteCompanyService
+    getBranchService, getDetailCompanyService, handleDeleteCompanyService, updateConfirmQuoteService
 }

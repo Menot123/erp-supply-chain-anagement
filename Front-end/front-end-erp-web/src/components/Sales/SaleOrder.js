@@ -9,10 +9,15 @@ import img_file from '../../assets/img/smiling_face.svg'
 import { FormattedMessage } from 'react-intl'
 import DataCompanyModal from './Modal/DataCompanyModal';
 import { useState } from 'react'
+import { FaCheck } from "react-icons/fa";
+import { ModalConfirmQuote } from './Modal/ModalConfirmQuote';
 
 function SaleOrder() {
 
     const [showModalDataCompany, setShowModalDataCompany] = useState(false)
+    const [isDoneStep1, setIsDoneStep1] = useState(false)
+    const [isDoneStep2, setIsDoneStep2] = useState(false)
+    const [showModalStep2, setShowModalStep2] = useState(false)
 
     const handleShowModalStep1 = () => {
         setShowModalDataCompany(true)
@@ -22,13 +27,29 @@ function SaleOrder() {
         setShowModalDataCompany(false)
     }
 
+    const handleShowModalStep2 = () => {
+        setShowModalStep2(true)
+    }
+
+    const handleCloseModalStep2 = () => {
+        setShowModalStep2(false)
+    }
+
+
     return (
         <>
             <SalesHeader />
             <DataCompanyModal
                 show={showModalDataCompany}
                 handleClose={handleCloseModalStep1}
+                isCreated={setIsDoneStep1}
             />
+            <ModalConfirmQuote
+                show={showModalStep2}
+                handleClose={handleCloseModalStep2}
+                isDone={setIsDoneStep2}
+            />
+
             <div className='wrapper-config-data'>
                 <div className='config-data'>
                     <div className='icon-close'>
@@ -49,7 +70,16 @@ function SaleOrder() {
                                 <span className='sub-content'>
                                     <FormattedMessage id="sales-sub-title-step1" />
                                 </span>
-                                <button onClick={() => handleShowModalStep1()} className='btn btn-step1'><FormattedMessage id="sales-btn-step1" /></button>
+                                {isDoneStep1
+                                    ?
+                                    <div className='btn-well-done'>
+                                        <FaCheck color="green" />
+                                        <span onClick={() => handleShowModalStep1()} className='text-well-done hover-item'><FormattedMessage id="sales-btn-doneStep" /></span>
+                                    </div>
+                                    :
+                                    <button onClick={() => handleShowModalStep1()} className='btn btn-step1'><FormattedMessage id="sales-btn-step1" /></button>
+                                }
+
                             </div>
                         </div>
 
@@ -61,13 +91,21 @@ function SaleOrder() {
                                 <img className='element-logo-first-step' src={third_step} alt='element-logo-first-step' />
                             </div>
                             <div className='first-step-content'>
-                                <span className='main-content'>
+                                <span onClick={handleShowModalStep2} className='main-content'>
                                     <FormattedMessage id="sales-title-step2" />
                                 </span>
                                 <span className='sub-content'>
                                     <FormattedMessage id="sales-sub-title-step2" />
                                 </span>
-                                <button className='btn btn-step2'><FormattedMessage id="sales-btn-step2" /></button>
+                                {isDoneStep2
+                                    ?
+                                    <div className='btn-well-done'>
+                                        <FaCheck color="green" />
+                                        <span onClick={() => handleShowModalStep2()} className='text-well-done hover-item'><FormattedMessage id="sales-btn-doneStep" /></span>
+                                    </div>
+                                    :
+                                    <button onClick={() => handleShowModalStep2()} className='btn btn-step2'><FormattedMessage id="sales-btn-step2" /></button>
+                                }
                             </div>
                         </div>
 

@@ -183,6 +183,7 @@
     "sales-sub-title-step3": "Send a quotation to test the customer portal.",
     "sales-btn-step3": "Send sample",
     "sales-main-message": "Create a new quotation, the first step of a new sale!",
+    "sales-btn-doneStep": "Step Completed!",
     "sales-sub-message": "Once the quotation is confirmed by the customer, it becomes a sales order. You will be able to create an invoice and collect the payment.",
     "toast-Unauthorized": "Login session has expired!",
     "modal-company-data-title": "Set your company data",
@@ -209,5 +210,12 @@
     "modal-company-branches.iDMainCompany": "Parent company ID",
     "modal-company-branches-toast.delete-confirm": "Are you sure you want to delete ",
     "modal-company-branches-toast.delete-success": "Successfully deleted the branch ",
-    "modal-company-branches-toast.delete-failed": "An error occurred while deleting the branch "
+    "modal-company-branches-toast.delete-failed": "An error occurred while deleting the branch ",
+    "modal-confirm-quote.title": "Choose how to confirm quotations",
+    "modal-confirm-quote.option-sign": "Electronic signature",
+    "modal-confirm-quote.btn-apply": "Apply",
+    "modal-confirm-quote.btn-cancel": "Cancel",
+    "modal-confirm-quote.toast-successfully": "Set quote confirmation method successfully",
+    "modal-confirm-quote.toast-empty-data.company": "Please enter company data first",
+    "modal-confirm-quote.toast-empty-select": "Please choose a quote confirmation method"
 }

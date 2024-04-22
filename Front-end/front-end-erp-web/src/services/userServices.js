@@ -96,10 +96,14 @@ const deleteBranch = (idBranch) => {
     return axios.delete(`/sale/api/company?idBranch=${idBranch}`)
 }
 
+const postDataConfirmMethod = (confirmMethod) => {
+    return axios.post(`/sale/api/company-confirm-quotes`, { confirmMethod })
+}
+
 export {
     loginService, logoutService, getOTPCode, checkingOTP, resetPassword, createNewEmployeeService,
     getAllType, getAllEmployee, resetPasswordLoggedIn, updateProfileService, getInfoEmployeeById,
     deleteEmployee, getAllEmployeesByDepartment, postDataUsersFromFile, getEmployeesPagination,
     getListEmployee, postDataNewDepartment, getAllDepartments, postDataCompany, postDataBranchCompany,
-    getAllBranches, getDetailBranch, getDetailCompany, deleteBranch
+    getAllBranches, getDetailBranch, getDetailCompany, deleteBranch, postDataConfirmMethod
 }
