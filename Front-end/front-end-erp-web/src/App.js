@@ -16,8 +16,8 @@ import { path } from './utils/constant'
 import ManageEmployeeRoute from './routes/ManageEmployeeRoute';
 import ManageInventoryRoute from './routes/ManageInventoryRoute';
 import ModalProfile from './components/ProfileEmployee/ModalProfile';
-import SaleOrder from './components/Sales/SaleOrder';
 import PrivateRoute from './routes/PrivateRoute'
+import SaleOrderRoute from './routes/SaleOrderRoute';
 
 function App() {
 
@@ -34,7 +34,7 @@ function App() {
       <Switch>
         <PrivateRoute path={path.MANAGE_EMPLOYEES} component={ManageEmployeeRoute}>
         </PrivateRoute>
-        <PrivateRoute path={path.SALE_ORDER} component={SaleOrder}>
+        <PrivateRoute path={path.SALE_ORDER} component={SaleOrderRoute}>
         </PrivateRoute>
         <PrivateRoute path={path.MANAGE_INVENTORY} component={ManageInventoryRoute}>
         </PrivateRoute>

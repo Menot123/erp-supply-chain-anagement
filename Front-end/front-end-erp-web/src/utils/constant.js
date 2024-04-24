@@ -19,4 +19,5 @@ export const path = {
     CREATE_PRODUCT: '/manage-inventory/products/create',
     ID_PRODUCT: '/manage-inventory/products/:id',
     SALE_ORDER: '/sale-order',
+    CREATE_QUOTE: '/sale-order/new-quote',
 };

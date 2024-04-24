@@ -98,7 +98,7 @@ function ListProduct() {
                     :
                     <>
                         <div className='manage-products-container'>
-                            <table class="table table-striped table-hover">
+                            <table className="table table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>

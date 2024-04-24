@@ -35,8 +35,10 @@ const Navigation = (props) => {
     const dispatch = useDispatch()
     const [isShowMenuApp, setIsShowMenuApp] = useState(false)
     const [isShowMenuUser, setIsShowMenuUser] = useState(false)
+    const [isShowMenuOrder, setIsShowMenuOrder] = useState(false)
     const dropdownMenuRef = useRef(null);
     const dropdownUserRef = useRef(null);
+    const dropdownOrderRef = useRef(null);
 
 
     const handleChangeLanguage = (key) => {
@@ -66,6 +68,9 @@ const Navigation = (props) => {
             if (dropdownUserRef.current && !dropdownUserRef.current.contains(event.target)) {
                 setIsShowMenuUser(false)
             }
+            if (dropdownOrderRef.current && !dropdownOrderRef.current.contains(event.target)) {
+                setIsShowMenuOrder(false)
+            }
         };
 
         document.addEventListener('click', handleClickOutside);
@@ -82,6 +87,10 @@ const Navigation = (props) => {
 
     const handleShowMenuUser = (status) => {
         setIsShowMenuUser(!status)
+    }
+
+    const handleShowMenuOrder = (status) => {
+        setIsShowMenuOrder(!status)
     }
 
     const redirectDropdownApp = (path) => {
@@ -137,7 +146,7 @@ const Navigation = (props) => {
                                     </div>
                                     <NavLink className="navbar-brand ms-1 current-app" to='/sale-order'><FormattedMessage id='sales-nav-name-app' /></NavLink>
                                     <div className='nav-sales'>
-                                        <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-orders' /></NavLink>
+                                        <div className='nav-link-me-sales' ref={dropdownOrderRef} onClick={() => handleShowMenuOrder(isShowMenuOrder)}><FormattedMessage id='sales-nav-title-orders' /></div>
                                         <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-to-invoices' /></NavLink>
                                         <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-products' /></NavLink>
                                         <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-reporting' /></NavLink>
@@ -202,6 +211,13 @@ const Navigation = (props) => {
                     {/* <span onClick={() => handleShowResetPasswordModal()} className='item-app-user'>Đổi mật khẩu</span> */}
                     <ResetPassword />
                     <span onClick={() => handleLogout()} className='item-app-user'><FormattedMessage id='navigation.dropdown-user-logout' /></span>
+                </div>
+
+                <div className={isShowMenuOrder === false ? 'drop-down-menu-order d-none' : 'drop-down-menu-order'}>
+                    <span onClick={() => redirectDropdownApp('/manage-inventory')} className='item-order-menu'>Báo giá</span>
+                    <span onClick={() => redirectDropdownApp()} className='item-order-menu'>Đơn hàng</span>
+                    <span onClick={() => redirectDropdownApp('/sale-order')} className='item-order-menu'>Đội ngũ kinh doanh</span>
+                    <span onClick={() => redirectDropdownApp()} className='item-order-menu'>Khách hàng</span>
                 </div>
 
             </div>

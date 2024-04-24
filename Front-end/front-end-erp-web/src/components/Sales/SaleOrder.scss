@@ -129,3 +129,50 @@
     }
 
 }
+
+.table-quotes {
+    .icon-activities {
+        font-weight: 400;
+        font-size  : 1.315em;
+    }
+
+    .cost,
+    .total-cost {
+        font-weight: 500;
+    }
+
+    .total-cost {
+        position: relative;
+
+        &::after {
+            content         : attr(data-tooltip);
+            position        : absolute;
+            bottom          : 100%;
+            left            : 50%;
+            transform       : translateX(-50%);
+            padding         : 4px 8px;
+            background-color: #000;
+            color           : #fff;
+            font-size       : 12px;
+            width           : 120px;
+            border-radius   : 4px;
+            opacity         : 0;
+            visibility      : hidden;
+            transition      : opacity 0.2s, visibility 0.2s;
+        }
+
+        &:hover::after {
+            opacity   : 1;
+            visibility: visible;
+        }
+    }
+
+    .status-quote {
+        border-radius   : 50rem;
+        color           : #FFF;
+        background-color: #714b67;
+        font-size       : 12px;
+        line-height     : 1.1;
+        padding         : 0.25em 0.82em;
+    }
+}

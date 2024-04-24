@@ -30,6 +30,10 @@
     }
 
     .pagination {
-        margin-bottom: 0;
+        margin-bottom  : 0;
+        min-width      : 270px;
+        display        : flex;
+        justify-content: flex-end;
     }
+
 }
