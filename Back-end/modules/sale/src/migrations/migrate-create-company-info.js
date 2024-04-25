@@ -35,6 +35,9 @@ module.exports = {
       idCompany: {
         type: Sequelize.STRING
       },
+      confirmQuote: {
+        type: Sequelize.STRING
+      },
       status: {
         type: Sequelize.STRING
       },

@@ -196,6 +196,7 @@
     "sales-sub-title-step3": "Gửi một báo giá để kiểm thử cổng thông tin khách hàng.",
     "sales-btn-step3": "Gửi mẫu",
     "sales-main-message": "Tạo một báo giá mới, bước đầu tiên trong hoạt động bán hàng!",
+    "sales-btn-doneStep": "Đã hoàn thành!",
     "sales-sub-message": "Sau khi báo giá được xác nhận bởi khách hàng, nó sẽ trở thành một đơn bán hàng. Bạn sẽ có thể tạo hóa đơn và nhận thanh toán.",
     "toast-Unauthorized": "Phiên đăng nhập đã hết hạn!",
     "modal-company-data-title": "Thiết lập dữ liệu công ty",
@@ -222,5 +223,12 @@
     "modal-company-branches.iDMainCompany": "ID công ty mẹ",
     "modal-company-branches-toast.delete-confirm": "Bạn có chắc chắn muốn xóa chi nhánh ",
     "modal-company-branches-toast.delete-success": "Xóa thành công chi nhánh ",
-    "modal-company-branches-toast.delete-failed": "Có lỗi xảy ra khi xóa chi nhánh "
+    "modal-company-branches-toast.delete-failed": "Có lỗi xảy ra khi xóa chi nhánh ",
+    "modal-confirm-quote.title": "Chọn cách xác nhận báo giá",
+    "modal-confirm-quote.option-sign": "Chữ ký điện tử",
+    "modal-confirm-quote.btn-apply": "Thiết lập",
+    "modal-confirm-quote.btn-cancel": "Hủy",
+    "modal-confirm-quote.toast-successfully": "Cài đặt phương thức xác nhận báo giá thành công",
+    "modal-confirm-quote.toast-empty-data.company": "Vui lòng nhập dữ liệu công ty trước",
+    "modal-confirm-quote.toast-empty-select": "Vui lòng chọn phương thức xác nhận báo giá"
 }

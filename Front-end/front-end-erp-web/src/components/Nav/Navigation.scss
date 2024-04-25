@@ -42,6 +42,13 @@
                         color          : #fff;
                     }
 
+                    .nav-link-me-sales {
+                        &:hover {
+                            cursor: pointer;
+                        }
+                    }
+
+
                 }
 
             }
@@ -161,5 +168,27 @@
             }
         }
 
+    }
+
+    .drop-down-menu-order {
+        z-index         : 10;
+        position        : absolute;
+        left            : 236px;
+        top             : 80%;
+        width           : 236px;
+        background-color: #fff;
+        display         : flex;
+        flex-direction  : column;
+        box-shadow      : 0 0 5px rgba(0, 0, 0, 0.3);
+        border-radius   : 4px;
+
+        .item-order-menu {
+            padding: 8px 8px;
+
+            &:hover {
+                background-color: #c49bb8;
+                cursor          : pointer;
+            }
+        }
     }
 }

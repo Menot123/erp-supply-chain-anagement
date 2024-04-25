@@ -1,0 +1,173 @@
+.wrapper-create-quote {
+    .header-create-quote {
+        padding      : 8px 16px 16px;
+        border-bottom: 1px solid #d8dadd;
+        display      : flex;
+        align-items  : center;
+        gap          : 4px;
+
+        .btn-actions {
+            .btn-create-quote {
+                color       : #714B67;
+                border-color: #714B67;
+                font-weight : 500;
+                line-height : 1.5;
+
+                &:hover {
+                    background-color: #714B67;
+                    color           : white;
+                }
+            }
+        }
+
+        .wrapper-text-header {
+            display       : flex;
+            flex-direction: column;
+
+            .title-quote {
+                color      : #01585c;
+                font-weight: 500;
+                line-height: 1.25;
+                position   : relative;
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+
+        }
+    }
+
+    .wrapper-body-create-quote {
+        padding: 8px 16px 0 16px;
+
+        .actions-status {
+            margin-bottom  : 8px;
+            display        : flex;
+            justify-content: space-between;
+
+            .wrap-btn-actions {
+                display: flex;
+                gap    : 4px;
+            }
+
+            .quote-status {
+                display    : flex;
+                align-items: center;
+                width      : 38%;
+
+                .quote-step {
+                    padding-top: 0;
+
+                    .ant-steps-item-process {
+                        .ant-steps-item-container {
+                            .ant-steps-item-icon {
+                                background-color: #861e6b !important;
+                                border-color    : #861e6b !important;
+                            }
+
+                        }
+
+
+                    }
+                }
+            }
+        }
+
+        .body-create-quote {
+            height       : 600px;
+            width        : 100%;
+            border       : 1px solid #ccc;
+            border-radius: 4px;
+            padding      : 24px;
+
+            .wrap-info-quote {
+                display           : flex;
+                gap               : 28px;
+                // justify-content: space-between;
+
+                .content-left,
+                .content-right {
+                    width: 50%;
+
+                    label {
+                        font-weight: 500;
+                    }
+                }
+
+                .content-left {
+                    display: flex;
+
+                    .select-customer {
+                        flex-grow    : 1;
+                        height       : 28px !important;
+                        border-bottom: 1px solid #fff;
+
+                        .ant-select-arrow {
+                            display: none;
+                        }
+
+                        &:hover {
+                            border-bottom: 1px solid #000;
+
+                            .ant-select-arrow {
+                                display: block;
+                            }
+                        }
+                    }
+                }
+
+                .content-right {
+
+                    .wrap-expiration-date,
+                    .wrap-currency,
+                    .wrap-payment-method {
+                        display: flex;
+
+                        .select-date-expiration,
+                        .select-currency,
+                        .select-payment-method {
+                            flex-grow    : 1;
+                            height       : 28px !important;
+                            border-radius: 0px !important;
+                            border-bottom: 1px solid #fff;
+
+                            .ant-select-arrow {
+                                display: none;
+                            }
+
+                            &:hover {
+                                border-bottom: 1px solid #000;
+
+                                .ant-select-arrow {
+                                    display: block;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            .wrap-info-products {
+                .wrap-policy-total {
+                    display        : flex;
+                    justify-content: space-between;
+
+                    .policy {
+                        width: 70%;
+
+                        .input-policy {
+                            border-bottom: 1px solid #fff;
+                            border-radius: 0px !important;
+
+                            &:hover {
+                                border-bottom: 1px solid #000;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}

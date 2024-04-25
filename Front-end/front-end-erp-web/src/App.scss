@@ -1,5 +1,7 @@
 body {
-    margin: 0;
+    margin    : 0;
+    border    : 0;
+    box-sizing: border-box;
 }
 
 .search-input-wrap {
@@ -38,8 +40,11 @@ body {
 }
 
 .hover-item {
-    cursor : pointer;
-    opacity: 0.8;
+    &:hover {
+        cursor : pointer;
+        opacity: 0.8;
+    }
+
 }
 
 .btn-purple {
@@ -50,6 +55,20 @@ body {
         opacity: 0.8;
     }
 }
+
+.btn-gray {
+    color           : #374151 !important;
+    background-color: #e7e9ed !important;
+    border-color    : #e7e9ed !important;
+    font-weight     : 500 !important;
+}
+
+.btn-gray:hover {
+    color           : #1F2937 !important;
+    background-color: #d8dadd !important;
+    border-color    : #d8dadd !important;
+}
+
 
 .loading-overlay {
     position        : fixed;

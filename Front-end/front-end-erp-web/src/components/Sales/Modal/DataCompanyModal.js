@@ -57,6 +57,22 @@ function DataCompanyModal(props) {
         if (res.EC === 0) {
             if (res?.DT) {
                 Promise.all([
+                    props?.isCreated(true),
+                    setDataCompany(res?.DT),
+                    setImgPreview(prevState => ({
+                        ...prevState,
+                        urlReview: res?.DT?.logo.replace(/"/g, '')
+                    }))
+                ])
+            }
+        }
+    }
+
+    const fetchInfoCompanyFirstTime = async () => {
+        let res = await getDetailCompany()
+        if (res.EC === 0) {
+            if (res?.DT) {
+                Promise.all([
                     setDataCompany(res?.DT),
                     setImgPreview(prevState => ({
                         ...prevState,
@@ -68,10 +84,15 @@ function DataCompanyModal(props) {
     }
 
     useEffect(() => {
-        Promise.all([fetchBranches(), fetchInfoCompany()])
+        fetchBranches()
+        fetchInfoCompanyFirstTime()
     }, [])
 
-
+    useEffect(() => {
+        if (dataCompany && dataCompany?.name) {
+            props?.isCreated(true)
+        }
+    }, [dataCompany, props])
 
     const handleOnchangeInput = (type, e) => {
         if (type) {

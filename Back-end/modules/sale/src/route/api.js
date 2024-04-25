@@ -164,6 +164,31 @@ const initApiRoutes = (app) => {
    */
   router.delete('/company', apiController.handleDeleteCompany);
 
+  /**
+* @swagger
+* /api/company-confirm-quotes:
+*  post:
+*      tags:
+*          - Sales
+*      summary: Create a method confirm quote
+*      description: Create a method confirm quote 
+*      requestBody:
+*          content:
+*              application/json:
+*                  schema:
+*                      type: object
+*                      properties: 
+*                          confirmQuote:
+*                              type: string
+*      responses:
+*          200:
+*              description: Return status of create a confirm quote method.
+*          500:
+*              description: Error from server.
+* 
+*/
+  router.post('/company-confirm-quotes', apiController.updateConfirmQuote);
+
   return app.use("/api/", router)
 
 }

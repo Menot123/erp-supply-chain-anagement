@@ -3,14 +3,16 @@ import './SalesHeader.scss'
 import { FaSearch } from "react-icons/fa";
 import { FormattedMessage, useIntl } from 'react-intl'
 import ReactPaginate from 'react-paginate';
+import { useHistory } from 'react-router-dom'
 
 
 function SalesHeader() {
 
     const intl = useIntl();
+    const history = useHistory()
 
     const handleCreateNewItem = () => {
-
+        history.push('/sale-order/new-quote')
     }
 
     const handleChangeFilter = () => {
@@ -33,9 +35,9 @@ function SalesHeader() {
             <ReactPaginate
                 nextLabel=">"
                 onPageChange={'handlePageClick'}
-                pageRangeDisplayed={2}
-                marginPagesDisplayed={2}
-                pageCount={20}
+                pageRangeDisplayed={1}
+                marginPagesDisplayed={1}
+                pageCount={7}
                 previousLabel="<"
                 pageClassName="page-item"
                 pageLinkClassName="page-link"
