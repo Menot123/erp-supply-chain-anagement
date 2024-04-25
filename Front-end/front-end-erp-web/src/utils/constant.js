@@ -18,5 +18,7 @@ export const path = {
     IMPORT_PRODUCT: '/manage-inventory/products/import',
     CREATE_PRODUCT: '/manage-inventory/products/create',
     ID_PRODUCT: '/manage-inventory/products/:id',
+    INPUT_WAREHOUSE: '/manage-inventory/input-warehouse',
+    OUTPUT_WAREHOUSE: '/manage-inventory/output-warehouse',
     SALE_ORDER: '/sale-order',
 };
