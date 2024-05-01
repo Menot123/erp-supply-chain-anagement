@@ -8,18 +8,20 @@ module.exports = (sequelize, DataTypes) => {
             Product.belongsTo(models.all_code, { foreignKey: 'type', targetKey: 'keyType', as: 'typeData' })
             Product.belongsTo(models.all_code, { foreignKey: 'group', targetKey: 'keyType', as: 'groupData' })
             Product.belongsTo(models.all_code, { foreignKey: 'unit', targetKey: 'keyType', as: 'unitData' })
+
+            Product.hasMany(models.Stock, { foreignKey: 'productId' })
+            Product.hasMany(models.StockEntryItem, { foreignKey: 'productId' })
+            Product.hasMany(models.StockDeliveryItem, { foreignKey: 'productId' })
         }
 
-        static generateProductId(type, group) {
+        static generateProductId() {
             // Logic to generate productId based on type and group
             // You can modify this logic to suit your requirements
-            const prefix = `${type}${group}`;
-            return `${prefix}001`;
+            return `PO001`;
         }
 
-        static async getNextProductId(type, group) {
+        static async getNextProductId() {
             const lastProduct = await this.findOne({
-                where: { type, group },
                 order: [
                     ['createdAt', 'DESC']
                 ],
@@ -29,10 +31,10 @@ module.exports = (sequelize, DataTypes) => {
                 const lastProductId = lastProduct.productId;
                 const numericPart = parseInt(lastProductId.slice(-3));
                 const nextNumericPart = (numericPart + 1).toString().padStart(3, '0');
-                return `${type}${group}${nextNumericPart}`;
+                return `PO${nextNumericPart}`;
             }
 
-            return this.generateProductId(type, group);
+            return this.generateProductId();
         }
 
     };
@@ -61,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
         modelName: 'Product',
         freezeTableName: true,
         hooks: {
-            beforeCreate: async (instance) => {
+            beforeCreate: async(instance) => {
                 instance.productId = await Product.getNextProductId(
                     instance.type,
                     instance.group
