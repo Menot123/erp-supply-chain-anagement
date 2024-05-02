@@ -65,7 +65,7 @@ function SaleOrder() {
 
         <>
             <SalesHeader />
-            {!isHaveQuote ?
+            {isHaveQuote ?
                 <div>
                     <DataCompanyModal
                         show={showModalDataCompany}
@@ -238,7 +238,7 @@ function SaleOrder() {
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td><span className='total-cost' data-tooltip="Tổng đã gồm thuế" title>999.458 ₫</span></td>
+                            <td><span className='total-cost' data-tooltip="Tổng đã gồm thuế">999.458 ₫</span></td>
                             <td></td>
                         </tr>
                     </tfoot>

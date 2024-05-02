@@ -8,6 +8,28 @@ module.exports = (sequelize, DataTypes) => {
             ////
             Customer.hasMany(models.StockDelivery, { foreignKey: 'customerId' })
         }
+        static generateId() {
+            // Logic to generate customerId based on type and group
+            // You can modify this logic to suit your requirements
+            return `CU001`;
+        }
+
+        static async getNextId() {
+            const lastItem = await this.findOne({
+                order: [
+                    ['createdAt', 'DESC']
+                ],
+            });
+
+            if (lastItem) {
+                const lastItemId = lastItem.customerId;
+                const numericPart = parseInt(lastItemId.slice(-3));
+                const nextNumericPart = (numericPart + 1).toString().padStart(3, '0');
+                return `CU${nextNumericPart}`;
+            }
+
+            return this.generateId();
+        }
     };
     Customer.init({
         customerId: {
@@ -25,7 +47,12 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'Customer',
-        freezeTableName: true
+        freezeTableName: true,
+        hooks: {
+            beforeCreate: async(instance) => {
+                instance.customerId = await Customer.getNextId();
+            },
+        }
     });
     return Customer;
 };

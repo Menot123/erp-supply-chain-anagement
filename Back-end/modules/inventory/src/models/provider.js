@@ -8,6 +8,28 @@ module.exports = (sequelize, DataTypes) => {
             ////
             Provider.hasMany(models.StockEntry, { foreignKey: 'providerId' })
         }
+        static generateId() {
+            // Logic to generate providerId based on type and group
+            // You can modify this logic to suit your requirements
+            return `PRO001`;
+        }
+
+        static async getNextId() {
+            const lastItem = await this.findOne({
+                order: [
+                    ['createdAt', 'DESC']
+                ],
+            });
+
+            if (lastItem) {
+                const lastItemId = lastItem.providerId;
+                const numericPart = parseInt(lastItemId.slice(-3));
+                const nextNumericPart = (numericPart + 1).toString().padStart(3, '0');
+                return `PRO${nextNumericPart}`;
+            }
+
+            return this.generateId();
+        }
     };
     Provider.init({
         providerId: {
@@ -25,7 +47,12 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'Provider',
-        freezeTableName: true
+        freezeTableName: true,
+        hooks: {
+            beforeCreate: async(instance) => {
+                instance.providerId = await Provider.getNextId();
+            },
+        }
     });
     return Provider;
 };
