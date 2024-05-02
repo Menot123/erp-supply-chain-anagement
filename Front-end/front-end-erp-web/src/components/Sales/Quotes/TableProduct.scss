@@ -4,5 +4,12 @@
             color : #017e84;
             cursor: pointer;
         }
+
+        td {
+            .empty-data {
+                border-radius: 0px;
+                border-bottom: 1px solid red !important;
+            }
+        }
     }
 }

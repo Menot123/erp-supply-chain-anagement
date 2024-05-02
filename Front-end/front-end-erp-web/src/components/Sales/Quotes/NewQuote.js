@@ -238,15 +238,7 @@ export const NewQuote = () => {
                             }
                             ]}
                         />
-                        <div className='wrap-policy-total'>
-                            <div className='policy input-hover'>
-                                <TextArea autoSize variant="borderless" className='input-policy' placeholder='Điều khoản và điều kiện...' />
-                            </div>
-                            <div className='total-price d-flex align-items-center'>
-                                <span>Tổng: </span>
-                                <h4>0₫</h4>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>
