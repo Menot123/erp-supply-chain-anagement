@@ -65,7 +65,7 @@ function SaleOrder() {
 
         <>
             <SalesHeader />
-            {!isHaveQuote ?
+            {isHaveQuote ?
                 <div>
                     <DataCompanyModal
                         show={showModalDataCompany}

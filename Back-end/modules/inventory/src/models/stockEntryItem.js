@@ -9,6 +9,28 @@ module.exports = (sequelize, DataTypes) => {
             StockEntryItem.belongsTo(models.StockEntry)
             StockEntryItem.belongsTo(models.Product)
         }
+        static generateId() {
+            // Logic to generate stockEntryItemId based on type and group
+            // You can modify this logic to suit your requirements
+            return `STEI001`;
+        }
+
+        static async getNextId() {
+            const lastItem = await this.findOne({
+                order: [
+                    ['createdAt', 'DESC']
+                ],
+            });
+
+            if (lastItem) {
+                const lastItemId = lastItem.stockEntryItemId;
+                const numericPart = parseInt(lastItemId.slice(-3));
+                const nextNumericPart = (numericPart + 1).toString().padStart(3, '0');
+                return `STEI${nextNumericPart}`;
+            }
+
+            return this.generateId();
+        }
     };
     StockEntryItem.init({
         stockEntryItemId: {
@@ -22,7 +44,12 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'StockEntryItem',
-        freezeTableName: true
+        freezeTableName: true,
+        hooks: {
+            beforeCreate: async(instance) => {
+                instance.stockEntryItemId = await StockEntryItem.getNextId();
+            },
+        }
     });
     return StockEntryItem;
 };

@@ -10,6 +10,28 @@ module.exports = (sequelize, DataTypes) => {
             StockDelivery.belongsTo(models.Warehouse)
             StockDelivery.hasMany(models.StockDeliveryItem, { foreignKey: 'stockDeliveryId' })
         }
+        static generateId() {
+            // Logic to generate stockDeliveryId based on type and group
+            // You can modify this logic to suit your requirements
+            return `STD001`;
+        }
+
+        static async getNextId() {
+            const lastItem = await this.findOne({
+                order: [
+                    ['createdAt', 'DESC']
+                ],
+            });
+
+            if (lastItem) {
+                const lastItemId = lastItem.stockDeliveryId;
+                const numericPart = parseInt(lastItemId.slice(-3));
+                const nextNumericPart = (numericPart + 1).toString().padStart(3, '0');
+                return `STD${nextNumericPart}`;
+            }
+
+            return this.generateId();
+        }
     };
     StockDelivery.init({
         stockDeliveryId: {
@@ -24,7 +46,12 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'StockDelivery',
-        freezeTableName: true
+        freezeTableName: true,
+        hooks: {
+            beforeCreate: async(instance) => {
+                instance.stockDeliveryId = await StockDelivery.getNextId();
+            },
+        }
     });
     return StockDelivery;
 };
