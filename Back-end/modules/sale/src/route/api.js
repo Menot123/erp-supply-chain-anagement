@@ -189,6 +189,40 @@ const initApiRoutes = (app) => {
 */
   router.post('/company-confirm-quotes', apiController.updateConfirmQuote);
 
+  /**
+* @swagger
+* /api/customers:
+*  get:
+*      tags:
+*          - Sales
+*      summary: Get customers
+*      description: Get list customers for quote 
+*      responses:
+*          200:
+*              description: Return status and list customers in db.
+*          404:
+*              description: Error from server.
+* 
+*/
+  router.get('/customers', apiController.getCustomers);
+
+  /**
+* @swagger
+* /api/allcodes:
+*  get:
+*      tags:
+*          - Sales
+*      summary: Get all codes 
+*      description: Get all codes from sale service
+*      responses:
+*          200:
+*              description: Return status and list all codes in sale db. 
+*          404:
+*              description: Error from server.
+* 
+*/
+  router.get('/all-codes', apiController.getAllCodes);
+
   return app.use("/api/", router)
 
 }

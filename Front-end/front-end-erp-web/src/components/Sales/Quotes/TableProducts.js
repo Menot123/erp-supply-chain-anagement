@@ -5,10 +5,11 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { useState } from 'react'
 import './TableProduct.scss'
 import _ from 'lodash'
-import { Flex, Input, Select } from 'antd';
+import { Flex, Input, Select, Tooltip } from 'antd';
 import { useEffect } from 'react'
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
+
 
 
 const { TextArea } = Input;
@@ -19,18 +20,21 @@ export const TableProducts = (props) => {
     const [creatingProduct, setCreatingProduct] = useState({})
     const [selectedTax, setSelectedTax] = useState(null)
     const [isCreatingProduct, setIsCreatingProduct] = useState(false)
-    const [errors, setErrors] = useState([]);
     const [isUpdating, setIsUpdating] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
+    const [finalPrice, setFinalPrice] = useState(0);
+    const [taxTotals, setTaxTotals] = useState({});
+    const [selectProduct, setSelectProduct] = useState([])
 
     const defaultProduct = {
-        productId: 10,
+        productId: '',
         name: '',
         description: '',
         quantity: '0.0',
         price: '0.0',
         tax: { value: 0, label: '' },
         priceBeforeTax: '',
+        lineId: '',
         emptyName: false,
         emptyDes: false,
     }
@@ -42,16 +46,59 @@ export const TableProducts = (props) => {
     ]
 
     useEffect(() => {
+        if (props && props?.listProductFromParent) {
+            const buildSelectProduct = () => {
+                let productSelect = props?.listProductFromParent.map((item, index) => {
+                    return (
+                        {
+                            value: item.productId,
+                            label: item.nameVi
+                        }
+                    )
+                })
+                setSelectProduct(productSelect)
+            }
+            buildSelectProduct()
+        }
+    }, [props])
+
+    useEffect(() => {
         const calculateTotalPrice = () => {
-            let total = 0;
-            listProduct.forEach(item => {
-                total += +item.priceBeforeTax;
-            });
-            setTotalPrice(total.toFixed(2));
+            let totalBeforeTax = 0
+            let totalPrice = 0
+            if (listProduct && listProduct.length > 0) {
+                listProduct.forEach(item => {
+                    totalBeforeTax += +item.priceBeforeTax;
+                    totalPrice += +item.priceBeforeTax + (+item?.priceBeforeTax * +item?.tax?.value / 100)
+                });
+            }
+            setTotalPrice(totalBeforeTax);
+            setFinalPrice(totalPrice)
         };
 
+        const calculateTaxTotals = () => {
+            const totals = {};
+            listProduct.forEach(item => {
+                if (item?.tax && item?.tax?.value !== 0) {
+                    const taxValue = +item?.priceBeforeTax * +item?.tax.value / 100;
+                    if (totals[item?.tax.value]) {
+                        totals[item?.tax.value] += taxValue;
+                    } else {
+                        totals[item?.tax.value] = taxValue;
+                    }
+                }
+            });
+            setTaxTotals(totals);
+        };
+
+        calculateTaxTotals();
         calculateTotalPrice();
     }, [listProduct]);
+
+    // useEffect(() => {
+
+    // }, [listProduct]);
+
 
     const updateEmptyFieldProduct = (productCreating, type) => {
         const updatedProducts = listProduct.map(item => {
@@ -100,12 +147,27 @@ export const TableProducts = (props) => {
         }
     }
 
-    const handleChangeInputCreatingProduct = (e, type, product) => {
+    const handleOnchangeNameProduct = (e, labeledValue) => {
+        let _listProduct = _.cloneDeep(listProduct)
+        let creatingProduct = _listProduct[_listProduct.length - 1]
+        if (creatingProduct) {
+            creatingProduct = {
+                ...creatingProduct,
+                lineId: _listProduct.length,
+                productId: e,
+                name: labeledValue?.label
+            }
+        }
+        _listProduct[_listProduct.length - 1] = creatingProduct
+        // Cập nhật danh sách sản phẩm mới
+        setListProduct(_listProduct);
+    }
 
+    const handleChangeInputCreatingProduct = (e, type, product) => {
         // Tìm sản phẩm trong danh sách dựa trên productId
         const updatedProducts = listProduct.map((item, index) => {
             const reg = /^-?\d*(\.\d*)?$/;
-            if (+item.productId === +product?.productId) {
+            if (+item.lineId === +product?.lineId) {
                 // Cập nhật giá trị của trường (field) tương ứng
                 if (type === 'tax') {
                     return {
@@ -134,8 +196,6 @@ export const TableProducts = (props) => {
                         ...item,
                         emptyName: false,
                         emptyDes: false,
-                        productId: +index + 10,
-                        priceBeforeTax: +item.quantity * +item.price,
                         [type]: e.target.value
                     };
                 }
@@ -146,6 +206,15 @@ export const TableProducts = (props) => {
         // Cập nhật danh sách sản phẩm mới
         setListProduct(updatedProducts);
     }
+
+    const handleRemoveProduct = (product) => {
+        let _listProduct = _.cloneDeep(listProduct);
+        if (_listProduct && _listProduct.length > 0) {
+            _listProduct = _listProduct.filter(item => item.productId !== product.productId);
+        }
+        setListProduct(_listProduct)
+        setIsCreatingProduct(false)
+    };
 
     return (
         <div>
@@ -168,12 +237,21 @@ export const TableProducts = (props) => {
                                 return (
                                     <tr key={'product' + index}>
                                         <td>
-                                            <Input className={item?.emptyName
-                                                ? 'name-creating-product empty-data'
-                                                : 'name-creating-product'}
-                                                placeholder="Nhập để tìm một sản phẩm..." variant="borderless"
-                                                onChange={(e) => handleChangeInputCreatingProduct(e, 'name', item)}
-                                                value={item?.name}
+                                            <Select
+                                                className={item?.emptyName
+                                                    ? 'name-creating-product empty-data'
+                                                    : 'name-creating-product'}
+                                                placeholder="Nhập để tìm một sản phẩm..."
+                                                variant="borderless"
+                                                showSearch
+                                                onChange={(e, labeledValue) => handleOnchangeNameProduct(e, labeledValue)}
+                                                style={{ width: 200 }}
+                                                optionFilterProp="children"
+                                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                                filterSort={(optionA, optionB) =>
+                                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                                }
+                                                options={selectProduct}
                                             />
                                         </td>
                                         <td>
@@ -215,10 +293,12 @@ export const TableProducts = (props) => {
                                             />
                                         </td>
                                         <td>
-                                            <span>{item?.priceBeforeTax && item?.priceBeforeTax !== '' ? item?.priceBeforeTax : '0'}₫</span>
+                                            <span>{item?.priceBeforeTax && item?.priceBeforeTax !== '' ? item?.priceBeforeTax.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '0₫'}</span>
                                         </td>
                                         <td>
-                                            <FaRegTrashCan />
+                                            <Tooltip placement="top" title={`Xóa sản phẩm "${item.name}"`}>
+                                                <FaRegTrashCan className='hover-item' onClick={() => handleRemoveProduct(item)} />
+                                            </Tooltip>
                                         </td>
 
                                     </tr>
@@ -238,22 +318,26 @@ export const TableProducts = (props) => {
                     </div>
                     <div className='wrap-tax-price'>
                         <div className='price-before-tax d-flex justify-content-between gap-4 align-items-center'>
-                            <span>Số tiền trước thuế: </span>
-                            <span>
+                            <span >Số tiền trước thuế: </span>
+                            <span className='fw-bold'>
                                 {
-                                    totalPrice && totalPrice !== 'NaN' && +totalPrice !== 0 ? totalPrice : '0₫'
+                                    totalPrice && totalPrice !== 'NaN' && +totalPrice !== 0 ? totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '0₫'
                                 }
                             </span>
                         </div>
 
-                        <div className='price-tax d-flex justify-content-between gap-4 align-items-center'>
-                            <span>Thuế GTGT 5%: </span>
-                            <span>0₫</span>
-                        </div>
+                        {
+                            Object.keys(taxTotals).map((taxValue, index) => (
+                                <div key={'tax-total' + index} className='tax-total d-flex justify-content-between gap-4 align-items-center'>
+                                    <span>Thuế GTGT {taxValue}% : </span>
+                                    <span>{taxTotals[taxValue].toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
+                                </div>
+                            ))
+                        }
 
                         <div className='total-price d-flex justify-content-between gap-4 align-items-center'>
                             <span>Tổng: </span>
-                            <h5 className='total-price-text'>0₫</h5>
+                            <h5 className='total-price-text'>{finalPrice && finalPrice !== 0 ? finalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '0₫'}</h5>
                         </div>
                     </div>
                 </div>

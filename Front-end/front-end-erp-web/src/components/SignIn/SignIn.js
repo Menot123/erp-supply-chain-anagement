@@ -12,7 +12,8 @@ import { LANGUAGES } from '../../utils/constant'
 import { useEffect } from 'react'
 import { loginService } from '../../services/userServices'
 import { useHistory } from 'react-router-dom'
-
+import img_right from '../../assets/img/background_login.png'
+import back_ground from '../../assets/img/background-light.svg'
 
 
 const SignIn = (props) => {
@@ -112,83 +113,85 @@ const SignIn = (props) => {
 
     return (
         <div className="login-container">
-            <div className='container'>
-                <div className="row justify-content-center align-items-center vh-100">
-                    <div className="login-box col-md-6">
-                        {/* Translate */}
-                        <div className='text-end me-5 mt-4'>
-                            <span onClick={() => handleChangeLanguage('vi')} className={language === LANGUAGES.VI ? 'selected-language' : 'unselected-language'}>VI</span>
-                            <span className='ms-2'></span>
-                            <span onClick={() => handleChangeLanguage('en')} className={language === LANGUAGES.EN ? 'selected-language' : 'unselected-language'}>EN</span>
-                        </div>
+            <div className="wrap-login-content">
+                <div className="login-box" style={{ backgroundImage: `url(${back_ground})` }}>
+                    {/* Translate */}
+                    <div className='text-end me-5 mt-4'>
+                        <span onClick={() => handleChangeLanguage('vi')} className={language === LANGUAGES.VI ? 'selected-language' : 'unselected-language'}>VI</span>
+                        <span className='ms-2'></span>
+                        <span onClick={() => handleChangeLanguage('en')} className={language === LANGUAGES.EN ? 'selected-language' : 'unselected-language'}>EN</span>
+                    </div>
 
-                        {/* Logo */}
-                        <div className='logo text-center mt-5'>
-                            <img src={logo} alt="Logo" />
-                        </div>
+                    {/* Logo */}
+                    <div className='logo text-center mt-5'>
+                        <img src={logo} alt="Logo" />
+                    </div>
 
-                        {/* Login text */}
-                        <div className="login-text text-center"><FormattedMessage id="login-form.title" /></div>
+                    {/* Login text */}
+                    <div className="login-text text-center"><FormattedMessage id="login-form.title" /></div>
 
-                        {/* Username */}
-                        <div className="form-group pe-5 ps-5">
-                            <label htmlFor="inputEmail" className="form-label"><FormattedMessage id="login-form.email-field" /></label>
-                            <div className="input-group">
-                                <input
-                                    type="email"
-                                    className="form-control"
-                                    id="inputEmail"
-                                    placeholder={intl.formatMessage({ id: "login-form.email-field-placeholder" })}
-                                    ref={usernameRef}
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
-                                />
-                                <div className="input-group-append">
-                                    <span className="icon input-group-text">
-                                        <i> <FaUser /></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Password */}
-                        <div className="form-group pe-5 ps-5 mb-5 mt-3">
-                            <label htmlFor="inputPassword" className="form-label"><FormattedMessage id="login-form.password-field" /></label>
-                            <div className="input-group">
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    className="form-control"
-                                    id="inputPassword"
-                                    placeholder={intl.formatMessage({ id: "login-form.password-field-placeholder" })}
-                                    ref={passwordRef}
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    onKeyPress={(e) => handleEnterLogin(e)}
-                                />
-                                <div className="input-group-append">
-                                    <span className="icon input-group-text">
-                                        <i> <FaKey /></i>
-                                    </span>
-                                </div>
-                            </div>
-                            <div className='d-flex justify-content-between'>
-                                <div className='mt-2'>
-                                    <input onChange={() => setShowPassword((prev) => !prev)} type="checkbox" id="showPwd" /> <label htmlFor="showPwd"><FormattedMessage id="login-form.show-pass" /></label>
-                                </div>
-                                <div className=' mt-2'>
-                                    <a href="/forgot-password"><FormattedMessage id="login-form.forgot-pass" /></a>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        {/* Login button */}
-                        <div className="login-button pe-5 ps-5 mb-5 mt-3">
-                            <div className="button-div d-grid gap-2">
-                                <button onClick={() => handleLogin()} className="btn" type="button" style={{ backgroundColor: '#714B67', color: 'white' }}><FormattedMessage id="login-form.btn-login" /></button>
+                    {/* Username */}
+                    <div className="form-group pe-5 ps-5">
+                        <label htmlFor="inputEmail" className="form-label"><FormattedMessage id="login-form.email-field" /></label>
+                        <div className="input-group">
+                            <input
+                                type="email"
+                                className="form-control"
+                                id="inputEmail"
+                                placeholder={intl.formatMessage({ id: "login-form.email-field-placeholder" })}
+                                ref={usernameRef}
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                            <div className="input-group-append">
+                                <span className="icon input-group-text">
+                                    <i> <FaUser /></i>
+                                </span>
                             </div>
                         </div>
                     </div>
+
+                    {/* Password */}
+                    <div className="form-group pe-5 ps-5 mb-5 mt-3">
+                        <label htmlFor="inputPassword" className="form-label"><FormattedMessage id="login-form.password-field" /></label>
+                        <div className="input-group">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                className="form-control"
+                                id="inputPassword"
+                                placeholder={intl.formatMessage({ id: "login-form.password-field-placeholder" })}
+                                ref={passwordRef}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                onKeyPress={(e) => handleEnterLogin(e)}
+                            />
+                            <div className="input-group-append">
+                                <span className="icon input-group-text">
+                                    <i> <FaKey /></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div className='d-flex justify-content-between'>
+                            <div className='mt-2'>
+                                <input onChange={() => setShowPassword((prev) => !prev)} type="checkbox" id="showPwd" /> <label htmlFor="showPwd"><FormattedMessage id="login-form.show-pass" /></label>
+                            </div>
+                            <div className=' mt-2'>
+                                <a href="/forgot-password"><FormattedMessage id="login-form.forgot-pass" /></a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {/* Login button */}
+                    <div className="login-button pe-5 ps-5 mb-5 mt-3">
+                        <div className="button-div d-grid gap-2">
+                            <button onClick={() => handleLogin()} className="btn" type="button" style={{ backgroundColor: '#714B67', color: 'white' }}><FormattedMessage id="login-form.btn-login" /></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className='background-right' >
+                    <img className='img-background' src={img_right} alt='img-right' />
                 </div>
             </div>
 

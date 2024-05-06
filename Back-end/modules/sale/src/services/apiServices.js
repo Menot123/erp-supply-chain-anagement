@@ -233,7 +233,53 @@ const updateConfirmQuoteService = async (methodConfirm) => {
     }
 }
 
+const getCustomersService = async () => {
+    try {
+        let res = {}
+        let customers = await db.Customer.findAll({
+            order: [
+                ['fullName', 'ASC']
+            ],
+            where: {
+                status: 'active'
+            },
+        });
+        if (customers) {
+            res.EC = 0
+            res.EM = 'Get customers successfully'
+            res.DT = customers
+        } else {
+            res.EM = 'Get customers failed'
+            res.EC = 1
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
+const getAllCodesService = async () => {
+    try {
+        let res = {}
+        let allCodes = await db.AllCode.findAll();
+        if (allCodes) {
+            res.EC = 0
+            res.EM = 'Get allCodes successfully'
+            res.DT = allCodes
+        } else {
+            res.EM = 'Get allCodes failed'
+            res.EC = 1
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
 module.exports = {
     createCompanyDataService, createBranchCompanyDataService, getBranchesService,
-    getBranchService, getDetailCompanyService, handleDeleteCompanyService, updateConfirmQuoteService
+    getBranchService, getDetailCompanyService, handleDeleteCompanyService, updateConfirmQuoteService,
+    getCustomersService, getAllCodesService
 }

@@ -75,7 +75,8 @@
         }
 
         .body-create-quote {
-            height       : 600px;
+            min-height   : 500px;
+            margin-bottom: 24px;
             width        : 100%;
             border       : 1px solid #ccc;
             border-radius: 4px;
@@ -124,6 +125,10 @@
                     .wrap-payment-method {
                         display: flex;
 
+                        label {
+                            width: 32%;
+                        }
+
                         .select-date-expiration,
                         .select-currency,
                         .select-payment-method {
@@ -148,40 +153,7 @@
                 }
             }
 
-            .wrap-info-products {
-                .wrap-policy-total {
-                    display        : flex;
-                    justify-content: space-between;
-
-                    .policy {
-                        width: 70%;
-
-                        .input-policy {
-                            border-bottom: 1px solid #fff;
-                            border-radius: 0px !important;
-
-                            &:hover {
-                                border-bottom: 1px solid #000;
-                            }
-                        }
-                    }
-
-                    .wrap-tax-price {
-                        span {
-                            font-weight: 400;
-                            font-size  : 0.875rem;
-                            line-height: 1.5;
-                        }
-
-                        .total-price {
-                            .total-price-text {
-                                margin-top: 4px;
-                                border-top: 1px solid #ccc;
-                            }
-                        }
-                    }
-                }
-            }
+            .wrap-info-products {}
         }
     }
 

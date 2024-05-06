@@ -14,6 +14,7 @@
     "author": "52000026_52000035",
     "license": "ISC",
     "dependencies": {
+        "amqplib": "^0.10.4",
         "body-parser": "^1.19.0",
         "dotenv": "^8.2.0",
         "ejs": "^3.1.5",

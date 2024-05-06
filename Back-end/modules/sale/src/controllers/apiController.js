@@ -106,26 +106,59 @@ const handleDeleteCompany = async (req, res, next) => {
     }
 }
 
-const updateConfirmQuote
-    = async (req, res, next) => {
-        try {
-            let methodConfirm = req.body;
-            let response = await apiService.updateConfirmQuoteService(methodConfirm?.confirmMethod);
-            return res.status(200).json({
-                EM: response.EM,
-                EC: response.EC,
-                DT: response.DT
-            })
-        } catch (e) {
-            return res.status(500).json({
-                EM: 'error from server in update confirm quote method controller',
-                EC: -1,
-                DT: ''
-            })
-        }
+const updateConfirmQuote = async (req, res, next) => {
+    try {
+        let methodConfirm = req.body;
+        let response = await apiService.updateConfirmQuoteService(methodConfirm?.confirmMethod);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in update confirm quote method controller',
+            EC: -1,
+            DT: ''
+        })
     }
+}
+
+const getCustomers = async (req, res, next) => {
+    try {
+        let response = await apiService.getCustomersService();
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in get customers controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const getAllCodes = async (req, res, next) => {
+    try {
+        let response = await apiService.getAllCodesService();
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in get all codes controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
 
 module.exports = {
     createCompanyData, createBranchCompanyData, getBranches, getBranch, getDetailCompany,
-    handleDeleteCompany, updateConfirmQuote
+    handleDeleteCompany, updateConfirmQuote, getCustomers, getAllCodes
 }
