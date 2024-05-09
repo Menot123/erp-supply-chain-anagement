@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react'
 import './NewQuote.scss'
 import { useHistory } from 'react-router-dom'
-import { Steps, Select, Tooltip, DatePicker, Tabs, Input } from "antd";
+import { Steps, Select, Tooltip, DatePicker, Tabs } from "antd";
 import { useState } from 'react'
 import { TableProducts } from './TableProducts';
 import { getAllProducts } from '../../../services/inventoryServices'
 import { getCustomers, getAllCodes } from '../../../services/saleServices'
 import { toast } from 'react-toastify';
 import { OtherInfo } from './OtherInfo';
+import { NavLink } from "react-router-dom";
+
 
 export const NewQuote = () => {
 
@@ -167,7 +169,7 @@ export const NewQuote = () => {
                     <div className='wrap-btn-actions'>
                         <button className='btn btn-main'>Gửi qua email</button>
                         <button className='btn btn-gray'>Xác nhận</button>
-                        <button className='btn btn-gray'>Xem trước</button>
+                        <NavLink to='/my/orders' className='btn btn-gray'>Xem trước</NavLink>
                     </div>
                     <div className='quote-status'>
                         <Steps

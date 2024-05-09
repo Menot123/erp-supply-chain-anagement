@@ -6,6 +6,7 @@ export const LANGUAGES = {
 export const path = {
     HOME: '/',
     HOME2: '/home',
+    FORGOT_PASSWORD: '/forgot-password',
     MANAGE_EMPLOYEES: '/manage-accounts',
     MANAGE_EMPLOYEES_BY_DEPARTMENT: '/manage-accounts/department',
     SIGN_IN: '/login',
@@ -23,4 +24,5 @@ export const path = {
     CREATE_INPUT_WAREHOUSE: '/manage-inventory/input-warehouse/create',
     SALE_ORDER: '/sale-order',
     CREATE_QUOTE: '/sale-order/new-quote',
+    VIEW_QUOTE: '/my/orders'
 };
