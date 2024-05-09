@@ -20,6 +20,7 @@ export const path = {
     ID_PRODUCT: '/manage-inventory/products/:id',
     INPUT_WAREHOUSE: '/manage-inventory/input-warehouse',
     OUTPUT_WAREHOUSE: '/manage-inventory/output-warehouse',
+    CREATE_INPUT_WAREHOUSE: '/manage-inventory/input-warehouse/create',
     SALE_ORDER: '/sale-order',
     CREATE_QUOTE: '/sale-order/new-quote',
 };

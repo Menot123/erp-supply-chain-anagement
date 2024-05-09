@@ -7,7 +7,7 @@ import { IoOptions } from "react-icons/io5";
 // } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux';
-import { getProductsPagination } from '../../../services/productServices'
+import { getProductsPagination } from '../../../services/inventoryServices'
 import { LANGUAGES } from '../../../utils/constant'
 import { toast } from 'react-toastify';
 import { FormattedMessage } from 'react-intl'
@@ -75,12 +75,12 @@ function InputWarehouse() {
             <div className='body-manage-input-warehouse'>
                 <FilterHeader
                     namePage={language === LANGUAGES.EN ? 'Receipts' : 'Phiếu nhập kho'}
-                    urlNewItem={'/manage-inventory/products/create'}
+                    urlNewItem={'/manage-inventory/input-warehouse/create'}
                     setCurrentViewProduct={setCurrentView}
                     currentView={currentView}
                     totalPageProduct={totalPage}
                     setCurrentProductPage={setCurrentPage}
-                    urlImportProduct={'/manage-inventory/products/import'}
+                    urlImportProduct={'/manage-inventory/input-warehouse/import'}
                 />
 
 

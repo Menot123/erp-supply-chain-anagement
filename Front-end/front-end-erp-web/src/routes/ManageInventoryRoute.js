@@ -5,6 +5,8 @@ import CreateNewProduct from '../components/ManageInventory/ManageProduct/Create
 import DetailProduct from '../components/ManageInventory/ManageProduct/DetailProduct';
 import ImportProduct from '../components/ManageInventory/ManageProduct/ImportProduct';
 import InputWarehouse from '../components/ManageInventory/Warehouse/InputWarehouse';
+import CreateNewInputWarehouse from '../components/ManageInventory/Warehouse/CreateNewInputWarehouse';
+
 import {
     Switch,
     Route,
@@ -22,6 +24,7 @@ function ManageEmployeeRoute() {
                 <Route path={path.ID_PRODUCT} component={DetailProduct} />
                 <Route path={path.MANAGE_PRODUCTS} component={ListProduct} />
                 {/* In-Out Warehouse */}
+                <Route path={path.CREATE_INPUT_WAREHOUSE} component={CreateNewInputWarehouse} />
                 <Route path={path.INPUT_WAREHOUSE} component={InputWarehouse} />
                 {/* <Route path={path.OUTPUT_WAREHOUSE} component={} /> */}
                 <Route exact path={path.MANAGE_INVENTORY} component={ManageInventory} />

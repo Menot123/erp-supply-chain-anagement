@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
-import { getProductsPagination } from '../../../services/productServices'
+import { getProductsPagination } from '../../../services/inventoryServices'
 import { LANGUAGES } from '../../../utils/constant'
 import { toast } from 'react-toastify';
 import { FormattedMessage } from 'react-intl'

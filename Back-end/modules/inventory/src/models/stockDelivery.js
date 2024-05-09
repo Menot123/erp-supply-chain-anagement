@@ -25,9 +25,9 @@ module.exports = (sequelize, DataTypes) => {
 
             if (lastItem) {
                 const lastItemId = lastItem.stockDeliveryId;
-                const numericPart = parseInt(lastItemId.slice(-3));
-                const nextNumericPart = (numericPart + 1).toString().padStart(3, '0');
-                return `STD${nextNumericPart}`;
+                const numericPart = parseInt(lastItemId.slice(-4));
+                const nextNumericPart = (numericPart + 1).toString().padStart(4, '0');
+                return `WH/OUT/${nextNumericPart}`;
             }
 
             return this.generateId();
