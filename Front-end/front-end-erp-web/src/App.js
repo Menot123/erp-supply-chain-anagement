@@ -18,6 +18,7 @@ import ManageInventoryRoute from './routes/ManageInventoryRoute';
 import ModalProfile from './components/ProfileEmployee/ModalProfile';
 import PrivateRoute from './routes/PrivateRoute'
 import SaleOrderRoute from './routes/SaleOrderRoute';
+import { ViewQuote } from './components/Customer/ViewQuote';
 
 function App() {
 
@@ -41,13 +42,13 @@ function App() {
         <Route path={path.SIGN_IN} exact>
           <SignIn />
         </Route>
-        <Route path="/forgot-password" exact>
+        <Route path={path.FORGOT_PASSWORD} exact>
           <ForgotPassword />
         </Route>
         <Route path={[path.HOME, path.HOME2]} exact>
           <Home />
         </Route>
-        <PrivateRoute path={path.PROFILE} component={ModalProfile}>
+        <PrivateRoute path={path.VIEW_QUOTE} component={ViewQuote}>
         </PrivateRoute>
         <Route path="*" exact>
           <NotFound404 />
