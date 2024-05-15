@@ -278,8 +278,125 @@ const getAllCodesService = async () => {
     }
 }
 
+const getCommentsService = async () => {
+    try {
+        let res = {}
+        let comments = await db.Comment.findAll({
+            order: [
+                ['createdAt', 'DESC'],
+            ],
+        });
+        if (comments) {
+            res.EC = 0
+            res.EM = 'Get comments successfully'
+            res.DT = comments
+        } else {
+            res.EM = 'Get comments failed'
+            res.EC = 1
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
+const postCommentService = async (dataComment) => {
+    try {
+        let res = {}
+        let fieldCheck = ['body', 'userName', 'userId', 'parentId', 'createdAt']
+
+        if (dataComment) {
+            fieldCheck.forEach(element => {
+                if (!dataComment[element]) {
+                    res.EC = -2
+                    res.EM = 'Missing fields of comment'
+                    res.DT = ''
+                    return res
+                }
+            });
+            await db.Comment.create(dataComment)
+            res.EM = 'Create a comment successfully'
+            res.EC = 0
+            res.DT = ''
+            return res
+
+        } else {
+            res.EC = -1
+            res.EM = 'Missing parameters of comment'
+            res.DT = ''
+            return res
+        }
+    } catch (e) {
+        console.log('>>> error when create a comment: ', e)
+    }
+}
+
+const updateCommentService = async (content, commentId) => {
+    try {
+        let res = {}
+        if (content && commentId) {
+            let comment = await db.Comment.findOne({
+                where: {
+                    id: commentId
+                }
+            })
+            if (comment) {
+                comment.update({ body: content })
+                res.EM = 'Update comment successfully.'
+                res.EC = 0
+                res.DT = ''
+            } else {
+                res.EM = 'Update comment failed.'
+                res.EC = -2
+                res.DT = ''
+            }
+        } else {
+            res.EC = -1
+            res.EM = 'Missing parameters'
+            res.DT = ''
+            return res
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error when update comment by id: ', e)
+    }
+}
+
+const deleteCommentService = async (commentId) => {
+    try {
+        let res = {}
+        if (commentId) {
+            let comment = await db.Comment.findOne({
+                where: {
+                    id: commentId
+                }
+            })
+            if (comment) {
+                await comment.destroy()
+                res.EM = 'Delete comment successfully.'
+                res.EC = 0
+                res.DT = ''
+            } else {
+                res.EM = 'Delete comment failed.'
+                res.EC = -2
+                res.DT = ''
+            }
+        } else {
+            res.EC = -1
+            res.EM = 'Missing parameters'
+            res.DT = ''
+            return res
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error when delete comment by id: ', e)
+    }
+}
+
 module.exports = {
     createCompanyDataService, createBranchCompanyDataService, getBranchesService,
     getBranchService, getDetailCompanyService, handleDeleteCompanyService, updateConfirmQuoteService,
-    getCustomersService, getAllCodesService
+    getCustomersService, getAllCodesService, getCommentsService, postCommentService, updateCommentService,
+    deleteCommentService
 }

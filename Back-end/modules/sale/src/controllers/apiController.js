@@ -158,7 +158,80 @@ const getAllCodes = async (req, res, next) => {
     }
 }
 
+const getComments = async (req, res, next) => {
+    try {
+        let response = await apiService.getCommentsService();
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in get comments by quote id controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const postComment = async (req, res, next) => {
+    try {
+        let dataComment = req.body;
+        let response = await apiService.postCommentService(dataComment);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in create a comment controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const updateComment = async (req, res, next) => {
+    try {
+        let dataContent = req.body.content;
+        let commentId = req.body.commentId;
+        let response = await apiService.updateCommentService(dataContent, commentId);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in update a comment controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const deleteComment = async (req, res, next) => {
+    try {
+        let commentId = req.params.commentId;
+        let response = await apiService.deleteCommentService(commentId);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in delete a comment controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 module.exports = {
     createCompanyData, createBranchCompanyData, getBranches, getBranch, getDetailCompany,
-    handleDeleteCompany, updateConfirmQuote, getCustomers, getAllCodes
+    handleDeleteCompany, updateConfirmQuote, getCustomers, getAllCodes, getComments, postComment,
+    updateComment, deleteComment
 }
