@@ -230,5 +230,11 @@
     "modal-confirm-quote.btn-cancel": "Hủy",
     "modal-confirm-quote.toast-successfully": "Cài đặt phương thức xác nhận báo giá thành công",
     "modal-confirm-quote.toast-empty-data.company": "Vui lòng nhập dữ liệu công ty trước",
-    "modal-confirm-quote.toast-empty-select": "Vui lòng chọn phương thức xác nhận báo giá"
+    "modal-confirm-quote.toast-empty-select": "Vui lòng chọn phương thức xác nhận báo giá",
+    "comment-quote-title": "Lịch sử trao đổi",
+    "comment-quote-input.place-holder": "Viết một thông điệp",
+    "comment-quote-input.btn-comment": "Gửi",
+    "comment-quote-input.btn-reply": "Phản hồi",
+    "comment-quote-input.btn-edit": "Chỉnh sửa",
+    "comment-quote-input.btn-delete": "Xóa"
 }

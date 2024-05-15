@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import './ViewQuote.scss'
-import { Alert, Affix, Table, Input } from 'antd';
+import { Alert, Affix, Table, Input, Button, Tooltip } from 'antd';
 import { FaArrowRightLong, FaComment } from "react-icons/fa6";
 import { useHistory } from 'react-router-dom';
 import { FaHome, FaPrint, FaUpload } from "react-icons/fa";
@@ -11,6 +11,10 @@ import Modal from 'react-bootstrap/Modal';
 import SignatureCanvas from 'react-signature-canvas'
 import { FaRegTrashAlt } from "react-icons/fa";
 import { getBase64 } from '../../utils/functions'
+import { useReactToPrint } from 'react-to-print';
+import { ModalRejectQuote } from '../Sales/Modal/ModalRejectQuote';
+import { Comments } from '../Comments/Comments';
+import { FormattedMessage } from 'react-intl'
 
 export const ViewQuote = () => {
 
@@ -19,7 +23,13 @@ export const ViewQuote = () => {
     const canvasRef = useRef(null);
     const [typeSignature, setTypeSignature] = useState('auto')
     const [isShowModalSignature, setIsShowModalSignature] = useState(false)
+    const [isShowModalRejectQuote, setIsShowModalRejectQuote] = useState(false)
     const [dataSignature, setDataSignature] = useState(null)
+    const [signatureFillInQuote, setSignatureFillInQuote] = useState(null)
+    const [submitSignature, setSubmitSignature] = useState(false);
+    const componentPDF = useRef()
+    const [isCancelQuote, setIsCancelQuote] = useState(false)
+    const commentRef = useRef()
 
     useEffect(() => {
         const autoSignature = (name) => {
@@ -44,6 +54,13 @@ export const ViewQuote = () => {
             autoSignature('Felix');
         }
     }, [typeSignature, signature, isShowModalSignature]);
+
+    const generatePDF = useReactToPrint({
+        content: () => componentPDF.current,
+        documentTitle: "Quote_S0003",
+        bodyClass: 'py-4 px-4'
+
+    })
 
     const backPreviousPage = () => {
         history.goBack()
@@ -126,6 +143,40 @@ export const ViewQuote = () => {
         }
     }
 
+    const handleSaveDrawSignature = () => {
+        const res = signature.getTrimmedCanvas().toDataURL('image/jpeg')
+        setSignatureFillInQuote(res)
+    }
+
+    const handleSubmitSignature = () => {
+        switch (typeSignature) {
+            case 'draw':
+                setSubmitSignature(true)
+                setTimeout(() => {
+                    handleSaveDrawSignature()
+                    handleCloseModalSignature()
+                    setSubmitSignature(false)
+                }, 2000)
+                break;
+            case 'auto':
+            case 'upload':
+                setSubmitSignature(true)
+                setTimeout(() => {
+                    setSignatureFillInQuote(dataSignature)
+                    handleCloseModalSignature()
+                    setSubmitSignature(false)
+                }, 2000)
+                break;
+            default:
+            // code block
+        }
+
+    }
+
+    const handleScrollToComment = () => {
+        commentRef.current.scrollIntoView()
+    }
+
     return (
         <>
             <div className='container container-view-quote'>
@@ -150,96 +201,115 @@ export const ViewQuote = () => {
                             <div>
                                 <h2>32.000 ₫</h2>
                                 <button className='btn btn-main  btn-accept' onClick={handleShowModalSignature}><MdDone /> Chấp nhận & ký</button>
-                                <button className='btn btn-view-detail'><FaPrint /> Xem chi tiết</button>
+                                <button className='btn btn-view-detail' onClick={generatePDF}><FaPrint /> Lưu báo giá</button>
                             </div>
                         </Affix>
 
                     </div>
 
                     <div className='content-right'>
-                        <h2>Báo giá - S00003</h2>
-                        <div className='wrap-inf-quote d-flex gap-4'>
-                            <div className='inf-selling w-50 '>
-                                <h5>Thông tin bán hàng</h5>
-                                <hr className='mt-1 mb-2' />
-                                <div className='date-created d-flex'>
-                                    <span className='label-date'>Ngày:</span>
-                                    <span>07/05/2024</span>
-                                </div>
-                                <div className='date-expiration d-flex'>
-                                    <span className='label-date'>Ngày hết hạn:	</span>
-                                    <span>07/06/2024</span>
-                                </div>
-                            </div>
+                        {isCancelQuote &&
+                            <Alert
+                                className='my-3 text-center'
+                                description={
+                                    <div>
 
-                            <div className='address-bill-delivery w-50 '>
-                                <h5>Địa chỉ xuất hóa đơn và giao hàng</h5>
-                                <hr className='mt-1 mb-2' />
-                                <span>Felix</span> <br />
-                                <span><IoMdMail /> felix@gmail.com</span>
-                            </div>
-                        </div>
-
-                        <Table
-                            className='mt-4'
-                            columns={columns}
-                            dataSource={data}
-                            pagination={false}
-                        />
-
-                        <div className='row'>
-                            <div className='col-6'></div>
-                            <div className='col-6 wrapper-price'>
-                                <div className='price-before-tax d-flex justify-content-between bottom-line'>
-                                    <span className='title-price-before-tax'>Số tiền trước thuế</span>
-                                    <span>40 ₫</span>
-                                </div>
-
-                                <div className='tax d-flex justify-content-between bottom-line'>
-                                    <span>Thuế GTGT 10%</span>
-                                    <span>4 ₫</span>
-                                </div>
-
-                                <div className='total d-flex justify-content-between bottom-line'>
-                                    <span className='title-total'>Tổng</span>
-                                    <span>44 ₫</span>
-                                </div>
-
-                            </div>
-                            <div className='col-6'></div>
-                            <div className='col-6 text-center mt-3 col-signatured'>
-                                {dataSignature &&
-                                    <>
-                                        <h5>Chữ ký</h5>
-                                        <div className='wrap-img-signatured'>
-                                            <img className='signatured' alt='signatured' src={dataSignature}></img>
-                                        </div>
-                                        <span className='signatured-text'>Felix</span>
-                                    </>
+                                        <b>Báo giá này đã bị huỷ. <FaComment onClick={handleScrollToComment} /></b>
+                                        {' Liên hệ với chúng tôi để nhận báo giá mới.'}
+                                    </div>
                                 }
+                                type="error"
+                                closable
+                            />
+                        }
+
+                        <div ref={componentPDF} style={{ width: '100%' }}>
+                            <h2>Báo giá - S00003</h2>
+                            <div className='wrap-inf-quote d-flex gap-4'>
+                                <div className='inf-selling w-50 '>
+                                    <h5>Thông tin bán hàng</h5>
+                                    <hr className='mt-1 mb-2' />
+                                    <div className='date-created d-flex'>
+                                        <span className='label-date'>Ngày:</span>
+                                        <span>07/05/2024</span>
+                                    </div>
+                                    <div className='date-expiration d-flex'>
+                                        <span className='label-date'>Ngày hết hạn:	</span>
+                                        <span>07/06/2024</span>
+                                    </div>
+                                </div>
+
+                                <div className='address-bill-delivery w-50 '>
+                                    <h5>Địa chỉ xuất hóa đơn và giao hàng</h5>
+                                    <hr className='mt-1 mb-2' />
+                                    <span>Felix</span> <br />
+                                    <span><IoMdMail /> felix@gmail.com</span>
+                                </div>
                             </div>
 
-                        </div>
+                            <Table
+                                className='mt-4'
+                                columns={columns}
+                                dataSource={data}
+                                pagination={false}
+                            />
 
-                        <div className='policy-condition mt-4'>
-                            <h5>Điều khoản & điều kiện</h5>
-                            <hr className='mt-1 mb-2' />
-                            <span>Uy tín</span>
-                        </div>
+                            <div className='row'>
+                                <div className='col-6'></div>
+                                <div className='col-6 wrapper-price'>
+                                    <div className='price-before-tax d-flex justify-content-between bottom-line'>
+                                        <span className='title-price-before-tax'>Số tiền trước thuế</span>
+                                        <span>40 ₫</span>
+                                    </div>
 
-                        <div className='policy-condition mt-4'>
-                            <h5>Điều khoản thanh toán</h5>
-                            <hr className='mt-1 mb-2' />
-                            <span>Điều khoản thanh toán: 21 ngày</span>
+                                    <div className='tax d-flex justify-content-between bottom-line'>
+                                        <span>Thuế GTGT 10%</span>
+                                        <span>4 ₫</span>
+                                    </div>
+
+                                    <div className='total d-flex justify-content-between bottom-line'>
+                                        <span className='title-total'>Tổng</span>
+                                        <span>44 ₫</span>
+                                    </div>
+
+                                </div>
+                                <div className='col-6'></div>
+                                <div className='col-6 text-center mt-3 col-signatured'>
+                                    {signatureFillInQuote &&
+                                        <>
+                                            <h5>Chữ ký</h5>
+                                            <div className='wrap-img-signatured'>
+                                                <img className='signatured' alt='signatured' src={signatureFillInQuote}></img>
+                                            </div>
+                                            <span className='signatured-text'>Felix</span>
+                                        </>
+                                    }
+                                </div>
+
+                            </div>
+
+                            <div className='policy-condition mt-4'>
+                                <h5>Điều khoản & điều kiện</h5>
+                                <hr className='mt-1 mb-2' />
+                                <span>Uy tín</span>
+                            </div>
+
+                            <div className='policy-condition mt-4'>
+                                <h5>Điều khoản thanh toán</h5>
+                                <hr className='mt-1 mb-2' />
+                                <span>Điều khoản thanh toán: 21 ngày</span>
+                            </div>
                         </div>
 
                         <div className='btn-actions d-flex justify-content-center gap-2'>
                             <button className='btn btn-main' onClick={handleShowModalSignature}><MdDone /> Chấp nhận & ký</button>
-                            <button className='btn btn-reply hover-item'><FaComment /> Xem chi tiết</button>
-                            <button className='btn btn-danger'><TiTimes /> Từ chối</button>
+                            <button className='btn btn-reply hover-item'><FaComment /> Phản hồi</button>
+                            <button className='btn btn-danger' onClick={() => setIsShowModalRejectQuote(true)}><TiTimes /> Từ chối</button>
 
                         </div>
 
+                        <h4 className='mt-3' ref={commentRef}><FormattedMessage id="comment-quote-title" /></h4>
+                        <Comments />
                     </div>
                 </div>
             </div>
@@ -287,14 +357,16 @@ export const ViewQuote = () => {
                                     <input hidden id="img-upload" type='file'
                                         onChange={(e) => handleUploadSignature(e)}
                                     />
-                                    <label className='label-upload' htmlFor="img-upload"><FaUpload /></label>
+                                    <Tooltip placement="left" title='Upload your signature'>
+                                        <label className='label-upload' htmlFor="img-upload"><FaUpload /></label>
+                                    </Tooltip>
 
                                 </div>
                             }
                         </div>
 
                         {typeSignature && (typeSignature === 'auto' || typeSignature === 'draw') &&
-                            <div div className='line-signature'></div>
+                            <div className='line-signature'></div>
                         }
 
                         {typeSignature && typeSignature === 'auto'
@@ -306,12 +378,15 @@ export const ViewQuote = () => {
 
                         {typeSignature && typeSignature === 'draw'
                             &&
-                            <SignatureCanvas
-                                penColor='black'
-                                dotSize='3'
-                                ref={(ref) => setSignature(ref)}
-                                canvasProps={{ width: 760, height: 200, className: 'sigCanvas' }}
-                            />
+                            <div className='wrapper-draw-signature'>
+                                <SignatureCanvas
+                                    penColor='black'
+                                    dotSize={3}
+                                    ref={(ref) => setSignature(ref)}
+                                    backgroundColor='rgba(255,255,255,1)'
+                                    canvasProps={{ width: 760, height: 200, className: 'sigCanvas' }}
+                                />
+                            </div>
                         }
 
                         {typeSignature && typeSignature === 'upload'
@@ -325,11 +400,23 @@ export const ViewQuote = () => {
                     </div>
 
                     <div className='wrapper-btn-accept-sign mt-3'>
-                        <button className='btn btn-main btn-accept float-end'><MdDone /> Chấp nhận & ký</button>
+                        <Button
+                            onClick={handleSubmitSignature}
+                            className='btn-main btn-accept float-end'
+                            loading={submitSignature}>
+                            {!submitSignature && <MdDone className='me-1' />}
+                            <span>
+                                Chấp nhận & ký
+                            </span></Button>
                     </div>
                 </Modal.Body>
 
             </Modal >
+            <ModalRejectQuote
+                show={isShowModalRejectQuote}
+                close={() => setIsShowModalRejectQuote(false)}
+                cancelQuote={() => setIsCancelQuote(true)}
+            />
         </>
 
     )

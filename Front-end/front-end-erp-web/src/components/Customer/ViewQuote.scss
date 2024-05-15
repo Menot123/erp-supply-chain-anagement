@@ -65,12 +65,12 @@
                         align-items    : center;
 
                         .signatured {
-                            max-height    : 5rem;
-                            max-width     : 100%;
-                            margin-left   : 16%;
-                            vertical-align: middle;
-                            text-align    : center;
-                            margin-bottom : -12px;
+                            max-height       : 5rem;
+                            max-width        : 100%;
+                            // margin-left   : 16%;
+                            vertical-align   : middle;
+                            text-align       : center;
+                            margin-bottom    : -12px;
                         }
                     }
 
@@ -117,6 +117,7 @@
 
     .line-signature {
         position  : absolute;
+        z-index   : 3;
         border-top: #D1D0CE solid 2px;
         bottom    : 33%;
         width     : 72%;
@@ -128,7 +129,6 @@
     .image-signature-uploaded {
         width : 760px;
         height: 200px;
-        border: 1px solid #000;
 
         .img-signature-uploaded {
             width : 100%;
@@ -136,13 +136,19 @@
         }
     }
 
-    .sigCanvas {
+    .wrapper-auto-signature,
+    .wrapper-draw-signature {
         position: relative;
-    }
+        height  : 200px;
+        width   : 760px;
 
-    .auto-signature {
-        position  : relative;
-        text-align: center;
+        .auto-signature,
+        .sigCanvas {
+            position  : absolute;
+            z-index   : 2;
+            text-align: center;
+        }
+
     }
 
 }
