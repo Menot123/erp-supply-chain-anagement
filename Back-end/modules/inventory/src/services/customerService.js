@@ -91,6 +91,7 @@ const handleCreateCustomerService = async(data) => {
 const handleUpdateCustomerService = async(customerId, data) => {
     try {
         let res = {}
+        console.log(data)
         let customer = await db.Customer.findOne({
             where: {
                 customerId: customerId,

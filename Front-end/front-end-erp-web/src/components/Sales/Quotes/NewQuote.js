@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import { Steps, Select, Tooltip, DatePicker, Tabs } from "antd";
 import { useState } from 'react'
 import { TableProducts } from './TableProducts';
-import { getAllProducts } from '../../../services/productServices'
+import { getAllProducts } from '../../../services/inventoryServices'
 import { getCustomers, getAllCodes } from '../../../services/saleServices'
 import { toast } from 'react-toastify';
 import { OtherInfo } from './OtherInfo';

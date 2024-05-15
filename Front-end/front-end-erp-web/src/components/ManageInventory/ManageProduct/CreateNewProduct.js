@@ -4,7 +4,7 @@ import { RiImageAddLine } from "react-icons/ri";
 import { useState, useEffect } from 'react'
 import 'react-image-lightbox/style.css';
 import Lightbox from 'react-image-lightbox';
-import { createNewProduct, getAllCode } from '../../../services/productServices'
+import { createNewProduct, getAllCode } from '../../../services/inventoryServices'
 import { useHistory } from 'react-router-dom'
 import Select from 'react-select'
 import { toast } from 'react-toastify';

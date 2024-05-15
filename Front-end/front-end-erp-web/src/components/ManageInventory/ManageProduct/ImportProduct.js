@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl'
 import { NavLink } from "react-router-dom";
 import { FaDownload } from "react-icons/fa";
 import iconCSVFile from '../../../assets/img/smiling_face.svg'
-import { importNewProducts } from '../../../services/productServices'
+import { importNewProducts } from '../../../services/inventoryServices'
 import { useState } from 'react'
 
 function ImportProduct() {

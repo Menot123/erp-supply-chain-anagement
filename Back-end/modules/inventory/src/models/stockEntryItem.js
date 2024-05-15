@@ -24,8 +24,8 @@ module.exports = (sequelize, DataTypes) => {
 
             if (lastItem) {
                 const lastItemId = lastItem.stockEntryItemId;
-                const numericPart = parseInt(lastItemId.slice(-3));
-                const nextNumericPart = (numericPart + 1).toString().padStart(3, '0');
+                const numericPart = parseInt(lastItemId.slice(-4));
+                const nextNumericPart = (numericPart + 1).toString().padStart(4, '0');
                 return `STEI${nextNumericPart}`;
             }
 

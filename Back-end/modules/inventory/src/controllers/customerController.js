@@ -62,7 +62,7 @@ const handleUpdateCustomer = async(req, res, next) => {
     try {
         let customerId = req.params.id;
         let dataCustomer = req.body;
-        let response = await customerService.handleUpdatecustomerService(customerId, dataCustomer);
+        let response = await customerService.handleUpdateCustomerService(customerId, dataCustomer);
         return res.status(200).json({
             EM: response.EM,
             EC: response.EC,

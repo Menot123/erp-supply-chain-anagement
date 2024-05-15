@@ -2,6 +2,7 @@ import express from 'express';
 // import session from "express-session"
 import productController from '../controllers/productController'
 import customerController from '../controllers/customerController'
+import providerController from '../controllers/providerController'
 import warehouseController from '../controllers/warehouseController'
 // import jwt from '../middleware/JWTServices';
 import apiController from '../controllers/apiController'
@@ -409,6 +410,153 @@ let initApiRoutes = (app) => {
      * 
      */
     router.delete('/customers/:id', customerController.handleDeleteCustomer)
+
+    // Provider API
+    /**
+     * @swagger
+     * /api/providers:
+     *  get:
+     *      tags:
+     *          - Provider
+     *      summary: Get all providers
+     *      description: Get all information about providers                
+     *      responses:
+     *          200:
+     *              description: Return status and list of providers if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/providers', providerController.handleGetProviders)
+
+    /**
+     * @swagger
+     * /api/providers/{id}:
+     *  get:
+     *      tags:
+     *          - Provider
+     *      summary: Get provider with id
+     *      description: Get information about provider with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of provider you want to get information 
+     *      responses:
+     *          200:
+     *              description: Return status and info of provider if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/providers/:id', providerController.handleGetProvider)
+
+    /**
+     * @swagger
+     * /api/providers:
+     *  post:
+     *      tags:
+     *          - Provider
+     *      summary: Create new provider
+     *      description: Create new provider for ERP system
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          nameVi:
+     *                              type: string
+     *                          nameEn:
+     *                              type: string
+     *                          addressVi:
+     *                              type: string
+     *                          addressEn:
+     *                              type: string
+     *                          logo:
+     *                              type: string
+     *                          contact:
+     *                              type: string  
+     *                          website:
+     *                              type: string                 
+     *      responses:
+     *          200:
+     *              description: Return status of create new provider.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/providers', providerController.handleCreateProvider)
+
+    /**
+     * @swagger
+     * /api/providers/{id}:
+     *  put:
+     *      tags:
+     *          - Provider
+     *      summary: Update provider information
+     *      description: Update provider for ERP system
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of provider you want to update    
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          nameVi:
+     *                              type: string
+     *                          nameEn:
+     *                              type: string
+     *                          addressVi:
+     *                              type: string
+     *                          addressEn:
+     *                              type: string
+     *                          logo:
+     *                              type: string
+     *                          contact:
+     *                              type: string  
+     *                          website:
+     *                              type: string            
+     *      responses:
+     *          200:
+     *              description: Return status of update provider.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.put('/providers/:id', providerController.handleUpdateProvider)
+
+    /**
+     * @swagger
+     * /api/providers/{id}:
+     *  delete:
+     *      tags:
+     *          - Provider
+     *      summary: Delete provider with id
+     *      description: Delete a provider with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of provider you want to delete
+     *      responses:
+     *          200:
+     *              description: Return status and info of delete provider.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.delete('/providers/:id', providerController.handleDeleteProvider)
 
     // Warehouse API
     /**

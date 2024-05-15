@@ -25,9 +25,9 @@ module.exports = (sequelize, DataTypes) => {
 
             if (lastItem) {
                 const lastItemId = lastItem.stockEntryId;
-                const numericPart = parseInt(lastItemId.slice(-3));
-                const nextNumericPart = (numericPart + 1).toString().padStart(3, '0');
-                return `STE${nextNumericPart}`;
+                const numericPart = parseInt(lastItemId.slice(-4));
+                const nextNumericPart = (numericPart + 1).toString().padStart(4, '0');
+                return `WH/IN/${nextNumericPart}`;
             }
 
             return this.generateId();
@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true
         },
         warehouseId: DataTypes.STRING,
-        customerId: DataTypes.STRING,
+        providerId: DataTypes.STRING,
         transactionType: DataTypes.STRING,
         transactionDate: DataTypes.DATE,
         status: DataTypes.STRING

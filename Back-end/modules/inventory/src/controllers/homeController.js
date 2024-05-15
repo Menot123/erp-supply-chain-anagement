@@ -32,7 +32,6 @@ let getHomePage = async (req, res) => {
         // console.log("--------------------------------");
         // return res.render('homepage.ejs', docsPath);
         // return res.render('homepage');
-
     } catch (err) {
         console.log(err.message);
     }
