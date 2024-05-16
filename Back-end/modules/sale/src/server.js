@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import viewEngine from './config/viewEngine'
 import initWebRoutes from './route/web'
 import initApiRoutes from './route/api';
+import setupSwagger from './middleware/swagger';
 import connectDB from './config/connectDB';
 require('dotenv').config();
 
@@ -36,6 +37,7 @@ app.use(function(req, res, next) {
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
+setupSwagger(app);
 
 viewEngine(app);
 initApiRoutes(app)
