@@ -237,7 +237,12 @@ function CreateNewInputWarehouse() {
                             {
                                 label: `Ghi chú`,
                                 key: 'tab-3',
-                                children: <OtherInfo />,
+                                children: <Input.TextArea
+                                    // value={value}
+                                    // onChange={(e) => setValue(e.target.value)}
+                                    placeholder="Thêm một ghi chú nội bộ sẽ được in trên phiếu Hoạt động lấy hàng"
+                                    autoSize={{ minRows: 3, maxRows: 5 }}
+                                />,
                             }
                             ]}
                         />

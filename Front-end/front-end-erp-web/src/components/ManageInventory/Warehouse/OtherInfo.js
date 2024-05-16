@@ -17,10 +17,10 @@ export const OtherInfo = () => {
         <div className='wrapper-other-info-quote d-flex'>
             <div className='content-left'>
                 <div className='content-left-title'>
-                    <span className='text-title'>BÁN HÀNG</span>
+                    <span className='text-title'>THÔNG TIN KHÁC</span>
                 </div>
-                <div className='content-left-employee d-flex align-items-center'>
-                    <label className='me-2' htmlFor='select-employee'>Nhân viên kinh doanh</label>
+                <div className='content-left-employee d-flex align-items-center mt-4'>
+                    <label className='me-2' htmlFor='select-employee'>Người phụ trách</label>
                     <Select
                         showSearch
                         id='select-employee'
@@ -36,24 +36,8 @@ export const OtherInfo = () => {
                             { value: 1, label: 'Nguyễn Văn Khánh' },
                             { value: 2, label: 'Nguyễn Tiến Đạt' },
                         ]}
+                        value={1}
                         onChange={(e) => handleChangeInputQuote(e, 'customer')}
-                    />
-                </div>
-            </div>
-            <div className='content-right'>
-                <div className='content-right-title'>
-                    <span className='text-title'>VẬN CHUYỂN</span>
-                </div>
-                <div className='content-right-delivery d-flex align-items-center'>
-                    <label className='me-2' htmlFor='select-date-delivery'>Ngày giao hàng</label>
-                    <DatePicker
-                        className='select-date-delivery'
-                        onChange={onChangeDatePicker}
-                        suffixIcon={false}
-                        variant="borderless"
-                        placeholder=''
-                        size='middle'
-                        id='select-date-delivery'
                     />
                 </div>
             </div>

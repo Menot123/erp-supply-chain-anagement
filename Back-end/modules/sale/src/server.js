@@ -42,7 +42,7 @@ initApiRoutes(app)
 initWebRoutes(app);
 
 
-// connectDB();
+connectDB();
 
 
 app.listen(port, () => {
