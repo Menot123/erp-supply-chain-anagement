@@ -1,0 +1,44 @@
+.wrapper-comment {
+    display      : flex;
+    margin-bottom: 4px;
+
+    .avatar-comment {
+        margin-right: 1rem;
+
+        .avatar-comment-element {
+            border-radius: 50%;
+        }
+    }
+
+    .content-comment-right {
+        .comment-content {
+            .wrapper-author-createdAt {
+                display: flex;
+                gap    : 8px;
+
+                .author-comment {}
+
+                .comment-createdAt {
+                    font-size: 85%;
+                    color    : #6C757D;
+                }
+            }
+
+            .comment-text {}
+
+            .btn-actions-comment {
+                display: flex;
+                gap    : 8px;
+
+                .comment-action {
+                    font-size: 12px;
+                    color    : rgb(51, 51, 51);
+                }
+            }
+
+            .replies {
+                margin-top: 8px;
+            }
+        }
+    }
+}

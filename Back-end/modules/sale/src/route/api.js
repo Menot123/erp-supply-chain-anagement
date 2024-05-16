@@ -223,6 +223,75 @@ const initApiRoutes = (app) => {
 */
   router.get('/all-codes', apiController.getAllCodes);
 
+  /**
+* @swagger
+* /api/comments:
+*  get:
+*      tags:
+*          - Sales
+*      summary: Get comments by id quote
+*      description: Get comments from customer by quote id 
+*      responses:
+*          200:
+*              description: Return status and list comments in sale db. 
+*          404:
+*              description: Error from server.
+* 
+*/
+  router.get('/comments', apiController.getComments);
+
+  /**
+* @swagger
+* /api/comment:
+*  get:
+*      tags:
+*          - Sales
+*      summary: Post new comment or reply comment
+*      description: Create new comment or reply comment
+*      responses:
+*          200:
+*              description: Return status create comment or reply. 
+*          404:
+*              description: Error from server.
+* 
+*/
+  router.post('/comment', apiController.postComment);
+
+  /**
+* @swagger
+* /api/comment:
+*  patch:
+*      tags:
+*          - Sales
+*      summary: Patch data comment to update
+*      description: Update content a comment by id
+*      responses:
+*          200:
+*              description: Return status update comment. 
+*          404:
+*              description: Error from server.
+* 
+*/
+  router.patch('/comment', apiController.updateComment);
+
+  /**
+* @swagger
+* /api/comment:
+*  delete:
+*      tags:
+*          - Sales
+*      summary: Delete a comment
+*      description: Delete a comment by id
+*      responses:
+*          200:
+*              description: Return status delete a comment. 
+*          404:
+*              description: Error from server.
+* 
+*/
+  router.delete('/comment/:commentId', apiController.deleteComment);
+
+
   return app.use("/api/", router)
 
 }

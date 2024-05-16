@@ -230,5 +230,11 @@
     "modal-confirm-quote.btn-cancel": "Cancel",
     "modal-confirm-quote.toast-successfully": "Set quote confirmation method successfully",
     "modal-confirm-quote.toast-empty-data.company": "Please enter company data first",
-    "modal-confirm-quote.toast-empty-select": "Please choose a quote confirmation method"
+    "modal-confirm-quote.toast-empty-select": "Please choose a quote confirmation method",
+    "comment-quote-title": "Response history",
+    "comment-quote-input.place-holder": "Write a message",
+    "comment-quote-input.btn-comment": "Send",
+    "comment-quote-input.btn-reply": "Reply",
+    "comment-quote-input.btn-edit": "Edit",
+    "comment-quote-input.btn-delete": "Delete"
 }
