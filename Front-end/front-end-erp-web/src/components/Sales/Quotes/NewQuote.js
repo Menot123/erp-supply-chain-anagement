@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import './NewQuote.scss'
 import { useHistory } from 'react-router-dom'
 import { Steps, Select, Tooltip, DatePicker, Tabs } from "antd";
@@ -9,11 +9,18 @@ import { getCustomers, getAllCodes } from '../../../services/saleServices'
 import { toast } from 'react-toastify';
 import { OtherInfo } from './OtherInfo';
 import { NavLink } from "react-router-dom";
-
+import { ModalSendQuoteToEmail } from '../Modal/ModalSendQuoteToEmail';
+import { useReactToPrint } from 'react-to-print';
+import { validateData } from '../../../utils/functions'
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { QuotePDF } from './QuotePDF';
 
 export const NewQuote = () => {
 
     const history = useHistory()
+    const componentPDF = useRef(null)
+
 
     const defaultDataQuote = {
         customer: '',
@@ -34,11 +41,21 @@ export const NewQuote = () => {
     const [dataQuote, setDataQuote] = useState(defaultDataQuote)
     const [currentStepQuote, setCurrentStepQuote] = useState(0);
     const [listProduct, setListProduct] = useState([])
-    // const [listCustomer, setListCustomer] = useState([])
     const [customersSelect, setCustomersSelect] = useState([])
+    const [selectedCustomer, setSelectedCustomer] = useState([])
+    const [customerList, setCustomerList] = useState([])
+    const [fullDataCustomer, setFullDataCustomer] = useState({})
+    const [paymentPolicyToQuote, setPaymentPolicyToQuote] = useState('')
     const [currencySelect, setCurrencySelect] = useState([])
     const [timePayment, setTimePayment] = useState([])
     const [otherInfoQuote, setOtherInfoQuote] = useState(defaultDataOtherInfoQuote)
+    const [isShowModalSendQuote, setIsShowModalSendQuote] = useState(false)
+    const [isSendingQuote, setIsSendingQuote] = useState(false)
+
+    const getCustomerById = (customerId) => {
+        const customer = customerList.find((customer) => customer.customerId === customerId);
+        return customer;
+    }
 
     const buildSelectCustomers = (listCustomer) => {
         let customersDataBuild = listCustomer.map((item, index) => {
@@ -77,6 +94,7 @@ export const NewQuote = () => {
         const fetchCustomers = async () => {
             const res = await getCustomers()
             if (res && res.EC === 0) {
+                setCustomerList(res.DT)
                 buildSelectCustomers(res.DT)
             } else {
                 toast.error(res.EM)
@@ -120,34 +138,80 @@ export const NewQuote = () => {
         console.log(key);
     };
 
-    const onChangeTable = (pagination, filters, sorter, extra) => {
-        console.log('params', pagination, filters, sorter, extra);
-    };
-
-    const handleChangeInputQuote = (e, type) => {
+    const handleChangeInputQuote = (e, type, label) => {
         switch (type) {
             case 'customer':
-                setDataQuote((prevState) => ({
-                    ...prevState,
-                    customer: e
-                }))
-                break;
             case 'currency':
-                setDataQuote((prevState) => ({
-                    ...prevState,
-                    currency: e
-                }))
-                break;
             case 'paymentPolicy':
+            case 'totalPrice':
+            case 'productList':
+                if (type === 'customer') {
+                    setSelectedCustomer(label)
+                    setFullDataCustomer(getCustomerById(e))
+                }
+                if (type === 'paymentPolicy') {
+                    setPaymentPolicyToQuote(label.label)
+                }
                 setDataQuote((prevState) => ({
                     ...prevState,
-                    paymentPolicy: e
+                    [type]: e
                 }))
                 break;
-
             default:
-            // code block
+                setDataQuote((prevState) => ({
+                    ...prevState,
+                    [type]: e.target.value
+                }))
+                break;
         }
+    }
+
+    const handleGeneratePdf = async () => {
+        const quote = componentPDF.current
+        try {
+            const canvas = await html2canvas(quote, {
+                scale: 2, // Tăng độ phân giải lên gấp đôi
+                useCORS: true, // Sử dụng Cross-Origin Resource Sharing nếu cần thiết
+            });
+            const imgQuote = canvas.toDataURL("image/png", 1.0);
+
+            const pdf = new jsPDF({
+                orientation: "vertical",
+                unit: 'px',
+                format: "a4",
+            })
+
+            const padding = 20; // Kích thước padding mong muốn
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+
+            const imgWidth = pdfWidth - (padding * 2);
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            const imgX = padding;
+            const imgY = padding;
+
+            pdf.addImage(imgQuote, "PNG", imgX, imgY, imgWidth, imgHeight);
+            pdf.save("Quote.pdf");
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const handleSendQuoteToEmail = () => {
+        const arrValidateFieldsQuote = ['customer', 'expirationDay', 'currency', 'paymentPolicy']
+        let check = validateData(arrValidateFieldsQuote, dataQuote)
+        console.log('>>> validate: ', check)
+        if (check && check.length === 0) {
+            setIsShowModalSendQuote(true)
+        } else {
+            toast.warning("Vui lòng điền đủ thông tin báo giá trước khi gửi.")
+        }
+    }
+
+    const handlePushDataQuotePreview = () => {
+        console.log('check data: ', dataQuote)
     }
 
     return (
@@ -167,9 +231,11 @@ export const NewQuote = () => {
             <div className='wrapper-body-create-quote'>
                 <div className='actions-status'>
                     <div className='wrap-btn-actions'>
-                        <button className='btn btn-main'>Gửi qua email</button>
+                        <button className='btn btn-main' onClick={handleSendQuoteToEmail}>Gửi qua email</button>
                         <button className='btn btn-gray'>Xác nhận</button>
-                        <NavLink to='/my/orders' className='btn btn-gray'>Xem trước</NavLink>
+                        <button className='btn btn-gray' onClick={handlePushDataQuotePreview}>Xem trước</button>
+
+                        {/* <NavLink to='/my/orders' className='btn btn-gray'>Xem trước</NavLink> */}
                     </div>
                     <div className='quote-status'>
                         <Steps
@@ -195,7 +261,7 @@ export const NewQuote = () => {
                     </div>
                 </div>
                 <div className='body-create-quote'>
-                    <h3>Mới</h3>
+                    <h3>{isSendingQuote ? 'Báo giá - S00003' : 'Mới'}</h3>
                     <div className='wrap-info-quote'>
                         <div className='content-left'>
                             <label htmlFor='select-customer'>Khách hàng</label>
@@ -211,7 +277,7 @@ export const NewQuote = () => {
                                     (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                 }
                                 options={customersSelect}
-                                onChange={(e) => handleChangeInputQuote(e, 'customer')}
+                                onChange={(e, label) => handleChangeInputQuote(e, 'customer', label)}
                             />
 
                         </div>
@@ -259,34 +325,55 @@ export const NewQuote = () => {
                                     filterSort={(optionA, optionB) =>
                                         (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                     }
-                                    onChange={(e) => handleChangeInputQuote(e, 'paymentPolicy')}
+                                    onChange={(e, label) => handleChangeInputQuote(e, 'paymentPolicy', label)}
                                     options={timePayment}
                                 />
                             </div>
                         </div>
 
                     </div>
-                    <div className='wrap-info-products'>
+                    <div className='wrap-info-products' >
                         <Tabs
                             onChange={onChangeTab}
                             type="card"
-                            items={[{
-                                label: `Chi tiết đơn hàng`,
-                                key: 'tab-1',
-                                children: <TableProducts listProductFromParent={listProduct} />,
-                            },
-                            {
-                                label: `Thông tin khác`,
-                                key: 'tab-2',
-                                children: <OtherInfo />,
+                            items={
+                                !isSendingQuote ? [{
+                                    label: `Chi tiết đơn hàng`,
+                                    key: 'tab-1',
+                                    children: <TableProducts listProductFromParent={listProduct} handleChangeDataQuote={handleChangeInputQuote} isSendingQuote={isSendingQuote}
+                                    />,
+                                },
+                                {
+                                    label: `Thông tin khác`,
+                                    key: 'tab-2',
+                                    children: <OtherInfo />,
+                                }]
+                                    :
+                                    [{
+                                        label: `Chi tiết đơn hàng`,
+                                        key: 'tab-1',
+                                        children: <TableProducts listProductFromParent={listProduct} handleChangeDataQuote={handleChangeInputQuote} isSendingQuote={isSendingQuote}
+                                        />,
+                                    }]
                             }
-                            ]}
                         />
 
                     </div>
+                    <ModalSendQuoteToEmail
+                        show={isShowModalSendQuote}
+                        close={() => setIsShowModalSendQuote(false)}
+                        dataQuote={dataQuote}
+                        customer={selectedCustomer}
+                        downloadQuote={handleGeneratePdf}
+
+                    />
                 </div>
             </div>
 
+            <QuotePDF componentPDF={componentPDF} dataQuote={dataQuote}
+                fullDataCustomer={fullDataCustomer}
+                paymentPolicyToQuote={paymentPolicyToQuote}
+            />
         </div>
     )
 }

@@ -62,7 +62,9 @@ export const TableProducts = (props) => {
         }
     }, [props])
 
+
     useEffect(() => {
+
         const calculateTotalPrice = () => {
             let totalBeforeTax = 0
             let totalPrice = 0
@@ -72,8 +74,7 @@ export const TableProducts = (props) => {
                     totalPrice += +item.priceBeforeTax + (+item?.priceBeforeTax * +item?.tax?.value / 100)
                 });
             }
-            setTotalPrice(totalBeforeTax);
-            setFinalPrice(totalPrice)
+            Promise.all([setTotalPrice(totalBeforeTax), setFinalPrice(totalPrice), props?.handleChangeDataQuote(totalPrice, 'totalPrice')])
         };
 
         const calculateTaxTotals = () => {
@@ -94,6 +95,7 @@ export const TableProducts = (props) => {
         calculateTaxTotals();
         calculateTotalPrice();
     }, [listProduct]);
+
 
     // useEffect(() => {
 
@@ -205,6 +207,8 @@ export const TableProducts = (props) => {
 
         // Cập nhật danh sách sản phẩm mới
         setListProduct(updatedProducts);
+        props?.handleChangeDataQuote(updatedProducts, 'productList')
+
     }
 
     const handleRemoveProduct = (product) => {
@@ -307,14 +311,17 @@ export const TableProducts = (props) => {
                         }
                         <tr>
                             <td colSpan='7'>
-                                <span onClick={() => handleAddNewInput()} className='add-sub-company'>Thêm sản phẩm</span>
+                                {props?.isSendingQuote ? "" : <span onClick={() => handleAddNewInput()} className='add-sub-company'>Thêm sản phẩm</span>}
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <div className='wrap-policy-total'>
                     <div className='policy input-hover'>
-                        <TextArea autoSize variant="borderless" className='input-policy' placeholder='Điều khoản và điều kiện...' />
+                        <TextArea autoSize variant="borderless" className='input-policy'
+                            placeholder='Điều khoản và điều kiện...'
+                            onChange={(e) => props?.handleChangeDataQuote(e, 'policyAndCondition')}
+                        />
                     </div>
                     <div className='wrap-tax-price'>
                         <div className='price-before-tax d-flex justify-content-between gap-4 align-items-center'>
