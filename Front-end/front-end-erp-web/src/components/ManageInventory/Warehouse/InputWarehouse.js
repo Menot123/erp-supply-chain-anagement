@@ -24,6 +24,10 @@ function InputWarehouse() {
     const language = useSelector(state => state.language.value)
 
     // Checkbox
+    const [isShowActions, setIsShowActions] = useState(false);
+    const [numberCheckedItems, setNumberCheckedItems] = useState(0);
+    const [allElementsChecked, setAllElementsChecked] = useState(false);
+
     const [isOpenDropdownFilter, setIsOpenDropdownFilter] = useState(false)
     const dropdownFilterRef = useRef(null);
 
@@ -37,6 +41,77 @@ function InputWarehouse() {
     const [orderDelayOfChecked, setOrderDelayOfChecked] = useState(false);
     const [activityTypeChecked, setActivityTypeChecked] = useState(false);
     const [statusChecked, setStatusChecked] = useState(true);
+
+    const csvDataExportVi = [
+        ["Mã tham chiếu", "Liên hệ", "Người phụ trách", "Ngày theo kế hoạch", "Tình trạng còn hàng của sản phẩm", "Hạn chót", "Ngày hiệu lực", "Chứng từ gốc", "Đơn hàng chậm trễ của", "Loại hoạt động", "Trạng thái"],
+        // ["WH/IN/001", "0123456789", "Nguyễn Tiến Đạt", "08/01/2024", "", "", "05/09/2024 04:18:45", "", "", "Nhập kho", "Hoàn tất"],
+        // ["WH/IN/001", "0123456789", "Nguyễn Tiến Đạt", "08/01/2024", "", "", "05/09/2024 04:18:45", "", "", "Nhập kho", "Hoàn tất"],
+        // ["WH/IN/001", "0123456789", "Nguyễn Tiến Đạt", "08/01/2024", "", "", "05/09/2024 04:18:45", "", "", "Nhập kho", "Hoàn tất"]
+    ];
+    const csvDataExportEn = [
+        ["Reference", "Contact", "Responsible", "Scheduled Date", "Product Availability", "Deadline", "Effective Date", "Source Document", "Back Order of", "Operation Type", "Status"],
+        // ["WH/IN/001", "0123456789", "Nguyễn Tiến Đạt", "08/01/2024", "", "", "05/09/2024 04:18:45", "", "", "Nhập kho", "Hoàn tất"],
+        // ["WH/IN/001", "0123456789", "Nguyễn Tiến Đạt", "08/01/2024", "", "", "05/09/2024 04:18:45", "", "", "Nhập kho", "Hoàn tất"],
+        // ["WH/IN/001", "0123456789", "Nguyễn Tiến Đạt", "08/01/2024", "", "", "05/09/2024 04:18:45", "", "", "Nhập kho", "Hoàn tất"]
+    ];
+
+    const [listCheckedItems, setListCheckedItems] = useState([["Mã tham chiếu", "Liên hệ", "Người phụ trách", "Ngày theo kế hoạch", "Tình trạng còn hàng của sản phẩm", "Hạn chót", "Ngày hiệu lực", "Chứng từ gốc", "Đơn hàng chậm trễ của", "Loại hoạt động", "Trạng thái"]]);
+
+    const exampleItem = {
+        reference: 'WH/IN/001',
+        contact: '0123456789',
+        responsible: 'Nguyễn Tiến Đạt',
+        scheduledDate: '08/01/2024',
+        productAvailability: '',
+        deadline: '',
+        effectiveDate: '05/09/2024 04:18:45',
+        sourceDocument: '',
+        backOrderof: '',
+        operationType: 'Nhập kho',
+        status: 'Sẵn sàng',
+    }
+
+    const itemObj2Array = (exampleItem) => {
+        const valuesArray = [];
+        for (const key in exampleItem) {
+            if (exampleItem.hasOwnProperty(key)) {
+                valuesArray.push(exampleItem[key]);
+            }
+        }
+        return valuesArray;
+    }
+
+    const checkedOrUncheckedElement = (element) => {
+        const arrayItem = itemObj2Array(exampleItem);
+        setAllElementsChecked(false);
+        // console.log(element.target.checked)
+        if (element.target.checked) {
+            const updateListChecked = [...listCheckedItems, arrayItem];
+            setListCheckedItems(updateListChecked);
+            console.log(updateListChecked);
+            setIsShowActions(true);
+            setNumberCheckedItems(updateListChecked.length - 1);
+        }
+        else {
+            const removeItemListChecked = listCheckedItems;
+            removeItemListChecked.pop();
+            setListCheckedItems(removeItemListChecked);
+            console.log(removeItemListChecked);
+            if (removeItemListChecked.length === 1) {
+                setIsShowActions(false);
+            }
+            setNumberCheckedItems(removeItemListChecked.length - 1);
+        }
+    }
+
+    const checkAllElements = (element) => {
+        if (allElementsChecked) {
+            setAllElementsChecked(false);
+        }
+        else {
+            setAllElementsChecked(true);
+        }
+    }
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -80,6 +155,10 @@ function InputWarehouse() {
                     currentView={currentView}
                     totalPageProduct={totalPage}
                     setCurrentProductPage={setCurrentPage}
+                    showActions={isShowActions}
+                    setShowActions={setIsShowActions}
+                    listCheckedItems={listCheckedItems}
+                    numberCheckedItems={numberCheckedItems}
                     urlImportProduct={'/manage-inventory/input-warehouse/import'}
                 />
 
@@ -114,7 +193,7 @@ function InputWarehouse() {
                             <table className="table table-striped table-hover">
                                 <thead className='table-heading'>
                                     <tr className='table-row-heading'>
-                                        <th className='align-middle' style={{ backgroundColor: '#f1e3f5' }} scope="col"><input className='form-check-input' type="checkbox" /></th>
+                                        <th className='align-middle' style={{ backgroundColor: '#f1e3f5' }} scope="col"><input onChange={(e) => checkAllElements(e)} className='form-check-input' type="checkbox" /></th>
                                         <th className='align-middle' style={{ backgroundColor: '#f1e3f5' }} scope="col"><FormattedMessage id="inventory-reiceipt-reference-code" /></th>
                                         <th className={`align-middle ${contactChecked ? '' : 'hidden'}`} style={{ backgroundColor: '#f1e3f5' }} scope="col"><FormattedMessage id="inventory-reiceipt-contact" /></th>
                                         <th className={`align-middle ${personInChargeChecked ? '' : 'hidden'}`} style={{ backgroundColor: '#f1e3f5' }} scope="col"><FormattedMessage id="inventory-reiceipt-person-in-charge" /></th>
@@ -220,7 +299,11 @@ function InputWarehouse() {
                                             if (tempProductsLength > 0) {
                                                 return <>
                                                     <tr className='hover-item'>
-                                                        <th scope="row"><input className='form-check-input' type="checkbox" /></th>
+                                                        {allElementsChecked
+                                                            ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
+                                                            : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
+                                                        }
+
                                                         <td>ET001</td>
                                                         <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
                                                         <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
@@ -235,7 +318,11 @@ function InputWarehouse() {
                                                         <td></td>
                                                     </tr>
                                                     <tr className='hover-item'>
-                                                        <th scope="row"><input className='form-check-input' type="checkbox" /></th>
+                                                        {allElementsChecked
+                                                            ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
+                                                            : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
+                                                        }
+
                                                         <td>ET001</td>
                                                         <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
                                                         <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
@@ -250,7 +337,11 @@ function InputWarehouse() {
                                                         <td></td>
                                                     </tr>
                                                     <tr className='hover-item'>
-                                                        <th scope="row"><input className='form-check-input' type="checkbox" /></th>
+                                                        {allElementsChecked
+                                                            ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
+                                                            : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
+                                                        }
+
                                                         <td>ET001</td>
                                                         <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
                                                         <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
@@ -265,7 +356,11 @@ function InputWarehouse() {
                                                         <td></td>
                                                     </tr>
                                                     <tr className='hover-item'>
-                                                        <th scope="row"><input className='form-check-input' type="checkbox" /></th>
+                                                        {allElementsChecked
+                                                            ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
+                                                            : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
+                                                        }
+
                                                         <td>ET001</td>
                                                         <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
                                                         <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>

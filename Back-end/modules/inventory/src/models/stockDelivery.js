@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         static generateId() {
             // Logic to generate stockDeliveryId based on type and group
             // You can modify this logic to suit your requirements
-            return `STD001`;
+            return `WH/OUT/001`;
         }
 
         static async getNextId() {

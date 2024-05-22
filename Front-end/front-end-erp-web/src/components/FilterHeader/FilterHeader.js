@@ -2,7 +2,9 @@ import React from 'react'
 import './FilterHeader.scss'
 import { HiSquares2X2 } from "react-icons/hi2";
 import { MdViewList } from "react-icons/md";
-import { FaSearch } from "react-icons/fa";
+import { IoCloseSharp, IoSettingsSharp } from "react-icons/io5";
+import { FaSearch, FaUpload } from "react-icons/fa";
+import { CSVLink } from "react-csv";
 import { useIntl } from 'react-intl'
 import { useHistory, useLocation } from 'react-router-dom'
 import { FormattedMessage } from 'react-intl'
@@ -75,6 +77,27 @@ function FilterHeader(props) {
                             </>}
                     </div>
                 </div>
+            }
+            {props?.showActions && props?.currentView === 'list'
+                ? <div className='m-auto'>
+                    <div className="container text-center">
+                        <div className="row">
+                            <div className="col border border-1 text-nowrap pt-1 pb-1 me-1">
+                                {props?.numberCheckedItems} đã chọn <IoCloseSharp size={18} />
+                            </div>
+                            <div className="col border border-1 text-nowrap me-1 pt-1 pb-1">
+                                <CSVLink style={{ textDecoration: 'none', color: 'black' }} data={props.listCheckedItems} filename={"export_data_receipts.csv"}>
+                                    <FaUpload size={14} /> Xuất
+                                </CSVLink>
+
+                            </div>
+                            <div className="col border border-1 text-nowrap pt-1 pb-1">
+                                <IoSettingsSharp /> Hành động
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                : ''
             }
 
             <div className={props?.hiddenBtnImport ? 'search-input-wrap d-flex flex-column h-60' : 'search-input-wrap d-flex flex-column'}>
