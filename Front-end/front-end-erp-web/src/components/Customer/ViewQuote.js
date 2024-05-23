@@ -214,7 +214,7 @@ export const ViewQuote = () => {
                                 description={
                                     <div>
 
-                                        <b>Báo giá này đã bị huỷ. <FaComment onClick={handleScrollToComment} /></b>
+                                        <b>Báo giá này đã bị huỷ. <FaComment className='hover-item' onClick={handleScrollToComment} /></b>
                                         {' Liên hệ với chúng tôi để nhận báo giá mới.'}
                                     </div>
                                 }
@@ -303,7 +303,7 @@ export const ViewQuote = () => {
 
                         <div className='btn-actions d-flex justify-content-center gap-2'>
                             <button className='btn btn-main' onClick={handleShowModalSignature}><MdDone /> Chấp nhận & ký</button>
-                            <button className='btn btn-reply hover-item'><FaComment /> Phản hồi</button>
+                            <button className='btn btn-reply hover-item' onClick={handleScrollToComment}><FaComment /> Phản hồi</button>
                             <button className='btn btn-danger' onClick={() => setIsShowModalRejectQuote(true)}><TiTimes /> Từ chối</button>
 
                         </div>
