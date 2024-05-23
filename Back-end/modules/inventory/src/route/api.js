@@ -4,6 +4,12 @@ import productController from '../controllers/productController'
 import customerController from '../controllers/customerController'
 import providerController from '../controllers/providerController'
 import warehouseController from '../controllers/warehouseController'
+import stockController from '../controllers/stockController'
+import stockEntryController from '../controllers/stockEntryController'
+import stockEntryItemController from '../controllers/stockEntryItemController'
+import stockDeliveryController from '../controllers/stockDeliveryController'
+import stockDeliveryItemController from '../controllers/stockDeliveryItemController'
+
 // import jwt from '../middleware/JWTServices';
 import apiController from '../controllers/apiController'
 
@@ -692,6 +698,723 @@ let initApiRoutes = (app) => {
      * 
      */
     router.delete('/warehouses/:id', warehouseController.handleDeleteWarehouse)
+
+    // Stock API
+    /**
+     * @swagger
+     * /api/stocks:
+     *  get:
+     *      tags:
+     *          - Stock
+     *      summary: Get all stocks
+     *      description: Get all information about stocks                
+     *      responses:
+     *          200:
+     *              description: Return status and list of stocks if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/stocks', stockController.handleGetStocks)
+
+    /**
+     * @swagger
+     * /api/stocks/{id}:
+     *  get:
+     *      tags:
+     *          - Stock
+     *      summary: Get stock with id
+     *      description: Get information about stock with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stock you want to get information 
+     *      responses:
+     *          200:
+     *              description: Return status and info of stock if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/stocks/:id', stockController.handleGetStock)
+
+    /**
+     * @swagger
+     * /api/stocks:
+     *  post:
+     *      tags:
+     *          - Stock
+     *      summary: Create new stock
+     *      description: Create new stock for ERP system
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          productId:
+     *                              type: string
+     *                          warehouseId:
+     *                              type: string
+     *                          quantity:
+     *                              type: string           
+     *      responses:
+     *          200:
+     *              description: Return status of create new stock.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/stocks', stockController.handleCreateStock)
+
+    /**
+     * @swagger
+     * /api/stocks/{id}:
+     *  put:
+     *      tags:
+     *          - Stock
+     *      summary: Update stock information
+     *      description: Update stock for ERP system
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stock you want to update    
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          productId:
+     *                              type: string
+     *                          warehouseId:
+     *                              type: string
+     *                          quantity:
+     *                              type: string           
+     *      responses:
+     *          200:
+     *              description: Return status of update stock.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.put('/stocks/:id', stockController.handleUpdateStock)
+
+    /**
+     * @swagger
+     * /api/stocks/{id}:
+     *  delete:
+     *      tags:
+     *          - Stock
+     *      summary: Delete stock with id
+     *      description: Delete a stock with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stock you want to delete
+     *      responses:
+     *          200:
+     *              description: Return status and info of delete stock.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.delete('/stocks/:id', stockController.handleDeleteStock)
+
+    // StockEntry API
+    /**
+     * @swagger
+     * /api/stockEntrys:
+     *  get:
+     *      tags:
+     *          - StockEntry
+     *      summary: Get all stockEntrys
+     *      description: Get all information about stockEntrys                
+     *      responses:
+     *          200:
+     *              description: Return status and list of stockEntrys if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/stockEntrys', stockEntryController.handleGetStockEntrys)
+
+    /**
+     * @swagger
+     * /api/stockEntrys/{id}:
+     *  get:
+     *      tags:
+     *          - StockEntry
+     *      summary: Get stockEntry with id
+     *      description: Get information about stockEntry with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stockEntry you want to get information 
+     *      responses:
+     *          200:
+     *              description: Return status and info of stockEntry if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/stockEntrys/:id', stockEntryController.handleGetStockEntry)
+
+    /**
+     * @swagger
+     * /api/stockEntrys:
+     *  post:
+     *      tags:
+     *          - StockEntry
+     *      summary: Create new stockEntry
+     *      description: Create new stockEntry for ERP system
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          providerId:
+     *                              type: string
+     *                          warehouseId:
+     *                              type: string
+     *                          userId:
+     *                              type: string     
+     *                          scheduledDate:
+     *                              type: string
+     *                              format: date
+     *                              example: "2024-01-01"
+     *                          note:
+     *                              type: string     
+     *      responses:
+     *          200:
+     *              description: Return status of create new stockEntry.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/stockEntrys', stockEntryController.handleCreateStockEntry)
+
+    /**
+     * @swagger
+     * /api/stockEntrys/{id}:
+     *  put:
+     *      tags:
+     *          - StockEntry
+     *      summary: Update stockEntry information
+     *      description: Update stockEntry for ERP system
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stockEntry you want to update    
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          providerId:
+     *                              type: string
+     *                          warehouseId:
+     *                              type: string
+     *                          userId:
+     *                              type: string     
+     *                          scheduledDate:
+     *                              type: string
+     *                              format: date
+     *                              example: "2024-01-01"
+     *                          note:
+     *                              type: string        
+     *                          status:
+     *                              type: string
+     *                              example: "done"   
+     *      responses:
+     *          200:
+     *              description: Return status of update stockEntry.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.put('/stockEntrys/:id', stockEntryController.handleUpdateStockEntry)
+
+    /**
+     * @swagger
+     * /api/stockEntrys/{id}:
+     *  delete:
+     *      tags:
+     *          - StockEntry
+     *      summary: Delete stockEntry with id
+     *      description: Delete a stockEntry with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stockEntry you want to delete
+     *      responses:
+     *          200:
+     *              description: Return status and info of delete stockEntry.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.delete('/stockEntrys/:id', stockEntryController.handleDeleteStockEntry)
+
+    // StockEntryItem API
+    /**
+     * @swagger
+     * /api/stockEntryItems:
+     *  get:
+     *      tags:
+     *          - StockEntryItem
+     *      summary: Get all stockEntryItems
+     *      description: Get all information about stockEntryItems                
+     *      responses:
+     *          200:
+     *              description: Return status and list of stockEntryItems if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/stockEntryItems', stockEntryItemController.handleGetStockEntryItems)
+
+    /**
+     * @swagger
+     * /api/stockEntryItems/{id}:
+     *  get:
+     *      tags:
+     *          - StockEntryItem
+     *      summary: Get stockEntryItem with id
+     *      description: Get information about stockEntryItem with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stockEntryItem you want to get information 
+     *      responses:
+     *          200:
+     *              description: Return status and info of stockEntryItem if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/stockEntryItems/:id', stockEntryItemController.handleGetStockEntryItem)
+
+    /**
+     * @swagger
+     * /api/stockEntryItems:
+     *  post:
+     *      tags:
+     *          - StockEntryItem
+     *      summary: Create new stockEntryItem
+     *      description: Create new stockEntryItem for ERP system
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          stockEntryId:
+     *                              type: string
+     *                          productId:
+     *                              type: string
+     *                          description:
+     *                              type: string     
+     *                          scheduledDate:
+     *                              type: string
+     *                              format: date
+     *                              example: "2024-01-01"
+     *                          deadline:
+     *                              type: string  
+     *                          quantity:
+     *                              type: string      
+     *      responses:
+     *          200:
+     *              description: Return status of create new stockEntryItem.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/stockEntryItems', stockEntryItemController.handleCreateStockEntryItem)
+
+    /**
+     * @swagger
+     * /api/stockEntryItems/{id}:
+     *  put:
+     *      tags:
+     *          - StockEntryItem
+     *      summary: Update stockEntryItem information
+     *      description: Update stockEntryItem for ERP system
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stockEntryItem you want to update    
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          stockEntryId:
+     *                              type: string
+     *                          productId:
+     *                              type: string
+     *                          description:
+     *                              type: string     
+     *                          scheduledDate:
+     *                              type: string
+     *                              format: date
+     *                              example: "2024-01-01"
+     *                          deadline:
+     *                              type: string  
+     *                          quantity:
+     *                              type: string          
+     *      responses:
+     *          200:
+     *              description: Return status of update stockEntryItem.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.put('/stockEntryItems/:id', stockEntryItemController.handleUpdateStockEntryItem)
+
+    /**
+     * @swagger
+     * /api/stockEntryItems/{id}:
+     *  delete:
+     *      tags:
+     *          - StockEntryItem
+     *      summary: Delete stockEntryItem with id
+     *      description: Delete a stockEntryItem with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stockEntryItem you want to delete
+     *      responses:
+     *          200:
+     *              description: Return status and info of delete stockEntryItem.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.delete('/stockEntryItems/:id', stockEntryItemController.handleDeleteStockEntryItem)
+
+    // StockDelivery API
+    /**
+     * @swagger
+     * /api/stockDeliverys:
+     *  get:
+     *      tags:
+     *          - StockDelivery
+     *      summary: Get all stockDeliverys
+     *      description: Get all information about stockDeliverys                
+     *      responses:
+     *          200:
+     *              description: Return status and list of stockDeliverys if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/stockDeliverys', stockDeliveryController.handleGetStockDeliverys)
+
+    /**
+     * @swagger
+     * /api/stockDeliverys/{id}:
+     *  get:
+     *      tags:
+     *          - StockDelivery
+     *      summary: Get stockDelivery with id
+     *      description: Get information about stockDelivery with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stockDelivery you want to get information 
+     *      responses:
+     *          200:
+     *              description: Return status and info of stockDelivery if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/stockDeliverys/:id', stockDeliveryController.handleGetStockDelivery)
+
+    /**
+     * @swagger
+     * /api/stockDeliverys:
+     *  post:
+     *      tags:
+     *          - StockDelivery
+     *      summary: Create new stockDelivery
+     *      description: Create new stockDelivery for ERP system
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          customerId:
+     *                              type: string
+     *                          warehouseId:
+     *                              type: string
+     *                          userId:
+     *                              type: string     
+     *                          scheduledDate:
+     *                              type: string
+     *                              format: date
+     *                              example: "2024-01-01"
+     *                          note:
+     *                              type: string      
+     *      responses:
+     *          200:
+     *              description: Return status of create new stockDelivery.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/stockDeliverys', stockDeliveryController.handleCreateStockDelivery)
+
+    /**
+     * @swagger
+     * /api/stockDeliverys/{id}:
+     *  put:
+     *      tags:
+     *          - StockDelivery
+     *      summary: Update stockDelivery information
+     *      description: Update stockDelivery for ERP system
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stockDelivery you want to update    
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          customerId:
+     *                              type: string
+     *                          warehouseId:
+     *                              type: string
+     *                          userId:
+     *                              type: string     
+     *                          scheduledDate:
+     *                              type: string
+     *                              format: date
+     *                              example: "2024-01-01"
+     *                          note:
+     *                              type: string          
+     *                          status:
+     *                              type: string
+     *                              example: "done" 
+     *      responses:
+     *          200:
+     *              description: Return status of update stockDelivery.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.put('/stockDeliverys/:id', stockDeliveryController.handleUpdateStockDelivery)
+
+    /**
+     * @swagger
+     * /api/stockDeliverys/{id}:
+     *  delete:
+     *      tags:
+     *          - StockDelivery
+     *      summary: Delete stockDelivery with id
+     *      description: Delete a stockDelivery with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stockDelivery you want to delete
+     *      responses:
+     *          200:
+     *              description: Return status and info of delete stockDelivery.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.delete('/stockDeliverys/:id', stockDeliveryController.handleDeleteStockDelivery)
+
+    // StockDeliveryItem API
+    /**
+     * @swagger
+     * /api/stockDeliveryItems:
+     *  get:
+     *      tags:
+     *          - StockDeliveryItem
+     *      summary: Get all stockDeliveryItems
+     *      description: Get all information about stockDeliveryItems                
+     *      responses:
+     *          200:
+     *              description: Return status and list of stockDeliveryItems if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/stockDeliveryItems', stockDeliveryItemController.handleGetStockDeliveryItems)
+
+    /**
+     * @swagger
+     * /api/stockDeliveryItems/{id}:
+     *  get:
+     *      tags:
+     *          - StockDeliveryItem
+     *      summary: Get stockDeliveryItem with id
+     *      description: Get information about stockDeliveryItem with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stockDeliveryItem you want to get information 
+     *      responses:
+     *          200:
+     *              description: Return status and info of stockDeliveryItem if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/stockDeliveryItems/:id', stockDeliveryItemController.handleGetStockDeliveryItem)
+
+    /**
+     * @swagger
+     * /api/stockDeliveryItems:
+     *  post:
+     *      tags:
+     *          - StockDeliveryItem
+     *      summary: Create new stockDeliveryItem
+     *      description: Create new stockDeliveryItem for ERP system
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          stockDeliveryId:
+     *                              type: string
+     *                          productId:
+     *                              type: string
+     *                          description:
+     *                              type: string     
+     *                          scheduledDate:
+     *                              type: string
+     *                              format: date
+     *                              example: "2024-01-01"
+     *                          deadline:
+     *                              type: string  
+     *                          quantity:
+     *                              type: string      
+     *      responses:
+     *          200:
+     *              description: Return status of create new stockDeliveryItem.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/stockDeliveryItems', stockDeliveryItemController.handleCreateStockDeliveryItem)
+
+    /**
+     * @swagger
+     * /api/stockDeliveryItems/{id}:
+     *  put:
+     *      tags:
+     *          - StockDeliveryItem
+     *      summary: Update stockDeliveryItem information
+     *      description: Update stockDeliveryItem for ERP system
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stockDeliveryItem you want to update    
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          stockDeliveryId:
+     *                              type: string
+     *                          productId:
+     *                              type: string
+     *                          description:
+     *                              type: string     
+     *                          scheduledDate:
+     *                              type: string
+     *                              format: date
+     *                              example: "2024-01-01"
+     *                          deadline:
+     *                              type: string  
+     *                          quantity:
+     *                              type: string          
+     *      responses:
+     *          200:
+     *              description: Return status of update stockDeliveryItem.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.put('/stockDeliveryItems/:id', stockDeliveryItemController.handleUpdateStockDeliveryItem)
+
+    /**
+     * @swagger
+     * /api/stockDeliveryItems/{id}:
+     *  delete:
+     *      tags:
+     *          - StockDeliveryItem
+     *      summary: Delete stockDeliveryItem with id
+     *      description: Delete a stockDeliveryItem with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stockDeliveryItem you want to delete
+     *      responses:
+     *          200:
+     *              description: Return status and info of delete stockDeliveryItem.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.delete('/stockDeliveryItems/:id', stockDeliveryItemController.handleDeleteStockDeliveryItem)
 
     return app.use("/api/", router)
 }

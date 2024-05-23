@@ -63,25 +63,34 @@ const handleGetStockEntryWithIdService = async(id) => {
 const handleCreateStockEntryService = async(data) => {
     try {
         let res = {}
-        let stockEntry = await db.StockEntry.findOne({
-            where: {
-                contact: data.contact
-            }
-        });
-        if (stockEntry) {
-            // console.log(stockEntry)
-            res.EC = -1
-            res.EM = 'StockEntry is existing'
-            res.DT = ''
-        } else {
-            await db.StockEntry.create({
-                ...data
-            })
-            res.EM = 'Create stockEntry successfully'
-            res.EC = 0
-            res.DT = ''
 
+        // Kiểm tra sự tồn tại của providerId, warehouseId, và userId
+        const providerExists = await db.Provider.findOne({
+            where: { providerId: data.providerId }
+        })
+
+        const warehouseExists = await db.Warehouse.findOne({
+            where: { warehouseId: data.warehouseId }
+        })
+
+        // const userExists = await db.User.findOne({
+        //     where: { userId: data.userId }
+        // })
+
+        if (!providerExists || !warehouseExists) {
+            // Một hoặc nhiều giá trị không tồn tại trong các mô hình liên quan
+            res.EM = 'Invalid providerId, warehouseId, or userId'
+            res.EC = 1
+            res.DT = ''
+            return res
         }
+
+        await db.StockEntry.create({
+            ...data
+        })
+        res.EM = 'Create stockEntry successfully'
+        res.EC = 0
+        res.DT = ''
         return res
     } catch (e) {
         console.log('>>> error when create new stockEntry: ', e)

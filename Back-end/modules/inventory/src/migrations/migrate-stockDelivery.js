@@ -7,20 +7,25 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.STRING
             },
-            warehouseId: {
-                allowNull: false,
-                type: Sequelize.STRING
-            },
             customerId: {
                 allowNull: false,
                 type: Sequelize.STRING
             },
-            transactionType: {
+            warehouseId: {
+                allowNull: false,
                 type: Sequelize.STRING
             },
-            transactionDate: {
+            userId: {
+                allowNull: false,
+                type: Sequelize.STRING
+            },
+            scheduledDate: {
                 allowNull: false,
                 type: Sequelize.DATE
+            },
+            note: {
+                allowNull: true,
+                type: Sequelize.STRING
             },
             createdAt: {
                 allowNull: false,
@@ -32,7 +37,7 @@ module.exports = {
             },
             status: {
                 type: Sequelize.STRING,
-                defaultValue: 'active'
+                defaultValue: 'draft'
             },
         });
     },

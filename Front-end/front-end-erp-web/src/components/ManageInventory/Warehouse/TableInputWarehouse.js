@@ -1,5 +1,6 @@
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { IoOptions } from "react-icons/io5";
 import { FaRegBuilding } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { useState } from 'react'
@@ -9,8 +10,6 @@ import { Flex, Input, Select, Tooltip } from 'antd';
 import { useEffect } from 'react'
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
-
-
 
 const { TextArea } = Input;
 
@@ -25,6 +24,8 @@ export const TableInputWarehouse = (props) => {
     const [finalPrice, setFinalPrice] = useState(0);
     const [taxTotals, setTaxTotals] = useState({});
     const [selectProduct, setSelectProduct] = useState([])
+
+    const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY', 'DD-MM-YYYY', 'DD-MM-YY'];
 
     const defaultProduct = {
         productId: '',
@@ -224,11 +225,10 @@ export const TableInputWarehouse = (props) => {
                         <tr>
                             <th scope="col">Sản phẩm</th>
                             <th scope="col">Mô tả</th>
-                            <th scope="col">Số lượng</th>
-                            <th scope="col">Đơn giá</th>
-                            <th scope="col">Thuế</th>
-                            <th scope="col">Thành tiền</th>
-                            <th scope="col"></th>
+                            <th scope="col">Ngày theo kế hoạch</th>
+                            <th scope="col">Hạn chót</th>
+                            <th scope="col">Nhu cầu</th>
+                            <th scope="col"><IoOptions /></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -270,13 +270,6 @@ export const TableInputWarehouse = (props) => {
                                                 variant="borderless" />
                                         </td>
                                         <td>
-                                            <Input
-                                                value={item?.price && item?.price !== '' ? item?.price : '0.00'}
-                                                onChange={(e) => handleChangeInputCreatingProduct(e, 'price', item)}
-                                                variant="borderless"
-                                            />
-                                        </td>
-                                        <td>
                                             <Select
                                                 showSearch
                                                 onChange={(e) => handleChangeInputCreatingProduct(e, 'tax', item)}
@@ -293,7 +286,10 @@ export const TableInputWarehouse = (props) => {
                                             />
                                         </td>
                                         <td>
-                                            <span>{item?.priceBeforeTax && item?.priceBeforeTax !== '' ? item?.priceBeforeTax.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '0₫'}</span>
+                                            <Input
+                                                onChange={(e) => handleChangeInputCreatingProduct(e, 'quantity', item)}
+                                                value={item?.quantity && item?.quantity !== '' ? item?.quantity : '0.00'}
+                                                variant="borderless" />
                                         </td>
                                         <td>
                                             <Tooltip placement="top" title={`Xóa sản phẩm "${item.name}"`}>

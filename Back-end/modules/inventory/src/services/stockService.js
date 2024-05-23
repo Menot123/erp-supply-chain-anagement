@@ -65,7 +65,8 @@ const handleCreateStockService = async(data) => {
         let res = {}
         let stock = await db.Stock.findOne({
             where: {
-                contact: data.contact
+                productId: data.productId,
+                warehouseId: data.warehouseId,
             }
         });
         if (stock) {

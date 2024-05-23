@@ -6,8 +6,9 @@ module.exports = (sequelize, DataTypes) => {
     class StockDelivery extends Model {
         static associate(models) {
             ////
-            StockDelivery.belongsTo(models.Customer)
-            StockDelivery.belongsTo(models.Warehouse)
+            StockDelivery.belongsTo(models.Customer, { foreignKey: 'customerId', targetKey: 'customerId', as: 'customerData' })
+            StockDelivery.belongsTo(models.Warehouse, { foreignKey: 'warehouseId', targetKey: 'warehouseId', as: 'warehouseData' })
+                // StockDelivery.belongsTo(models.User, { foreignKey: 'warehouseId', targetKey: 'warehouseId', as: 'warehouseData' })
             StockDelivery.hasMany(models.StockDeliveryItem, { foreignKey: 'stockDeliveryId' })
         }
         static generateId() {
@@ -38,10 +39,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             primaryKey: true
         },
-        warehouseId: DataTypes.STRING,
         customerId: DataTypes.STRING,
-        transactionType: DataTypes.STRING,
-        transactionDate: DataTypes.DATE,
+        warehouseId: DataTypes.STRING,
+        userId: DataTypes.STRING,
+        scheduledDate: DataTypes.DATE,
+        note: DataTypes.STRING,
         status: DataTypes.STRING
     }, {
         sequelize,

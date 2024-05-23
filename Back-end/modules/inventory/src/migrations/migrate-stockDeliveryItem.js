@@ -15,6 +15,18 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.STRING
             },
+            description: {
+                allowNull: true,
+                type: Sequelize.STRING
+            },
+            scheduledDate: {
+                allowNull: false,
+                type: Sequelize.DATE
+            },
+            deadline: {
+                allowNull: true,
+                type: Sequelize.DATE
+            },
             quantity: {
                 defaultValue: 0,
                 type: Sequelize.INTEGER

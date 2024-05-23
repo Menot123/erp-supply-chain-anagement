@@ -6,8 +6,8 @@ module.exports = (sequelize, DataTypes) => {
     class Stock extends Model {
         static associate(models) {
             ////
-            Stock.belongsTo(models.Warehouse)
-            Stock.belongsTo(models.Product)
+            Stock.belongsTo(models.Warehouse, { foreignKey: 'warehouseId', targetKey: 'warehouseId', as: 'warehouseData' })
+            Stock.belongsTo(models.Product, { foreignKey: 'productId', targetKey: 'productId', as: 'productData' })
         }
         static generateId() {
             // Logic to generate stockId based on type and group
