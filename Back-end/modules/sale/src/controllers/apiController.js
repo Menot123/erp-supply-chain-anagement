@@ -230,8 +230,43 @@ const deleteComment = async (req, res, next) => {
     }
 }
 
+const getLatestQuote = async (req, res, next) => {
+    try {
+        let response = await apiService.getLatestQuoteService();
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in get latest quote controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const sendingQuote = async (req, res, next) => {
+    try {
+        const { dataQuote, fullDataCustomer, bodySendQuote } = req.body;
+        const quoteFile = req.file;
+        let response = await apiService.sendingQuoteService(dataQuote, fullDataCustomer, bodySendQuote, quoteFile);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in sending quote controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
 module.exports = {
     createCompanyData, createBranchCompanyData, getBranches, getBranch, getDetailCompany,
     handleDeleteCompany, updateConfirmQuote, getCustomers, getAllCodes, getComments, postComment,
-    updateComment, deleteComment
+    updateComment, deleteComment, getLatestQuote, sendingQuote
 }

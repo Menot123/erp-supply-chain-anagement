@@ -1,6 +1,7 @@
 import React from 'react'
 import './OtherInfo.scss'
 import { Select, DatePicker } from "antd";
+import { FormattedMessage, useIntl } from 'react-intl'
 
 
 export const OtherInfo = () => {
@@ -17,10 +18,10 @@ export const OtherInfo = () => {
         <div className='wrapper-other-info-quote d-flex'>
             <div className='content-left'>
                 <div className='content-left-title'>
-                    <span className='text-title'>BÁN HÀNG</span>
+                    <span className='text-title'><FormattedMessage id="new_quote.other-info-seller-title" /></span>
                 </div>
                 <div className='content-left-employee d-flex align-items-center'>
-                    <label className='me-2' htmlFor='select-employee'>Nhân viên kinh doanh</label>
+                    <label className='me-2' htmlFor='select-employee'><FormattedMessage id="new_quote.other-info-seller" /></label>
                     <Select
                         showSearch
                         id='select-employee'
@@ -42,10 +43,10 @@ export const OtherInfo = () => {
             </div>
             <div className='content-right'>
                 <div className='content-right-title'>
-                    <span className='text-title'>VẬN CHUYỂN</span>
+                    <span className='text-title'><FormattedMessage id="new_quote.other-info-transportation" /></span>
                 </div>
                 <div className='content-right-delivery d-flex align-items-center'>
-                    <label className='me-2' htmlFor='select-date-delivery'>Ngày giao hàng</label>
+                    <label className='me-2' htmlFor='select-date-delivery'><FormattedMessage id="new_quote.other-info.date-transportation" /></label>
                     <DatePicker
                         className='select-date-delivery'
                         onChange={onChangeDatePicker}

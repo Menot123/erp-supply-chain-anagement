@@ -4,7 +4,6 @@ module.exports = {
     await queryInterface.createTable('quotes', {
       quoteId: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },

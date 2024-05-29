@@ -3,12 +3,14 @@ import './ModalSendQuoteToEmail.scss'
 import Modal from 'react-bootstrap/Modal';
 import { Select, Input } from "antd";
 import { FaRegFilePdf } from "react-icons/fa";
+import { sendingQuoteToCustomer } from '../../../services/saleServices'
+import { toast } from 'react-toastify';
 
 export const ModalSendQuoteToEmail = (props) => {
 
     const defaultValue = `Xin chào,
 
-Đã có quotation S00005 có giá trị là 6.655 ₫ đã sẵn sàng để bạn kiểm tra.
+Đã có quotation S${props?.dataQuote?.quoteId} có giá trị là ${props?.dataQuote?.totalPrice} đã sẵn sàng để bạn kiểm tra.
     
 Đừng ngần ngại liên hệ với chúng tôi nếu bạn có câu hỏi cần được giải đáp.
 `;
@@ -16,20 +18,69 @@ export const ModalSendQuoteToEmail = (props) => {
 
     const [titleSendQuote, setTitleSendQuote] = useState('')
     const [bodySendQuote, setBodySendQuote] = useState(defaultValue)
+    const [receiver, setReceiver] = useState('')
+    const [isSendingEmail, setIsSendingEmail] = useState(false)
 
     useEffect(() => {
-        if (props?.dataQuote && props?.customer?.label) {
-            setTitleSendQuote(props?.customer?.label + ' Báo giá (Mã S00005)')
+        if (props?.dataQuote && props?.fullDataCustomer) {
+            let receiverText = props?.fullDataCustomer?.fullName + ` <${props?.fullDataCustomer?.email}> `
+            Promise.all([
+                setReceiver(receiverText),
+                setTitleSendQuote(props?.fullDataCustomer?.fullName + ' Báo giá (Mã ' + props?.dataQuote?.quoteId + ')'),
+                setBodySendQuote(`Xin chào,
+
+Đã có quotation ${props?.dataQuote?.quoteId} có giá trị là ${props?.dataQuote?.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })} đã sẵn sàng để bạn kiểm tra.
+                
+Đừng ngần ngại liên hệ với chúng tôi nếu bạn có câu hỏi cần được giải đáp.`)])
         }
     }, [props])
 
     const { TextArea } = Input;
 
-    const handleConfirmCancelQuote = () => {
-        props?.cancelQuote()
-        props?.close()
-        window.scrollTo(0, 0)
-    }
+    // const handleConfirmCancelQuote = () => {
+    //     props?.cancelQuote()
+    //     props?.close()
+    //     window.scrollTo(0, 0)
+    // }
+
+    // const handleSendingQuoteToEmail = async () => {
+    //     let quoteFile = await props?.downloadQuote('POST_API')
+    //     console.log('check quote file: ', quoteFile)
+    //     let dataSend = {
+    //         quoteFile,
+    //         ...props?.dataQuote,
+    //         ...props?.fullDataCustomer,
+    //         bodySendQuote: bodySendQuote
+    //     }
+
+    //     let res = await sendingQuoteToCustomer(dataSend)
+    // }
+
+    const handleSendingQuoteToEmail = async () => {
+
+        try {
+            setIsSendingEmail(true)
+            let quoteFile = await props?.downloadQuote('POST_API');
+
+            // Tạo FormData và thêm các dữ liệu khác
+            const formData = new FormData();
+            formData.append('quoteFile', quoteFile, 'quote.pdf'); // Chuyển đổi Blob thành file
+            formData.append('dataQuote', JSON.stringify(props?.dataQuote));
+            formData.append('fullDataCustomer', JSON.stringify(props?.fullDataCustomer));
+            formData.append('bodySendQuote', bodySendQuote);
+
+            // Gửi request POST sử dụng axios và chờ phản hồi
+            let res = await sendingQuoteToCustomer(formData);
+            setTimeout(() => {
+                setIsSendingEmail(false);
+                if (res && res.EC === 0) {
+                    toast.success(`Sending quote to ${props?.fullDataCustomer?.email} successfully!`)
+                }
+            }, 3000);
+        } catch (error) {
+            console.error('Error sending quote:', error);
+        }
+    };
 
     return (
         <>
@@ -49,14 +100,8 @@ export const ModalSendQuoteToEmail = (props) => {
                 <Modal.Body>
                     <div className='wrap-body-modal'>
                         <div className='wrap-select-customer'>
-                            <label htmlFor='select-customer'>Khách hàng</label>
-                            <Select
-                                id='select-customer'
-                                className='select-customer'
-                                variant="borderless"
-                                value={props?.customer ?? props?.customer}
-                                disabled={true}
-                            />
+                            <label htmlFor='select-customer'>Người nhận</label>
+                            <Input variant="borderless" value={receiver ?? ''} disabled />
                         </div>
                         <div className='wrap-input-title'>
                             <label htmlFor='input-title'>Tiêu đề</label>
@@ -65,7 +110,7 @@ export const ModalSendQuoteToEmail = (props) => {
                             />
                         </div>
 
-                        <TextArea className='p0' value={bodySendQuote} variant='borderless' autoSize
+                        <TextArea style={{ padding: '0px' }} value={bodySendQuote} variant='borderless' autoSize
                             onChange={(e) => setBodySendQuote(e.target.value)}
                         />
 
@@ -85,10 +130,17 @@ export const ModalSendQuoteToEmail = (props) => {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button className='btn btn-main' onClick={handleConfirmCancelQuote}>Gửi</button>
+                    <button className='btn btn-main' onClick={handleSendingQuoteToEmail}>Gửi</button>
                     <button className='btn btn-gray' onClick={props?.close}> Hủy bỏ</button>
                 </Modal.Footer>
             </Modal >
+            {isSendingEmail
+                ?
+                <div className="loading-overlay">
+                    <div className="loading-spinner"></div>
+                </div>
+                : ''
+            }
         </>
     )
 }

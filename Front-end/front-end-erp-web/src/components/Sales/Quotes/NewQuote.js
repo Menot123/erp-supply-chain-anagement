@@ -15,14 +15,20 @@ import { validateData } from '../../../utils/functions'
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { QuotePDF } from './QuotePDF';
+import { MdSignalCellularNull } from 'react-icons/md';
+import { getLatestQuoteCode } from '../../../services/saleServices'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { useSelector } from 'react-redux';
 
 export const NewQuote = () => {
 
     const history = useHistory()
     const componentPDF = useRef(null)
-
+    const intl = useIntl();
+    const language = useSelector(state => state.language.value)
 
     const defaultDataQuote = {
+        quoteId: '',
         customer: '',
         expirationDay: '',
         currency: '',
@@ -51,6 +57,23 @@ export const NewQuote = () => {
     const [otherInfoQuote, setOtherInfoQuote] = useState(defaultDataOtherInfoQuote)
     const [isShowModalSendQuote, setIsShowModalSendQuote] = useState(false)
     const [isSendingQuote, setIsSendingQuote] = useState(false)
+    const [dataSendQuotePDF, setDataSendQuotePDF] = useState([])
+    const [filePDFBlob, setFilePDFBlob] = useState(null)
+
+    useEffect(() => {
+        const fetchLatestQuoteCode = async () => {
+            let res = await getLatestQuoteCode()
+            if (res?.EC === 0) {
+                setDataQuote((prevState) => ({
+                    ...prevState,
+                    quoteId: 'S' + res?.DT[0]?.quoteId
+                }))
+            }
+        }
+
+        fetchLatestQuoteCode()
+    }, [])
+
 
     const getCustomerById = (customerId) => {
         const customer = customerList.find((customer) => customer.customerId === customerId);
@@ -69,20 +92,23 @@ export const NewQuote = () => {
         setCustomersSelect(customersDataBuild)
     }
 
-    const buildSelectAllCodes = (listCodes) => {
-        let codesDataBuild = []
-        codesDataBuild = listCodes.map((item, index) => {
-            return (
-                {
-                    value: item?.id,
-                    label: item?.valueVi
-                }
-            )
-        })
-        return codesDataBuild
-    }
+
 
     useEffect(() => {
+
+        const buildSelectAllCodes = (listCodes) => {
+            let codesDataBuild = []
+            codesDataBuild = listCodes.map((item, index) => {
+                return (
+                    {
+                        value: item?.id,
+                        label: language === 'vi' ? item?.valueVi : item?.valueEn
+                    }
+                )
+            })
+            return codesDataBuild
+        }
+
         const fetchAllProduct = async () => {
             const res = await getAllProducts()
             if (res && res.EC === 0) {
@@ -117,7 +143,7 @@ export const NewQuote = () => {
 
         Promise.all([fetchAllProduct(), fetchCustomers(), fetchAllCodes()])
 
-    }, [])
+    }, [language])
 
     const handleCreateNewDepartment = () => {
 
@@ -166,11 +192,11 @@ export const NewQuote = () => {
         }
     }
 
-    const handleGeneratePdf = async () => {
+    const handleGeneratePdf = async (type) => {
         const quote = componentPDF.current
         try {
             const canvas = await html2canvas(quote, {
-                scale: 2, // Tăng độ phân giải lên gấp đôi
+                scale: 1, // Tăng độ phân giải lên gấp đôi (neu bang 2 thi size file lon)
                 useCORS: true, // Sử dụng Cross-Origin Resource Sharing nếu cần thiết
             });
             const imgQuote = canvas.toDataURL("image/png", 1.0);
@@ -193,6 +219,10 @@ export const NewQuote = () => {
             const imgY = padding;
 
             pdf.addImage(imgQuote, "PNG", imgX, imgY, imgWidth, imgHeight);
+            if (type && type === 'POST_API') {
+                // setFilePDFBlob(pdf.output('blob'))
+                return pdf.output('blob');
+            }
             pdf.save("Quote.pdf");
         } catch (err) {
             console.log(err)
@@ -202,11 +232,11 @@ export const NewQuote = () => {
     const handleSendQuoteToEmail = () => {
         const arrValidateFieldsQuote = ['customer', 'expirationDay', 'currency', 'paymentPolicy']
         let check = validateData(arrValidateFieldsQuote, dataQuote)
-        console.log('>>> validate: ', check)
         if (check && check.length === 0) {
+            setDataSendQuotePDF(dataQuote)
             setIsShowModalSendQuote(true)
         } else {
-            toast.warning("Vui lòng điền đủ thông tin báo giá trước khi gửi.")
+            toast.warning(<FormattedMessage id="new_quote.toast-empty-field" />)
         }
     }
 
@@ -218,22 +248,22 @@ export const NewQuote = () => {
         <div className='wrapper-create-quote'>
             <div className='header-create-quote'>
                 <div className='btn-actions'>
-                    <button onClick={() => handleCreateNewDepartment()} className='ms-1 btn btn-outline-secondary btn-create-quote'>Mới</button>
+                    <button onClick={() => handleCreateNewDepartment()} className='ms-1 btn btn-outline-secondary btn-create-quote'><FormattedMessage id="btn-new-quote" /></button>
                 </div>
                 <div className='wrapper-text-header'>
                     <Tooltip placement="top" title='Back to "Báo giá"'>
-                        <span onClick={backToQuote} className='title-quote' >Báo giá</span>
+                        <span onClick={backToQuote} className='title-quote' ><FormattedMessage id="title-new-quote" /></span>
                     </Tooltip>
                     {/* <span onClick={backToQuote} className='title-quote' data-tooltip='Back to "Báo giá"'>Báo giá</span> */}
-                    <span className='title-create'>Mới</span>
+                    <span className='title-create'><FormattedMessage id="btn-new-quote" /></span>
                 </div>
             </div>
             <div className='wrapper-body-create-quote'>
                 <div className='actions-status'>
                     <div className='wrap-btn-actions'>
-                        <button className='btn btn-main' onClick={handleSendQuoteToEmail}>Gửi qua email</button>
-                        <button className='btn btn-gray'>Xác nhận</button>
-                        <button className='btn btn-gray' onClick={handlePushDataQuotePreview}>Xem trước</button>
+                        <button className='btn btn-main' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>
+                        <button className='btn btn-gray'><FormattedMessage id="btn-confirm-quote" /></button>
+                        <button className='btn btn-gray' onClick={handlePushDataQuotePreview}><FormattedMessage id="btn-preview-quote" /></button>
 
                         {/* <NavLink to='/my/orders' className='btn btn-gray'>Xem trước</NavLink> */}
                     </div>
@@ -246,31 +276,31 @@ export const NewQuote = () => {
                             items={[
                                 {
                                     status: 'process',
-                                    title: 'Báo giá',
+                                    title: <FormattedMessage id="title-new-quote" />,
                                 },
                                 {
                                     status: 'wait',
-                                    title: 'Báo giá đã gửi',
+                                    title: <FormattedMessage id="step-quote-sent" />,
                                 },
                                 {
                                     status: 'wait',
-                                    title: 'Đơn bán hàng',
+                                    title: <FormattedMessage id="step-bill" />,
                                 },
                             ]}
                         />
                     </div>
                 </div>
                 <div className='body-create-quote'>
-                    <h3>{isSendingQuote ? 'Báo giá - S00003' : 'Mới'}</h3>
+                    <h3>{isSendingQuote ? 'Báo giá - S00003' : <FormattedMessage id="btn-new-quote" />}</h3>
                     <div className='wrap-info-quote'>
                         <div className='content-left'>
-                            <label htmlFor='select-customer'>Khách hàng</label>
+                            <label htmlFor='select-customer'><FormattedMessage id="new_quote.customer" /></label>
                             <Select
                                 showSearch
                                 id='select-customer'
                                 className='select-customer'
                                 variant="borderless"
-                                placeholder="Nhập để tìm một khách hàng..."
+                                placeholder={intl.formatMessage({ id: "new_quote.placeholder-customer" })}
                                 optionFilterProp="children"
                                 filterOption={(input, option) => (option?.label ?? '').includes(input)}
                                 filterSort={(optionA, optionB) =>
@@ -283,7 +313,7 @@ export const NewQuote = () => {
                         </div>
                         <div className='content-right'>
                             <div className='wrap-expiration-date'>
-                                <label htmlFor='select-date-expiration'>Ngày hết hạn</label>
+                                <label htmlFor='select-date-expiration'><FormattedMessage id="new_quote.expire-date" /></label>
                                 <DatePicker
                                     className='select-date-expiration'
                                     onChange={onChangeDatePicker}
@@ -295,7 +325,7 @@ export const NewQuote = () => {
                                 />
                             </div>
                             <div className='wrap-currency'>
-                                <label htmlFor='select-currency'>Bảng giá</label>
+                                <label htmlFor='select-currency'><FormattedMessage id="new_quote.currency" /></label>
                                 <Select
                                     id='select-currency'
                                     className='select-currency'
@@ -313,7 +343,7 @@ export const NewQuote = () => {
                             </div>
 
                             <div className='wrap-payment-method'>
-                                <label htmlFor='select-payment-method'>Điều khoản thanh toán</label>
+                                <label htmlFor='select-payment-method'><FormattedMessage id="new_quote.payment-policy" /></label>
                                 <Select
                                     id='select-payment-method'
                                     showSearch
@@ -338,19 +368,19 @@ export const NewQuote = () => {
                             type="card"
                             items={
                                 !isSendingQuote ? [{
-                                    label: `Chi tiết đơn hàng`,
+                                    label: <FormattedMessage id="new_quote.detail-order" />,
                                     key: 'tab-1',
                                     children: <TableProducts listProductFromParent={listProduct} handleChangeDataQuote={handleChangeInputQuote} isSendingQuote={isSendingQuote}
                                     />,
                                 },
                                 {
-                                    label: `Thông tin khác`,
+                                    label: <FormattedMessage id="new_quote.other-info" />,
                                     key: 'tab-2',
                                     children: <OtherInfo />,
                                 }]
                                     :
                                     [{
-                                        label: `Chi tiết đơn hàng`,
+                                        label: <FormattedMessage id="new_quote.detail-order" />,
                                         key: 'tab-1',
                                         children: <TableProducts listProductFromParent={listProduct} handleChangeDataQuote={handleChangeInputQuote} isSendingQuote={isSendingQuote}
                                         />,
@@ -363,17 +393,20 @@ export const NewQuote = () => {
                         show={isShowModalSendQuote}
                         close={() => setIsShowModalSendQuote(false)}
                         dataQuote={dataQuote}
-                        customer={selectedCustomer}
+                        fullDataCustomer={fullDataCustomer}
                         downloadQuote={handleGeneratePdf}
-
                     />
                 </div>
             </div>
 
-            <QuotePDF componentPDF={componentPDF} dataQuote={dataQuote}
-                fullDataCustomer={fullDataCustomer}
-                paymentPolicyToQuote={paymentPolicyToQuote}
-            />
+            {isShowModalSendQuote ?
+                <QuotePDF componentPDF={componentPDF}
+                    fullDataCustomer={fullDataCustomer}
+                    paymentPolicyToQuote={paymentPolicyToQuote}
+                    dataQuote={dataSendQuotePDF}
+                />
+                : ''
+            }
         </div>
     )
 }

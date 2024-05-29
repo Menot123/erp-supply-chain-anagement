@@ -6,12 +6,10 @@ import initApiRoutes from './route/api';
 import setupSwagger from './middleware/swagger';
 import connectDB from './config/connectDB';
 require('dotenv').config();
-
 let app = express();
 let port = process.env.PORT || 8084;
 
-
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', process.env.REACT_URL);
@@ -49,5 +47,5 @@ connectDB();
 
 app.listen(port, () => {
     //callback
-    console.log("Backend Node ERP Inventory running on the port:", +port);
+    console.log("Backend Node ERP Sale running on the port:", +port);
 });

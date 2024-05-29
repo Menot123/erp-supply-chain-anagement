@@ -1,6 +1,7 @@
 import express from "express"
 import apiController from '../controllers/apiController'
-
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() }); // Sử dụng bộ nhớ để lưu trữ file trong bộ nhớ đệm
 const router = express.Router()
 
 
@@ -292,6 +293,40 @@ const initApiRoutes = (app) => {
      * 
      */
     router.delete('/comment/:commentId', apiController.deleteComment);
+
+    /**
+     * @swagger
+     * /api/quote:
+     *  get:
+     *      tags:
+     *          - Sales
+     *      summary: Get the last quote
+     *      description: Get the last quote by created At
+     *      responses:
+     *          200:
+     *              description: Return a quote latest
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/quote', apiController.getLatestQuote);
+
+    /**
+     * @swagger
+     * /api/sending-quote:
+     *  get:
+     *      tags:
+     *          - Sales
+     *      summary: Sending quote to email
+     *      description: Sending quote to email and update status of quote.
+     *      responses:
+     *          200:
+     *              description: Return status sending quote and update status of quote
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/sending-quote', upload.single('quoteFile'), apiController.sendingQuote);
 
 
     return app.use("/api/", router)

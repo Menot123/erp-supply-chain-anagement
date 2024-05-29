@@ -24,6 +24,23 @@ const deleteComment = (commentId) => {
     return axios.delete(`/sale/api/comment/${commentId}`)
 }
 
+const getLatestQuoteCode = () => {
+    return axios.get('/sale/api/quote')
+}
+
+// const sendingQuoteToCustomer = (dataQuote) => {
+//     return axios.post('/sale/api/sending-quote', dataQuote)
+// }
+
+const sendingQuoteToCustomer = (data) => {
+    return axios.post('/sale/api/sending-quote', data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+};
+
 export {
-    getCustomers, getAllCodes, getComments, createAComment, editComment, deleteComment
+    getCustomers, getAllCodes, getComments, createAComment, editComment, deleteComment, getLatestQuoteCode,
+    sendingQuoteToCustomer
 }

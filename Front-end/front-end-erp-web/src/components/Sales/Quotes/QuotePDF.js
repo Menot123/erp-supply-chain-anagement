@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { IoMdMail } from "react-icons/io";
 import { Table } from 'antd';
 
 export const QuotePDF = (props) => {
 
     const [dataProducts, setDataProducts] = useState([])
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [finalPrice, setFinalPrice] = useState(0);
+    const [taxTotals, setTaxTotals] = useState({});
+
+    const memoizedProductName = useMemo(() => props?.dataQuote?.productList, [props?.dataQuote?.productList]);
 
     const buildDataTableProduct = (products) => {
         let dataProducts = []
@@ -16,20 +21,50 @@ export const QuotePDF = (props) => {
                     quantity: product?.quantity,
                     price: product?.price,
                     tax: 'Thuế GTGT phải nộp ' + product?.tax?.label,
-                    total: product?.priceBeforeTax,
+                    total: product?.priceBeforeTax.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
                 })
             })
         }
         return dataProducts
     }
 
+    const calculateTotalPrice = () => {
+        let totalBeforeTax = 0
+        let totalPrice = 0
+        if (props?.dataQuote?.productList && props?.dataQuote?.productList.length > 0) {
+            props?.dataQuote?.productList.forEach(item => {
+                totalBeforeTax += +item.priceBeforeTax;
+                totalPrice += +item.priceBeforeTax + (+item?.priceBeforeTax * +item?.tax?.value / 100)
+            });
+        }
+        Promise.all([setTotalPrice(totalBeforeTax), setFinalPrice(totalPrice)])
+    };
+
+    const calculateTaxTotals = () => {
+        const totals = {};
+        props?.dataQuote?.productList.forEach(item => {
+            if (item?.tax && item?.tax?.value !== 0) {
+                const taxValue = +item?.priceBeforeTax * +item?.tax.value / 100;
+                if (totals[item?.tax.value]) {
+                    totals[item?.tax.value] += taxValue;
+                } else {
+                    totals[item?.tax.value] = taxValue;
+                }
+            }
+        });
+        setTaxTotals(totals);
+    };
 
     useEffect(() => {
-        if (props?.dataQuote?.productList) {
+        if (props?.dataQuote?.productList && props?.dataQuote?.productList.length > 0) {
             let productsBuild = buildDataTableProduct(props?.dataQuote?.productList)
             setDataProducts(productsBuild)
+            calculateTaxTotals();
+            calculateTotalPrice();
         }
-    }, [props])
+
+    }, [props?.dataQuote?.productList]);
+
 
     const columns = [
         {
@@ -66,7 +101,6 @@ export const QuotePDF = (props) => {
         return `${currentYear}/${currentMonth}/${currentDay}`;
     }
 
-    console.log('check props: ', props?.dataQuote)
 
     return (
         // <div className='wrapper-quote-pdf'>
@@ -123,7 +157,8 @@ export const QuotePDF = (props) => {
         //     </div>
         // </div>
 
-        <div ref={props?.componentPDF} style={{ width: '100%' }}>
+        <div ref={props?.componentPDF} style={{ width: '100%', }} >
+            {/* position: 'absolute', left: '-2000px' */}
             <h2>Báo giá - S00003</h2>
             <div className='wrap-inf-quote d-flex gap-4'>
                 <div className='inf-selling w-50 '>
@@ -159,17 +194,26 @@ export const QuotePDF = (props) => {
                 <div className='col-6 wrapper-price'>
                     <div className='price-before-tax d-flex justify-content-between bottom-line'>
                         <span className='title-price-before-tax'>Số tiền trước thuế</span>
-                        <span>40 ₫</span>
+                        <span>{totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
                     </div>
 
-                    <div className='tax d-flex justify-content-between bottom-line'>
+                    {/* <div className='tax d-flex justify-content-between bottom-line'>
                         <span>Thuế GTGT 10%</span>
                         <span>4 ₫</span>
-                    </div>
+                    </div> */}
+
+                    {
+                        Object.keys(taxTotals).map((taxValue, index) => (
+                            <div key={'tax-total' + index} className='tax d-flex justify-content-between bottom-line'>
+                                <span>Thuế GTGT {taxValue}% : </span>
+                                <span>{taxTotals[taxValue].toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
+                            </div>
+                        ))
+                    }
 
                     <div className='total d-flex justify-content-between bottom-line'>
                         <span className='title-total'>Tổng</span>
-                        <span>44 ₫</span>
+                        <span>{finalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
                     </div>
 
                 </div>

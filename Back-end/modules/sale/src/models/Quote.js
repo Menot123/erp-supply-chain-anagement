@@ -15,8 +15,9 @@ module.exports = (sequelize, DataTypes) => {
     };
     Quote.init({
         quoteId: {
-            type: DataTypes.STRING,
-            primaryKey: true
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
         },
         customer: DataTypes.STRING,
         expirationDay: DataTypes.STRING,

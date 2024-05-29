@@ -10,11 +10,11 @@ import { useEffect } from 'react'
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 
-
-
 const { TextArea } = Input;
 
 export const TableProducts = (props) => {
+
+    const intl = useIntl();
 
     const [listProduct, setListProduct] = useState([])
     const [creatingProduct, setCreatingProduct] = useState({})
@@ -226,13 +226,12 @@ export const TableProducts = (props) => {
                 <table className="table table-striped table-hover table-products">
                     <thead>
                         <tr>
-                            <th scope="col">Sản phẩm</th>
-                            <th scope="col">Mô tả</th>
-                            <th scope="col">Số lượng</th>
-                            <th scope="col">Đơn giá</th>
-                            <th scope="col">Thuế</th>
-                            <th scope="col">Thành tiền</th>
-                            <th scope="col"></th>
+                            <th scope="col"><FormattedMessage id="new_quote.product" /></th>
+                            <th scope="col"><FormattedMessage id="new_quote.product-description" /></th>
+                            <th scope="col"><FormattedMessage id="new_quote.product-quantity" /></th>
+                            <th scope="col"><FormattedMessage id="new_quote.product-price" /></th>
+                            <th scope="col"><FormattedMessage id="new_quote.product-tax" /></th>
+                            <th scope="col"><FormattedMessage id="new_quote.product-total" /></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -245,7 +244,7 @@ export const TableProducts = (props) => {
                                                 className={item?.emptyName
                                                     ? 'name-creating-product empty-data'
                                                     : 'name-creating-product'}
-                                                placeholder="Nhập để tìm một sản phẩm..."
+                                                placeholder={intl.formatMessage({ id: "new_quote.placeholder-customer" })}
                                                 variant="borderless"
                                                 showSearch
                                                 onChange={(e, labeledValue) => handleOnchangeNameProduct(e, labeledValue)}
@@ -300,7 +299,7 @@ export const TableProducts = (props) => {
                                             <span>{item?.priceBeforeTax && item?.priceBeforeTax !== '' ? item?.priceBeforeTax.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '0₫'}</span>
                                         </td>
                                         <td>
-                                            <Tooltip placement="top" title={`Xóa sản phẩm "${item.name}"`}>
+                                            <Tooltip placement="top" title={intl.formatMessage({ id: "new_quote.tool-tip-delete" }) + item.name}>
                                                 <FaRegTrashCan className='hover-item' onClick={() => handleRemoveProduct(item)} />
                                             </Tooltip>
                                         </td>
@@ -311,7 +310,7 @@ export const TableProducts = (props) => {
                         }
                         <tr>
                             <td colSpan='7'>
-                                {props?.isSendingQuote ? "" : <span onClick={() => handleAddNewInput()} className='add-sub-company'>Thêm sản phẩm</span>}
+                                {props?.isSendingQuote ? "" : <span onClick={() => handleAddNewInput()} className='add-sub-company'><FormattedMessage id="new_quote.product-add-new" /></span>}
                             </td>
                         </tr>
                     </tbody>
@@ -319,13 +318,13 @@ export const TableProducts = (props) => {
                 <div className='wrap-policy-total'>
                     <div className='policy input-hover'>
                         <TextArea autoSize variant="borderless" className='input-policy'
-                            placeholder='Điều khoản và điều kiện...'
+                            placeholder={intl.formatMessage({ id: "new_quote.payment-policy" })}
                             onChange={(e) => props?.handleChangeDataQuote(e, 'policyAndCondition')}
                         />
                     </div>
                     <div className='wrap-tax-price'>
                         <div className='price-before-tax d-flex justify-content-between gap-4 align-items-center'>
-                            <span >Số tiền trước thuế: </span>
+                            <span ><FormattedMessage id="new_quote.total-before-tax" /></span>
                             <span className='fw-bold'>
                                 {
                                     totalPrice && totalPrice !== 'NaN' && +totalPrice !== 0 ? totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '0₫'
@@ -336,14 +335,14 @@ export const TableProducts = (props) => {
                         {
                             Object.keys(taxTotals).map((taxValue, index) => (
                                 <div key={'tax-total' + index} className='tax-total d-flex justify-content-between gap-4 align-items-center'>
-                                    <span>Thuế GTGT {taxValue}% : </span>
+                                    <span><FormattedMessage id="new_quote.VAT" /> {taxValue}% : </span>
                                     <span>{taxTotals[taxValue].toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
                                 </div>
                             ))
                         }
 
                         <div className='total-price d-flex justify-content-between gap-4 align-items-center'>
-                            <span>Tổng: </span>
+                            <span><FormattedMessage id="new_quote.total" /> </span>
                             <h5 className='total-price-text'>{finalPrice && finalPrice !== 0 ? finalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '0₫'}</h5>
                         </div>
                     </div>

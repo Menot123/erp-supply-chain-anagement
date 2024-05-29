@@ -1,5 +1,7 @@
 import db from '../models/index'
 const { Op } = require('sequelize');
+import { sendEmail } from './mailService';
+
 
 const createCompanyDataService = async (dataCompany) => {
     try {
@@ -394,9 +396,71 @@ const deleteCommentService = async (commentId) => {
     }
 }
 
+const getLatestQuoteService = async () => {
+    try {
+        let res = {}
+        let quote = await db.Quote.findAll({
+            limit: 1,
+            order: [
+                ['createdAt', 'DESC']
+            ],
+            where: {
+                status: 'active'
+            },
+        });
+        if (quote) {
+            res.EC = 0
+            res.EM = 'Get quote latest successfully'
+            res.DT = quote
+        } else {
+            res.EM = 'Get quote latest failed'
+            res.EC = 1
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
+const sendingQuoteService = async (dataQuote, fullDataCustomer, bodySendQuote, quoteFile) => {
+    let res = {}
+
+    if (dataQuote && fullDataCustomer && bodySendQuote && quoteFile) {
+        const dataQuoteSend = JSON.parse(dataQuote)
+        const fullDataCustomerSend = JSON.parse(fullDataCustomer)
+
+        try {
+            sendEmail({
+                receiver: fullDataCustomerSend?.email,
+                name: fullDataCustomerSend?.fullName,
+                bodySendQuote: bodySendQuote,
+                quoteCode: dataQuoteSend?.quoteId,
+                currentLang: 'vi',
+                quoteFile: quoteFile,
+            })
+
+            res.EM = 'Sending a quote successfully'
+            res.EC = 0
+            res.DT = ''
+        } catch (error) {
+            // Xử lý lỗi gửi email
+            console.error('Error sending email:', error)
+            res.EM = 'Sending a quote failed'
+            res.EC = -1
+            res.DT = ''
+        }
+    } else {
+        res.EM = 'Sending a quote failed'
+        res.EC = -2
+        res.DT = ''
+    }
+    return res
+}
+
 module.exports = {
     createCompanyDataService, createBranchCompanyDataService, getBranchesService,
     getBranchService, getDetailCompanyService, handleDeleteCompanyService, updateConfirmQuoteService,
     getCustomersService, getAllCodesService, getCommentsService, postCommentService, updateCommentService,
-    deleteCommentService
+    deleteCommentService, getLatestQuoteService, sendingQuoteService
 }
