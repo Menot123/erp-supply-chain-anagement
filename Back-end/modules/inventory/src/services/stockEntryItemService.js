@@ -1,10 +1,10 @@
 import db from '../models/index'
 const { Op } = require("sequelize");
 
-const handleGetStockEntrysService = async() => {
+const handleGetStockEntryItemsService = async() => {
     try {
         let res = {}
-        let stockEntrys = await db.StockEntry.findAll({
+        let stockEntryItems = await db.StockEntryItem.findAll({
             order: [
                 ['createdAt', 'DESC']
             ],
@@ -14,141 +14,146 @@ const handleGetStockEntrysService = async() => {
                 },
             }
         });
-        if (stockEntrys) {
+        if (stockEntryItems) {
             res.EC = 0
-            res.EM = 'Get stockEntrys successfully'
-            res.DT = stockEntrys
+            res.EM = 'Get stockEntryItems successfully'
+            res.DT = stockEntryItems
         } else {
-            res.EM = 'Get stockEntrys failed'
+            res.EM = 'Get stockEntryItems failed'
             res.EC = 1
             res.DT = ''
         }
         return res
     } catch (error) {
-        console.log('>>> error from get stockEntrys: ', e)
+        console.log('>>> error from get stockEntryItems: ', e)
         return {
-            EM: 'Something wrong with handleGetStockEntrysService service',
+            EM: 'Something wrong with handleGetStockEntryItemsService service',
             EC: 1,
             DT: {}
         }
     }
 }
 
-const handleGetStockEntryWithIdService = async(id) => {
+const handleGetStockEntryItemWithIdService = async(id) => {
     try {
         let res = {}
-        let stockEntry = await db.StockEntry.findOne({
+        let stockEntryItem = await db.StockEntryItem.findOne({
             where: {
                 status: {
                     [Op.not]: 'deleted'
                 },
-                stockEntryId: id
+                stockEntryItemId: id
             }
         });
-        if (stockEntry) {
+        if (stockEntryItem) {
             res.EC = 0
-            res.EM = 'Get stockEntry successfully'
-            res.DT = stockEntry
+            res.EM = 'Get stockEntryItem successfully'
+            res.DT = stockEntryItem
         } else {
-            res.EM = 'Get stockEntry failed'
+            res.EM = 'Get stockEntryItem failed'
             res.EC = 1
             res.DT = ''
         }
         return res
     } catch (e) {
-        console.log('>>> error from get stockEntry with id service: ', e)
+        console.log('>>> error from get stockEntryItem with id service: ', e)
     }
 }
 
-const handleCreateStockEntryService = async(data) => {
+const handleCreateStockEntryItemService = async(data) => {
     try {
         let res = {}
-        let stockEntry = await db.StockEntry.findOne({
-            where: {
-                contact: data.contact
-            }
-        });
-        if (stockEntry) {
-            // console.log(stockEntry)
-            res.EC = -1
-            res.EM = 'StockEntry is existing'
-            res.DT = ''
-        } else {
-            await db.StockEntry.create({
-                ...data
-            })
-            res.EM = 'Create stockEntry successfully'
-            res.EC = 0
-            res.DT = ''
 
+        // Kiểm tra sự tồn tại của stockEntryId và productId
+        const stockEntryExists = await db.StockEntry.findOne({
+            where: { stockEntryId: data.stockEntryId }
+        })
+
+        const productExists = await db.Product.findOne({
+            where: { productId: data.productId }
+        })
+
+        if (!stockEntryExists || !productExists) {
+            // Một hoặc nhiều giá trị không tồn tại trong các mô hình liên quan
+            res.EM = 'Invalid stockEntryId or productId'
+            res.EC = 1
+            res.DT = ''
+            return res
         }
+
+        await db.StockEntryItem.create({
+            ...data
+        })
+        res.EM = 'Create stockEntryItem successfully'
+        res.EC = 0
+        res.DT = ''
         return res
     } catch (e) {
-        console.log('>>> error when create new stockEntry: ', e)
+        console.log('>>> error when create new stockEntryItem: ', e)
     }
 }
 
-const handleUpdateStockEntryService = async(stockEntryId, data) => {
+const handleUpdateStockEntryItemService = async(stockEntryItemId, data) => {
     try {
         let res = {}
         console.log(data)
-        let stockEntry = await db.StockEntry.findOne({
+        let stockEntryItem = await db.StockEntryItem.findOne({
             where: {
-                stockEntryId: stockEntryId,
+                stockEntryItemId: stockEntryItemId,
                 status: {
                     [Op.not]: 'deleted'
                 }
             }
         });
-        if (stockEntry) {
-            await stockEntry.update({
+        if (stockEntryItem) {
+            await stockEntryItem.update({
                 ...data
             })
-            res.EM = 'Update stockEntry successfully'
+            res.EM = 'Update stockEntryItem successfully'
             res.EC = 0
             res.DT = ''
         } else {
             res.EC = -1
-            res.EM = 'StockEntry not found'
+            res.EM = 'StockEntryItem not found'
             res.DT = ''
         }
         return res
     } catch (e) {
-        console.log('>>> error when update stockEntry: ', e)
+        console.log('>>> error when update stockEntryItem: ', e)
     }
 }
 
-const handleDeleteStockEntryService = async(stockEntryId) => {
+const handleDeleteStockEntryItemService = async(stockEntryItemId) => {
     try {
         let res = {}
-        let stockEntry = await db.StockEntry.findOne({
+        let stockEntryItem = await db.StockEntryItem.findOne({
             where: {
-                stockEntryId: stockEntryId,
+                stockEntryItemId: stockEntryItemId,
                 status: {
                     [Op.not]: 'deleted'
                 }
             }
         });
-        if (stockEntry) {
-            await stockEntry.update({ status: 'deleted' })
-            res.EM = 'Delete stockEntry successfully'
+        if (stockEntryItem) {
+            await stockEntryItem.update({ status: 'deleted' })
+            res.EM = 'Delete stockEntryItem successfully'
             res.EC = 0
             res.DT = ''
         } else {
             res.EC = -1
-            res.EM = 'StockEntry not found'
+            res.EM = 'StockEntryItem not found'
             res.DT = ''
         }
         return res
     } catch (e) {
-        console.log('>>> error when delete stockEntry: ', e)
+        console.log('>>> error when delete stockEntryItem: ', e)
     }
 }
 
 module.exports = {
-    handleGetStockEntrysService,
-    handleGetStockEntryWithIdService,
-    handleCreateStockEntryService,
-    handleUpdateStockEntryService,
-    handleDeleteStockEntryService
+    handleGetStockEntryItemsService,
+    handleGetStockEntryItemWithIdService,
+    handleCreateStockEntryItemService,
+    handleUpdateStockEntryItemService,
+    handleDeleteStockEntryItemService
 }

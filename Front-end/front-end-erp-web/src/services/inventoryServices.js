@@ -32,6 +32,10 @@ const deleteProduct = (id) => {
     return axios.delete(`/inventory/api/products/${id}`)
 }
 
+const getProviders = () => {
+    return axios.get(`/inventory/api/providers`)
+}
+
 export {
     createNewProduct,
     importNewProducts,
@@ -40,5 +44,6 @@ export {
     getProductWithId,
     updateProductInformation,
     getAllCode,
-    deleteProduct
+    deleteProduct,
+    getProviders
 }

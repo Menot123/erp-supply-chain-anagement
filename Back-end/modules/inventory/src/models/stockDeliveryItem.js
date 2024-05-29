@@ -6,8 +6,8 @@ module.exports = (sequelize, DataTypes) => {
     class StockDeliveryItem extends Model {
         static associate(models) {
             ////
-            StockDeliveryItem.belongsTo(models.StockDelivery)
-            StockDeliveryItem.belongsTo(models.Product)
+            StockDeliveryItem.belongsTo(models.StockDelivery, { foreignKey: 'stockDeliveryId', targetKey: 'stockDeliveryId', as: 'stockDeliveryData' })
+            StockDeliveryItem.belongsTo(models.Product, { foreignKey: 'productId', targetKey: 'productId', as: 'productData' })
         }
         static generateId() {
             // Logic to generate stockDeliveryItemId based on type and group
@@ -37,8 +37,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             primaryKey: true
         },
-        stockDeliveryItemId: DataTypes.STRING,
+        stockDeliveryId: DataTypes.STRING,
         productId: DataTypes.STRING,
+        description: DataTypes.STRING,
+        scheduledDate: DataTypes.DATE,
+        deadline: DataTypes.DATE,
         quantity: DataTypes.INTEGER,
         status: DataTypes.STRING
     }, {
