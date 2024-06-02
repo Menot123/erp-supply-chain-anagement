@@ -10,7 +10,9 @@ module.exports = (sequelize, DataTypes) => {
          * The `models/index` file will call this method automatically.
          */
         static associate(models) {
-            // define association here
+            Quote.belongsTo(models.Customer, { foreignKey: 'customerId', targetKey: 'customerId', as: 'dataCustomer' })
+            Quote.belongsTo(models.AllCode, { foreignKey: 'currency', targetKey: 'id', as: 'dataCurrency' })
+            Quote.belongsTo(models.AllCode, { foreignKey: 'paymentPolicy', targetKey: 'id', as: 'dataPaymentPolicy' })
         }
     };
     Quote.init({
@@ -19,14 +21,18 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             autoIncrement: true,
         },
-        customer: DataTypes.STRING,
+        customerId: DataTypes.STRING,
         expirationDay: DataTypes.STRING,
         currency: DataTypes.STRING,
         paymentPolicy: DataTypes.STRING,
         productList: DataTypes.TEXT,
         policyAndCondition: DataTypes.STRING,
+        priceBeforeTax: DataTypes.STRING,
+        tax: DataTypes.STRING,
         totalPrice: DataTypes.STRING,
         status: DataTypes.STRING,
+        createdUser: DataTypes.INTEGER,
+        updatedUser: DataTypes.INTEGER
     }, {
         sequelize,
         modelName: 'Quote',

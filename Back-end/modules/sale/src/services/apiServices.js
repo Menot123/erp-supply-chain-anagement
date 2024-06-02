@@ -405,7 +405,9 @@ const getLatestQuoteService = async () => {
                 ['createdAt', 'DESC']
             ],
             where: {
-                status: 'active'
+                status: {
+                    [Op.not]: 'active',
+                },
             },
         });
         if (quote) {
@@ -458,9 +460,117 @@ const sendingQuoteService = async (dataQuote, fullDataCustomer, bodySendQuote, q
     return res
 }
 
+const postQuoteService = async (dataQuote) => {
+    try {
+        let res = {}
+        let fieldCheck = ['quoteId', 'customer', 'expirationDay', 'currency', 'paymentPolicy', 'productList', 'policyAndCondition', 'totalPrice']
+
+        if (dataQuote) {
+            fieldCheck.forEach(element => {
+                if (!dataQuote[element]) {
+                    res.EC = -2
+                    res.EM = 'Missing fields of quote'
+                    res.DT = ''
+                    return res
+                }
+            });
+            await db.Quote.create({
+                ...dataQuote,
+                customerId: dataQuote?.customer,
+                tax: JSON.stringify(dataQuote.tax),
+                productList: JSON.stringify(dataQuote.productList),
+                status: dataQuote?.status ?? 'S1'
+            })
+            res.EM = 'Create a quote successfully'
+            res.EC = 0
+            res.DT = ''
+            return res
+
+        } else {
+            res.EC = -1
+            res.EM = 'Missing parameters of quote'
+            res.DT = ''
+            return res
+        }
+    } catch (error) {
+        console.error('Error create quote service:', error)
+    }
+
+}
+
+const updateStatusQuoteService = async (quoteId) => {
+    console.log('check quoteId: ', quoteId)
+    try {
+        let res = {}
+        let quote = await db.Quote.findOne({
+            where: {
+                quoteId: quoteId
+            }
+        })
+
+        if (quote) {
+            await quote.update({ status: 'S2' })
+            res.EM = 'Create a quote successfully'
+            res.EC = 0
+            res.DT = ''
+        } else {
+            res.EC = -1
+            res.EM = 'Error when update status quote'
+            res.DT = ''
+        }
+        return res
+    }
+    catch (error) {
+        console.error('Error create quote service:', error)
+    }
+}
+
+const getDataPreviewQuoteService = async (quoteId) => {
+    try {
+        let res = {}
+        let dataQuote = await db.Quote.findOne({
+            where: {
+                quoteId: quoteId,
+                status: {
+                    [Op.not]: 'active',
+                },
+            },
+            include: [
+                {
+                    model: db.Customer,
+                    as: 'dataCustomer',
+                },
+                {
+                    model: db.AllCode,
+                    as: 'dataCurrency',
+                    attributes: ['valueVi', "valueEn"],
+                },
+                {
+                    model: db.AllCode,
+                    as: 'dataPaymentPolicy',
+                    attributes: ['valueVi', "valueEn"],
+                }
+            ]
+        });
+        if (dataQuote) {
+            res.EC = 0
+            res.EM = 'Get dataQuote latest successfully'
+            res.DT = dataQuote
+        } else {
+            res.EM = 'Get dataQuote latest failed'
+            res.EC = 1
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
 module.exports = {
     createCompanyDataService, createBranchCompanyDataService, getBranchesService,
     getBranchService, getDetailCompanyService, handleDeleteCompanyService, updateConfirmQuoteService,
     getCustomersService, getAllCodesService, getCommentsService, postCommentService, updateCommentService,
-    deleteCommentService, getLatestQuoteService, sendingQuoteService
+    deleteCommentService, getLatestQuoteService, sendingQuoteService, postQuoteService, updateStatusQuoteService,
+    getDataPreviewQuoteService
 }

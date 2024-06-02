@@ -16,7 +16,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { QuotePDF } from './QuotePDF';
 import { MdSignalCellularNull } from 'react-icons/md';
-import { getLatestQuoteCode } from '../../../services/saleServices'
+import { getLatestQuoteCode, confirmQuote, postDataQuote } from '../../../services/saleServices'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useSelector } from 'react-redux';
 
@@ -26,6 +26,8 @@ export const NewQuote = () => {
     const componentPDF = useRef(null)
     const intl = useIntl();
     const language = useSelector(state => state.language.value)
+    const email = useSelector(state => state.user.email)
+
 
     const defaultDataQuote = {
         quoteId: '',
@@ -35,6 +37,10 @@ export const NewQuote = () => {
         paymentPolicy: '',
         productList: [],
         policyAndCondition: '',
+        createdUser: email ?? '',
+        updatedUser: email ?? '',
+        priceBeforeTax: '',
+        tax: '',
         totalPrice: '',
         status: ''
     }
@@ -58,22 +64,51 @@ export const NewQuote = () => {
     const [isShowModalSendQuote, setIsShowModalSendQuote] = useState(false)
     const [isSendingQuote, setIsSendingQuote] = useState(false)
     const [dataSendQuotePDF, setDataSendQuotePDF] = useState([])
-    const [filePDFBlob, setFilePDFBlob] = useState(null)
+    let defaultStep = {
+        status1: 'process',
+        status2: 'wait',
+        status3: 'wait',
+    }
+
+    const [arrCurrentStep, setArrCurrentStep] = useState(defaultStep)
+
+    const fetchLatestQuoteCode = async () => {
+        let res = await getLatestQuoteCode()
+        if (res?.EC === 0) {
+            let currentId = null
+            if (res?.DT && res?.DT.length > 0) {
+                currentId = +res?.DT[0]?.quoteId + 1
+            } else {
+                currentId = 1
+            }
+            setDataQuote((prevState) => ({
+                ...prevState,
+                quoteId: currentId
+            }))
+        }
+    }
 
     useEffect(() => {
-        const fetchLatestQuoteCode = async () => {
-            let res = await getLatestQuoteCode()
-            if (res?.EC === 0) {
-                setDataQuote((prevState) => ({
-                    ...prevState,
-                    quoteId: 'S' + res?.DT[0]?.quoteId
-                }))
-            }
-        }
-
         fetchLatestQuoteCode()
     }, [])
 
+    const secondStep = (step) => {
+        if (step === 1) {
+            setCurrentStepQuote(step)
+            setArrCurrentStep({
+                status1: 'wait',
+                status2: 'process',
+                status3: 'wait',
+            })
+        } else {
+            setCurrentStepQuote(step)
+            setArrCurrentStep({
+                status1: 'wait',
+                status2: 'wait',
+                status3: 'process',
+            })
+        }
+    }
 
     const getCustomerById = (customerId) => {
         const customer = customerList.find((customer) => customer.customerId === customerId);
@@ -146,7 +181,7 @@ export const NewQuote = () => {
     }, [language])
 
     const handleCreateNewDepartment = () => {
-
+        fetchLatestQuoteCode()
     }
 
     const backToQuote = () => {
@@ -240,8 +275,46 @@ export const NewQuote = () => {
         }
     }
 
-    const handlePushDataQuotePreview = () => {
-        console.log('check data: ', dataQuote)
+    const handlePushDataQuotePreview = async () => {
+        const arrValidateFieldsQuote = ['customer', 'expirationDay', 'currency', 'paymentPolicy']
+        let check = validateData(arrValidateFieldsQuote, dataQuote)
+        if (check && check.length === 0) {
+            let res = await postDataQuote({ ...dataQuote, status: 'S0' })
+            if (res?.EC === 0) {
+                history.push(`/my/orders/${dataQuote?.quoteId}`)
+            } else {
+                toast.error(<FormattedMessage id='new_quote.preview-toast-error' />)
+            }
+        } else {
+            toast.warning(<FormattedMessage id="new_quote.preview-toast-empty-field" />)
+        }
+    }
+
+    const handleClearDataQuote = () => {
+        setDataSendQuotePDF([])
+    }
+
+    const handleConfirmQuote = async () => {
+        if (dataQuote && dataQuote?.quoteId) {
+            let res = await confirmQuote(dataQuote?.quoteId)
+            if (res && res.EC === 0) {
+                secondStep(2)
+            }
+        }
+    }
+
+    const setTaxAndPriceBeforeTax = (type, value) => {
+        if (type === 'tax') {
+            setDataQuote((prevState) => ({
+                ...prevState,
+                [type]: value
+            }))
+        } else {
+            setDataQuote((prevState) => ({
+                ...prevState,
+                [type]: value
+            }))
+        }
     }
 
     return (
@@ -262,7 +335,7 @@ export const NewQuote = () => {
                 <div className='actions-status'>
                     <div className='wrap-btn-actions'>
                         <button className='btn btn-main' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>
-                        <button className='btn btn-gray'><FormattedMessage id="btn-confirm-quote" /></button>
+                        <button className='btn btn-gray' onClick={handleConfirmQuote}><FormattedMessage id="btn-confirm-quote" /></button>
                         <button className='btn btn-gray' onClick={handlePushDataQuotePreview}><FormattedMessage id="btn-preview-quote" /></button>
 
                         {/* <NavLink to='/my/orders' className='btn btn-gray'>Xem trước</NavLink> */}
@@ -275,15 +348,15 @@ export const NewQuote = () => {
                             className="site-navigation-steps quote-step"
                             items={[
                                 {
-                                    status: 'process',
+                                    status: arrCurrentStep?.status1,
                                     title: <FormattedMessage id="title-new-quote" />,
                                 },
                                 {
-                                    status: 'wait',
+                                    status: arrCurrentStep?.status2,
                                     title: <FormattedMessage id="step-quote-sent" />,
                                 },
                                 {
-                                    status: 'wait',
+                                    status: arrCurrentStep?.status3,
                                     title: <FormattedMessage id="step-bill" />,
                                 },
                             ]}
@@ -371,6 +444,7 @@ export const NewQuote = () => {
                                     label: <FormattedMessage id="new_quote.detail-order" />,
                                     key: 'tab-1',
                                     children: <TableProducts listProductFromParent={listProduct} handleChangeDataQuote={handleChangeInputQuote} isSendingQuote={isSendingQuote}
+                                        setTaxAndPriceBeforeTax={setTaxAndPriceBeforeTax}
                                     />,
                                 },
                                 {
@@ -383,6 +457,7 @@ export const NewQuote = () => {
                                         label: <FormattedMessage id="new_quote.detail-order" />,
                                         key: 'tab-1',
                                         children: <TableProducts listProductFromParent={listProduct} handleChangeDataQuote={handleChangeInputQuote} isSendingQuote={isSendingQuote}
+                                            setTaxAndPriceBeforeTax={setTaxAndPriceBeforeTax}
                                         />,
                                     }]
                             }
@@ -395,6 +470,8 @@ export const NewQuote = () => {
                         dataQuote={dataQuote}
                         fullDataCustomer={fullDataCustomer}
                         downloadQuote={handleGeneratePdf}
+                        handleClearDataQuote={handleClearDataQuote}
+                        secondStep={secondStep}
                     />
                 </div>
             </div>

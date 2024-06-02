@@ -5,7 +5,8 @@ const {
 module.exports = (sequelize, DataTypes) => {
     class AllCode extends Model {
         static associate(models) {
-
+            AllCode.hasMany(models.Quote, { foreignKey: 'currency', as: 'dataCurrency' })
+            AllCode.hasMany(models.Quote, { foreignKey: 'paymentPolicy', as: 'dataPaymentPolicy' })
         }
     };
     AllCode.init({

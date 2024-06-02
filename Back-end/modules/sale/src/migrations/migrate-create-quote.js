@@ -7,7 +7,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      customer: {
+      customerId: {
         type: Sequelize.STRING
       },
       expirationDay: {
@@ -25,12 +25,24 @@ module.exports = {
       policyAndCondition: {
         type: Sequelize.STRING
       },
+      priceBeforeTax: {
+        type: Sequelize.STRING
+      },
+      tax: {
+        type: Sequelize.STRING
+      },
       totalPrice: {
         type: Sequelize.STRING
       },
       status: {
         type: Sequelize.STRING,
         defaultValue: 'active'
+      },
+      createdUser: {
+        type: Sequelize.STRING
+      },
+      updatedUser: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

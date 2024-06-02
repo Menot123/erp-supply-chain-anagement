@@ -265,8 +265,63 @@ const sendingQuote = async (req, res, next) => {
         })
     }
 }
+
+const postQuote = async (req, res, next) => {
+    try {
+        const dataQuote = req.body;
+        let response = await apiService.postQuoteService(dataQuote);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in create a quote controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const updateStatusQuote = async (req, res, next) => {
+    try {
+        let quoteId = req.params?.quoteId
+        let response = await apiService.updateStatusQuoteService(quoteId);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in update status a quote controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const getDataPreviewQuote = async (req, res, next) => {
+    try {
+        const quoteId = req.params.quoteId
+        let response = await apiService.getDataPreviewQuoteService(quoteId);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in get data preview quote controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 module.exports = {
     createCompanyData, createBranchCompanyData, getBranches, getBranch, getDetailCompany,
     handleDeleteCompany, updateConfirmQuote, getCustomers, getAllCodes, getComments, postComment,
-    updateComment, deleteComment, getLatestQuote, sendingQuote
+    updateComment, deleteComment, getLatestQuote, sendingQuote, postQuote, updateStatusQuote, getDataPreviewQuote
 }
