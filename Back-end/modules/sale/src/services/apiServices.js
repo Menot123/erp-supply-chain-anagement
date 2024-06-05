@@ -463,7 +463,7 @@ const sendingQuoteService = async (dataQuote, fullDataCustomer, bodySendQuote, q
 const postQuoteService = async (dataQuote) => {
     try {
         let res = {}
-        let fieldCheck = ['quoteId', 'customer', 'expirationDay', 'currency', 'paymentPolicy', 'productList', 'policyAndCondition', 'totalPrice']
+        let fieldCheck = ['quoteId', 'customer', 'expirationDay', 'currency', 'paymentPolicy', 'productList', 'totalPrice']
 
         if (dataQuote) {
             fieldCheck.forEach(element => {
@@ -474,13 +474,24 @@ const postQuoteService = async (dataQuote) => {
                     return res
                 }
             });
-            await db.Quote.create({
-                ...dataQuote,
-                customerId: dataQuote?.customer,
-                tax: JSON.stringify(dataQuote.tax),
-                productList: JSON.stringify(dataQuote.productList),
-                status: dataQuote?.status ?? 'S1'
+            let quote = await db.Quote.findOne({
+                where: {
+                    quoteId: dataQuote?.quoteId
+                }
             })
+            if (!quote) {
+                await db.Quote.create({
+                    ...dataQuote,
+                    customerId: dataQuote?.customer,
+                    tax: JSON.stringify(dataQuote.tax),
+                    productList: JSON.stringify(dataQuote.productList),
+                    status: dataQuote?.status ?? 'S0'
+                })
+            } else {
+                if (quote.status === 'S0') {
+                    await quote.update({ status: dataQuote?.status })
+                }
+            }
             res.EM = 'Create a quote successfully'
             res.EC = 0
             res.DT = ''
@@ -499,7 +510,6 @@ const postQuoteService = async (dataQuote) => {
 }
 
 const updateStatusQuoteService = async (quoteId) => {
-    console.log('check quoteId: ', quoteId)
     try {
         let res = {}
         let quote = await db.Quote.findOne({
@@ -514,9 +524,13 @@ const updateStatusQuoteService = async (quoteId) => {
             res.EC = 0
             res.DT = ''
         } else {
-            res.EC = -1
-            res.EM = 'Error when update status quote'
-            res.DT = ''
+            await db.Quote.create({
+                ...dataQuote,
+                customerId: dataQuote?.customer,
+                tax: JSON.stringify(dataQuote.tax),
+                productList: JSON.stringify(dataQuote.productList),
+                status: dataQuote?.status ?? 'S0'
+            })
         }
         return res
     }
@@ -567,10 +581,87 @@ const getDataPreviewQuoteService = async (quoteId) => {
     }
 }
 
+const postCancelQuoteService = async (dataQuote, fullDataCustomer, bodySendQuote) => {
+    try {
+        let res = {}
+        let fieldCheck = ['quoteId', 'customer', 'expirationDay', 'currency', 'paymentPolicy', 'productList', 'totalPrice']
+        const dataQuoteSend = JSON.parse(dataQuote)
+        const fullDataCustomerSend = JSON.parse(fullDataCustomer)
+
+        if (dataQuoteSend) {
+            fieldCheck.forEach(element => {
+                if (!dataQuoteSend[element]) {
+                    res.EC = -2
+                    res.EM = 'Missing fields of quote'
+                    res.DT = ''
+                    return res
+                }
+            });
+            await sendEmailCancelQuote(dataQuote, fullDataCustomer, bodySendQuote)
+            let quote = await db.Quote.findOne({
+                where: {
+                    quoteId: dataQuoteSend?.quoteId
+                }
+            })
+            if (quote) {
+                await quote.update({ status: dataQuoteSend?.status })
+                res.EM = 'Cancel quote successfully'
+                res.EC = 0
+                res.DT = ''
+            } else {
+                res.EM = 'Something went wrong when cancel quote service'
+                res.EC = -3
+                res.DT = ''
+            }
+        } else {
+            res.EC = -1
+            res.EM = 'Missing parameters of quote'
+            res.DT = ''
+        }
+        return res
+    } catch (error) {
+        console.error('Error create quote service:', error)
+    }
+}
+
+const sendEmailCancelQuote = async (dataQuote, fullDataCustomer, bodySendQuote) => {
+    let res = {}
+
+    if (dataQuote && fullDataCustomer && bodySendQuote) {
+        const dataQuoteSend = JSON.parse(dataQuote)
+        const fullDataCustomerSend = JSON.parse(fullDataCustomer)
+
+        try {
+            sendEmail({
+                receiver: fullDataCustomerSend?.email,
+                name: fullDataCustomerSend?.fullName,
+                bodySendQuote: bodySendQuote,
+                quoteCode: dataQuoteSend?.quoteId,
+                currentLang: 'vi',
+            })
+
+            res.EM = 'Sending an email cancel quote successfully'
+            res.EC = 0
+            res.DT = ''
+        } catch (error) {
+            // Xử lý lỗi gửi email
+            console.error('Error sending  an email cancel:', error)
+            res.EM = 'Sending  an email cancel quote failed'
+            res.EC = -1
+            res.DT = ''
+        }
+    } else {
+        res.EM = 'Sending  an email cancel quote failed'
+        res.EC = -2
+        res.DT = ''
+    }
+    return res
+}
+
 module.exports = {
     createCompanyDataService, createBranchCompanyDataService, getBranchesService,
     getBranchService, getDetailCompanyService, handleDeleteCompanyService, updateConfirmQuoteService,
     getCustomersService, getAllCodesService, getCommentsService, postCommentService, updateCommentService,
     deleteCommentService, getLatestQuoteService, sendingQuoteService, postQuoteService, updateStatusQuoteService,
-    getDataPreviewQuoteService
+    getDataPreviewQuoteService, postCancelQuoteService, sendEmailCancelQuote
 }

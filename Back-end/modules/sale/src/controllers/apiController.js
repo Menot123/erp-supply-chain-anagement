@@ -320,8 +320,27 @@ const getDataPreviewQuote = async (req, res, next) => {
     }
 }
 
+const postCancelQuote = async (req, res, next) => {
+    try {
+        const { dataQuote, fullDataCustomer, bodySendQuote } = req.body;
+        let response = await apiService.postCancelQuoteService(dataQuote, fullDataCustomer, bodySendQuote);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in delete a quote controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 module.exports = {
     createCompanyData, createBranchCompanyData, getBranches, getBranch, getDetailCompany,
     handleDeleteCompany, updateConfirmQuote, getCustomers, getAllCodes, getComments, postComment,
-    updateComment, deleteComment, getLatestQuote, sendingQuote, postQuote, updateStatusQuote, getDataPreviewQuote
+    updateComment, deleteComment, getLatestQuote, sendingQuote, postQuote, updateStatusQuote, getDataPreviewQuote,
+    postCancelQuote
 }

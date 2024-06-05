@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import './ViewQuote.scss'
 import { Alert, Affix, Table, Input, Button, Tooltip } from 'antd';
-import { FaArrowRightLong, FaComment } from "react-icons/fa6";
+import { FaComment } from "react-icons/fa6";
 import { useHistory } from 'react-router-dom';
 import { FaHome, FaPrint, FaUpload } from "react-icons/fa";
 import { MdDone } from "react-icons/md";
@@ -38,12 +38,14 @@ export const ViewQuote = () => {
     const [dataProducts, setDataProducts] = useState([])
     const location = useLocation();
     const [nameCustomer, setNameCustomer] = useState('')
+    const [isLoadingData, setIsLoadingData] = useState(false)
 
     useEffect(() => {
         const path = location.pathname
         const orderId = path.split("/").pop();
 
         const fetchDataQuotePreview = async () => {
+            setIsLoadingData(true)
             const res = await getDataQuotePreview(orderId)
             if (res.EC === 0) {
                 let customer = res?.DT?.dataCustomer?.fullName
@@ -54,6 +56,7 @@ export const ViewQuote = () => {
                 setDataPreview({ ...res?.DT, tax: JSON.parse(res?.DT?.tax), productList: JSON.parse(res?.DT?.productList) })
                 buildDataTableProduct(JSON.parse(res?.DT?.productList))
             }
+            setIsLoadingData(false)
         }
 
         const buildDataTableProduct = (listProduct) => {
@@ -103,7 +106,7 @@ export const ViewQuote = () => {
 
     const generatePDF = useReactToPrint({
         content: () => componentPDF.current,
-        documentTitle: "Quote_S0003",
+        documentTitle: `Quote_S${dataPreview?.quoteId ?? '0'}`,
         bodyClass: 'py-4 px-4'
 
     })
@@ -224,6 +227,13 @@ export const ViewQuote = () => {
 
     return (
         <>
+            {isLoadingData
+                ?
+                <div className="loading-overlay">
+                    <div className="loading-spinner"></div>
+                </div>
+                : ''
+            }
             <div className='container container-view-quote'>
                 <Alert
                     className='my-3 text-center'
@@ -231,7 +241,7 @@ export const ViewQuote = () => {
                         <div>
                             {<FormattedMessage id="new_quote.preview-title-dialog" />}
 
-                            <b className='hover-item ms-2' onClick={backPreviousPage}><FaArrowRightLong /> <FormattedMessage id="new_quote.preview-title-dialog-back" /></b>
+                            <b className='hover-item ms-2' onClick={backPreviousPage}> </b>
                         </div>
                     }
                     type="info"
@@ -337,11 +347,13 @@ export const ViewQuote = () => {
 
                             </div>
 
-                            <div className='policy-condition mt-4'>
-                                <h5><FormattedMessage id="new_quote.preview-policy-conditions" /></h5>
-                                <hr className='mt-1 mb-2' />
-                                <span>{dataPreview?.policyAndCondition}</span>
-                            </div>
+                            {dataPreview?.policyAndCondition &&
+                                <div className='policy-condition mt-4'>
+                                    <h5><FormattedMessage id="new_quote.preview-policy-conditions" /></h5>
+                                    <hr className='mt-1 mb-2' />
+                                    <span>{dataPreview?.policyAndCondition}</span>
+                                </div>
+                            }
 
                             <div className='policy-condition mt-4'>
                                 <h5><FormattedMessage id="new_quote.preview-policy-payment" /></h5>

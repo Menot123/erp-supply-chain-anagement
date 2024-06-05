@@ -52,8 +52,15 @@ const getDataQuotePreview = (quoteId) => {
     return axios.get(`/sale/api/data-preview-quote/${quoteId}`)
 }
 
+const postDataCancelQuote = (data) => {
+    return axios.post('/sale/api/cancel-quote', data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}
 
 export {
     getCustomers, getAllCodes, getComments, createAComment, editComment, deleteComment, getLatestQuoteCode,
-    sendingQuoteToCustomer, postDataQuote, confirmQuote, getDataQuotePreview
+    sendingQuoteToCustomer, postDataQuote, confirmQuote, getDataQuotePreview, postDataCancelQuote
 }

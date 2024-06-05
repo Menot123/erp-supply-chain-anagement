@@ -377,6 +377,23 @@ const initApiRoutes = (app) => {
      */
     router.get('/data-preview-quote/:quoteId', apiController.getDataPreviewQuote);
 
+    /**
+     * @swagger
+     * /api/cancel-quote:
+     *  post:
+     *      tags:
+     *          - Sales
+     *      summary: cancel a quote 
+     *      description: cancel a quote by id
+     *      responses:
+     *          200:
+     *              description: Return a status delete quote
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/cancel-quote', upload.single('quoteFile'), apiController.postCancelQuote);
+
     return app.use("/api/", router)
 
 }
