@@ -6,7 +6,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { useState } from 'react'
 import './TableInputWarehouse.scss'
 import _ from 'lodash'
-import { Flex, Input, Select, Tooltip } from 'antd';
+import { Flex, Input, Select, Tooltip, DatePicker } from 'antd';
 import { useEffect } from 'react'
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
@@ -148,6 +148,13 @@ export const TableInputWarehouse = (props) => {
         }
     }
 
+    const onChangeDatePickerItem = (date, dateString) => {
+        // setDataInputWarehouse((prevState) => ({
+        //     ...prevState,
+        //     scheduledDay: dateString
+        // }))
+    };
+
     const handleOnchangeNameProduct = (e, labeledValue) => {
         let _listProduct = _.cloneDeep(listProduct)
         let creatingProduct = _listProduct[_listProduct.length - 1]
@@ -264,25 +271,25 @@ export const TableInputWarehouse = (props) => {
                                             />
                                         </td>
                                         <td>
-                                            <Input
-                                                onChange={(e) => handleChangeInputCreatingProduct(e, 'quantity', item)}
-                                                value={item?.quantity && item?.quantity !== '' ? item?.quantity : '0.00'}
-                                                variant="borderless" />
+                                            <DatePicker
+                                                className='select-date-expiration'
+                                                onChange={onChangeDatePickerItem}
+                                                suffixIcon={false}
+                                                variant="borderless"
+                                                placeholder=''
+                                                size='middle'
+                                                id='select-date-expiration'
+                                            />
                                         </td>
                                         <td>
-                                            <Select
-                                                showSearch
-                                                onChange={(e) => handleChangeInputCreatingProduct(e, 'tax', item)}
-                                                value={item.tax}
+                                            <DatePicker
+                                                className='select-date-expiration'
+                                                onChange={onChangeDatePickerItem}
+                                                suffixIcon={false}
                                                 variant="borderless"
-                                                className='select-tax'
-                                                style={{ width: 200 }}
-                                                optionFilterProp="children"
-                                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                                                filterSort={(optionA, optionB) =>
-                                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                                                }
-                                                options={taxOptions}
+                                                placeholder=''
+                                                size='middle'
+                                                id='select-date-expiration'
                                             />
                                         </td>
                                         <td>

@@ -1,9 +1,13 @@
 import React from 'react'
 import './OtherInfo.scss'
 import { Select, DatePicker } from "antd";
+import { useSelector } from 'react-redux';
 
 
 export const OtherInfo = () => {
+
+    const user = useSelector(state => state.user)
+    const userName = user.lastName + ' ' + user.firstName
 
     const handleChangeInputQuote = () => {
 
@@ -33,8 +37,7 @@ export const OtherInfo = () => {
                             (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                         }
                         options={[
-                            { value: 1, label: 'Nguyễn Văn Khánh' },
-                            { value: 2, label: 'Nguyễn Tiến Đạt' },
+                            { value: 1, label: userName },
                         ]}
                         value={1}
                         onChange={(e) => handleChangeInputQuote(e, 'customer')}
