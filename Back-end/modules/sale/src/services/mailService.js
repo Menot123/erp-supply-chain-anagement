@@ -9,8 +9,8 @@ let sendEmail = async (dataMail) => {
         secure: true,
         auth: {
             // TODO: replace `user` and `pass` values from <https://forwardemail.net>
-            user: process.env.APP_EMAIL,
-            pass: process.env.APP_EMAIL_PASSWORD,
+            user: process.env.APP_MAIL_NAME,
+            pass: process.env.APP_MAIL_PASS,
         },
     });
 
@@ -41,7 +41,6 @@ let sendEmail = async (dataMail) => {
         content: dataMail?.quoteFile?.buffer,
         contentType: 'application/pdf'
     };
-
 
     let info = await transporter.sendMail({
         from: 'Báo giá <From ERP Viet>',

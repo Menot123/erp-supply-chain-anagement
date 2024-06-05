@@ -74,7 +74,7 @@ export const TableProducts = (props) => {
                     totalPrice += +item.priceBeforeTax + (+item?.priceBeforeTax * +item?.tax?.value / 100)
                 });
             }
-            Promise.all([setTotalPrice(totalBeforeTax), setFinalPrice(totalPrice), props?.handleChangeDataQuote(totalPrice, 'totalPrice')])
+            Promise.all([setTotalPrice(totalBeforeTax), setFinalPrice(totalPrice), props?.handleChangeDataQuote(totalPrice, 'totalPrice'), props?.setTaxAndPriceBeforeTax('priceBeforeTax', totalBeforeTax)])
         };
 
         const calculateTaxTotals = () => {
@@ -90,6 +90,7 @@ export const TableProducts = (props) => {
                 }
             });
             setTaxTotals(totals);
+            props?.setTaxAndPriceBeforeTax('tax', totals)
         };
 
         calculateTaxTotals();
@@ -318,7 +319,7 @@ export const TableProducts = (props) => {
                 <div className='wrap-policy-total'>
                     <div className='policy input-hover'>
                         <TextArea autoSize variant="borderless" className='input-policy'
-                            placeholder={intl.formatMessage({ id: "new_quote.payment-policy" })}
+                            placeholder={intl.formatMessage({ id: "new_quote.condition-policy" })}
                             onChange={(e) => props?.handleChangeDataQuote(e, 'policyAndCondition')}
                         />
                     </div>

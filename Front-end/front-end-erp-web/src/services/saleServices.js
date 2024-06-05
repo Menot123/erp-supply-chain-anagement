@@ -40,7 +40,20 @@ const sendingQuoteToCustomer = (data) => {
     });
 };
 
+const postDataQuote = (data) => {
+    return axios.post('/sale/api/quote', data)
+}
+
+const confirmQuote = (quoteId) => {
+    return axios.put(`/sale/api/quote/${quoteId}`)
+}
+
+const getDataQuotePreview = (quoteId) => {
+    return axios.get(`/sale/api/data-preview-quote/${quoteId}`)
+}
+
+
 export {
     getCustomers, getAllCodes, getComments, createAComment, editComment, deleteComment, getLatestQuoteCode,
-    sendingQuoteToCustomer
+    sendingQuoteToCustomer, postDataQuote, confirmQuote, getDataQuotePreview
 }

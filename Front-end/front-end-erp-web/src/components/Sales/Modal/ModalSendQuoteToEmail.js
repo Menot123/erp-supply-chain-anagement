@@ -3,7 +3,7 @@ import './ModalSendQuoteToEmail.scss'
 import Modal from 'react-bootstrap/Modal';
 import { Select, Input } from "antd";
 import { FaRegFilePdf } from "react-icons/fa";
-import { sendingQuoteToCustomer } from '../../../services/saleServices'
+import { sendingQuoteToCustomer, postDataQuote } from '../../../services/saleServices'
 import { toast } from 'react-toastify';
 
 export const ModalSendQuoteToEmail = (props) => {
@@ -37,29 +37,12 @@ export const ModalSendQuoteToEmail = (props) => {
 
     const { TextArea } = Input;
 
-    // const handleConfirmCancelQuote = () => {
-    //     props?.cancelQuote()
-    //     props?.close()
-    //     window.scrollTo(0, 0)
-    // }
-
-    // const handleSendingQuoteToEmail = async () => {
-    //     let quoteFile = await props?.downloadQuote('POST_API')
-    //     console.log('check quote file: ', quoteFile)
-    //     let dataSend = {
-    //         quoteFile,
-    //         ...props?.dataQuote,
-    //         ...props?.fullDataCustomer,
-    //         bodySendQuote: bodySendQuote
-    //     }
-
-    //     let res = await sendingQuoteToCustomer(dataSend)
-    // }
-
     const handleSendingQuoteToEmail = async () => {
 
         try {
             setIsSendingEmail(true)
+            let response = await postDataQuote(props?.dataQuote)
+            console.log('check response: ', response)
             let quoteFile = await props?.downloadQuote('POST_API');
 
             // Tạo FormData và thêm các dữ liệu khác
@@ -75,6 +58,9 @@ export const ModalSendQuoteToEmail = (props) => {
                 setIsSendingEmail(false);
                 if (res && res.EC === 0) {
                     toast.success(`Sending quote to ${props?.fullDataCustomer?.email} successfully!`)
+                    Promise.all([props?.close(),
+                    props?.handleClearDataQuote(),
+                    props?.secondStep(1)])
                 }
             }, 3000);
         } catch (error) {

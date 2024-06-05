@@ -328,6 +328,54 @@ const initApiRoutes = (app) => {
      */
     router.post('/sending-quote', upload.single('quoteFile'), apiController.sendingQuote);
 
+    /**
+    * @swagger
+    * /api/quote:
+    *  post:
+    *      tags:
+    *          - Sales
+    *      summary: Create a quote
+    *      responses:
+    *          201:
+    *              description: Return status create a quote. 
+    *          500:
+    *              description: Error from server.
+    * 
+    */
+    router.post('/quote', apiController.postQuote);
+
+    /**
+   * @swagger
+   * /api/quote:
+   *  put:
+   *      tags:
+   *          - Sales
+   *      summary: Update status of quote
+   *      responses:
+   *          204:
+   *              description: Return status update the quote. 
+   *          500:
+   *              description: Error from server.
+   * 
+   */
+    router.put('/quote/:quoteId', apiController.updateStatusQuote);
+
+    /**
+     * @swagger
+     * /api/quote:
+     *  get:
+     *      tags:
+     *          - Sales
+     *      summary: Get the last quote
+     *      description: Get the last quote by created At
+     *      responses:
+     *          200:
+     *              description: Return a quote latest
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/data-preview-quote/:quoteId', apiController.getDataPreviewQuote);
 
     return app.use("/api/", router)
 

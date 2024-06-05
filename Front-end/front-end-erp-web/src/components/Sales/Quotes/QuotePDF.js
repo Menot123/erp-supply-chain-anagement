@@ -197,11 +197,6 @@ export const QuotePDF = (props) => {
                         <span>{totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
                     </div>
 
-                    {/* <div className='tax d-flex justify-content-between bottom-line'>
-                        <span>Thuế GTGT 10%</span>
-                        <span>4 ₫</span>
-                    </div> */}
-
                     {
                         Object.keys(taxTotals).map((taxValue, index) => (
                             <div key={'tax-total' + index} className='tax d-flex justify-content-between bottom-line'>
