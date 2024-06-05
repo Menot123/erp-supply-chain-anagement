@@ -4,7 +4,7 @@ import { RiImageAddLine } from "react-icons/ri";
 import { useState, useEffect } from 'react'
 import 'react-image-lightbox/style.css';
 import Lightbox from 'react-image-lightbox';
-import { createNewProduct, getAllCode, getAllProducts, getProviders } from '../../../services/inventoryServices'
+import { createNewReceipt, getAllCode, getAllProducts, getProviders } from '../../../services/inventoryServices'
 import { useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
@@ -23,13 +23,14 @@ function CreateNewInputWarehouse() {
     const history = useHistory()
 
     const defaultDataInputWarehouse = {
-        receiveFrom: '',
+        providerId: '',
         operationType: 'Phiếu nhập kho',
+        warehouseId: 'WH001',
         scheduledDay: '',
         productList: [],
-        policyAndCondition: '',
-        totalPrice: '',
-        status: ''
+        note: '',
+        userId: idUser,
+        status: 'draft'
     }
 
     const defaultDataOtherInfoInputWarehouse = {
@@ -44,7 +45,7 @@ function CreateNewInputWarehouse() {
     const [selectProvider, setSelectProvider] = useState([])
     // const [operationType, setOperationType] = useState([])
     const [operationTypesSelect, setOperationTypesSelect] = useState([])
-    const [receiveFromSelect, setReceiveFromSelect] = useState([])
+    const [receiveFromSelect, setReceiveFromSelect] = useState([{ value: 'actionEntry', label: 'Nhập kho' }])
     const [timePayment, setTimePayment] = useState([])
     const [otherInfoInputWarehouse, setOtherInfoInputWarehouse] = useState(defaultDataOtherInfoInputWarehouse)
 
@@ -56,8 +57,15 @@ function CreateNewInputWarehouse() {
         }))
     };
 
+    const onChangeNote = (event) => {
+        setDataInputWarehouse((prevState) => ({
+            ...prevState,
+            note: event.target.value
+        }))
+    };
+
     const onChangeTab = (key) => {
-        console.log(key);
+        // console.log(key);
     };
 
     const handleChangeInputQuote = (e, type) => {
@@ -71,7 +79,7 @@ function CreateNewInputWarehouse() {
             case 'receiveFrom':
                 setDataInputWarehouse((prevState) => ({
                     ...prevState,
-                    receiveFrom: e
+                    providerId: e
                 }))
                 break;
             default:
@@ -84,7 +92,7 @@ function CreateNewInputWarehouse() {
     const intl = useIntl();
 
     useEffect(() => {
-        console.log(idUser)
+        // console.log(idUser)
         const fetchAllProduct = async () => {
             const res = await getAllProducts()
             if (res && res.EC === 0) {
@@ -125,12 +133,25 @@ function CreateNewInputWarehouse() {
     }, [listProvider])
 
 
+    const validateDataReceipt = () => {
+        const fieldCheck = ['providerId', 'operationType', 'scheduledDay'];
+        const missingFields = [];
+
+        fieldCheck.forEach(field => {
+            if (!dataInputWarehouse[field]) {
+                missingFields.push(field);
+            }
+        });
+
+        return missingFields;
+    };
+
     const handleSaveInputWarehouse = async () => {
         // Validate data
-        // let check = validateDataProduct()
+        // let check = validateDataReceipt()
 
         // if (check.length === 0) {
-        //     let res = await createNewProduct(dataProduct)
+        //     let res = await createNewReceipt(dataProduct)
         //     if (res.EC === 0) {
         //         cleanValueSubmit()
         //         toast.success(res.EM)
@@ -142,28 +163,49 @@ function CreateNewInputWarehouse() {
         // }
     }
 
-    const handleCancelCreateProduct = () => {
+    const handleCancelCreateInputWarehouse = () => {
         history.push('/manage-inventory/input-warehouse')
+    }
+
+    const handleSetReadyReceipt = async () => {
+        console.log(dataInputWarehouse)
+        let check = validateDataReceipt()
+
+        if (check.length === 0) {
+            let res = await createNewReceipt(dataInputWarehouse)
+            if (res.EC === 0) {
+                toast.success(res.EM)
+                handleCancelCreateInputWarehouse()
+            } else {
+                toast.error(res.EM)
+            }
+        } else {
+            toast.warning(`Missing fields: ${check.toString()}`)
+        }
+    }
+
+    const handleSetDoneReceipt = () => {
+        console.log('done')
     }
 
     return (
         <div className='wrapper-create-input-warehouse'>
             <div className='header-create'>
                 <span className='title-create'>
-                    <span onClick={() => handleCancelCreateProduct()} className='bold'>{language === LANGUAGES.EN ? 'Reicept' : 'Phiếu nhập kho'}</span>
+                    <span onClick={() => handleCancelCreateInputWarehouse()} className='bold'>{language === LANGUAGES.EN ? 'Reicept' : 'Phiếu nhập kho'}</span>
                     <span> / </span>
                     <span><FormattedMessage id='nav.manage-inventory-create-product-title' /></span>
                 </span>
                 <div className='btn-actions'>
                     <button onClick={() => handleSaveInputWarehouse()} className='btn btn-primary btn-main'><FormattedMessage id='btn-save' /></button>
-                    <button onClick={() => handleCancelCreateProduct()} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='btn-cancel' /></button>
+                    <button onClick={() => handleCancelCreateInputWarehouse()} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='btn-cancel' /></button>
                 </div>
             </div>
             <div className='container-fluid create-product-container'>
                 <div className='actions-status'>
                     <div className='wrap-btn-actions'>
-                        <button className='btn btn-main'>Đánh dấu việc cần làm</button>
-                        <button className='btn btn-gray'>Xác nhận</button>
+                        <button onClick={() => handleSetReadyReceipt()} className='btn btn-main'>Đánh dấu việc cần làm</button>
+                        <button onClick={() => handleSetDoneReceipt()} className='btn btn-gray'>Xác nhận</button>
                         <button className='btn btn-gray'>In nhãn</button>
                         <button className='btn btn-gray'>Hủy</button>
                     </div>
@@ -265,6 +307,7 @@ function CreateNewInputWarehouse() {
                                     // value={value}
                                     // onChange={(e) => setValue(e.target.value)}
                                     placeholder="Thêm một ghi chú nội bộ sẽ được in trên phiếu Hoạt động lấy hàng"
+                                    onChange={(e) => onChangeNote(e)}
                                     autoSize={{ minRows: 3, maxRows: 5 }}
                                 />,
                             }

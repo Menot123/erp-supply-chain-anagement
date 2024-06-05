@@ -12,7 +12,8 @@ const handleGetProductsService = async () => {
                 status: {
                     [Op.not]: 'deleted'
                 },
-            }
+            },
+            // attributes: { exclude: ['image'] }
         });
         if (products) {
             res.EC = 0

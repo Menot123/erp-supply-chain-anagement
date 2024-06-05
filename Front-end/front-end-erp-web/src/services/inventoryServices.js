@@ -36,6 +36,14 @@ const getProviders = () => {
     return axios.get(`/inventory/api/providers`)
 }
 
+const getStockEntrys = () => {
+    return axios.get(`/inventory/api/stockEntrys`)
+}
+
+const createNewReceipt = (data) => {
+    return axios.post(`/inventory/api/stockEntrys`, data)
+}
+
 export {
     createNewProduct,
     importNewProducts,
@@ -45,5 +53,7 @@ export {
     updateProductInformation,
     getAllCode,
     deleteProduct,
-    getProviders
+    getProviders,
+    getStockEntrys,
+    createNewReceipt
 }

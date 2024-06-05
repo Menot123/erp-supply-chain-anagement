@@ -2,24 +2,24 @@ import React from 'react'
 import './InputWarehouse.scss'
 import FilterHeader from '../../FilterHeader/FilterHeader';
 import { IoOptions } from "react-icons/io5";
-// import {
-//     useHistory
-// } from "react-router-dom";
+import {
+    useHistory
+} from "react-router-dom";
 import { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux';
-import { getProductsPagination } from '../../../services/inventoryServices'
+import { getStockEntrys } from '../../../services/inventoryServices'
 import { LANGUAGES } from '../../../utils/constant'
 import { toast } from 'react-toastify';
 import { FormattedMessage } from 'react-intl'
 
 function InputWarehouse() {
-    // const history = useHistory();
+    const history = useHistory();
     const [currentView, setCurrentView] = useState('list')
     const [currentLimit] = useState(16)
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPage, setTotalPage] = useState(0)
 
-    const [products, setProducts] = useState([])
+    const [stockEntrys, setStockEntrys] = useState([])
     const tempProductsLength = 1
     const language = useSelector(state => state.language.value)
 
@@ -56,6 +56,8 @@ function InputWarehouse() {
     ];
 
     const [listCheckedItems, setListCheckedItems] = useState([["Mã tham chiếu", "Liên hệ", "Người phụ trách", "Ngày theo kế hoạch", "Tình trạng còn hàng của sản phẩm", "Hạn chót", "Ngày hiệu lực", "Chứng từ gốc", "Đơn hàng chậm trễ của", "Loại hoạt động", "Trạng thái"]]);
+
+
 
     const exampleItem = {
         reference: 'WH/IN/001',
@@ -129,21 +131,22 @@ function InputWarehouse() {
 
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            const response = await getProductsPagination(currentPage, currentLimit)
-            if (response.EC === 0 && response?.DT?.products.length > 0) {
-                Promise.all([setProducts(response?.DT?.products), setTotalPage(response?.DT?.totalPage)])
+        const fetchStockEntrys = async () => {
+            const response = await getStockEntrys()
+            if (response.EC == 0) {
+                Promise.all([setStockEntrys(response?.DT)])
+                console.log(response.DT)
             } else {
                 toast.error(response?.EM)
             }
         }
 
-        fetchProducts()
+        fetchStockEntrys()
     }, [currentPage, currentLimit])
 
-    // const handleNavigateToProductPage = (productId) => {
-    //     history.push('/manage-inventory/products/' + productId)
-    // }
+    const handleNavigateToReceiptPage = (receiptId) => {
+        history.push('/manage-inventory/input-warehouse/' + receiptId)
+    }
 
     return (
         <>
@@ -292,100 +295,109 @@ function InputWarehouse() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* {products && products.length > 0 ? ( */}
-                                    {tempProductsLength > 0 ? (
+                                    {/* {tempProductsLength > 0 ? ( */}
+                                    {stockEntrys ? (
                                         (() => {
                                             // if (products.length > 0) {
                                             if (tempProductsLength > 0) {
-                                                return <>
-                                                    <tr className='hover-item'>
-                                                        {allElementsChecked
-                                                            ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
-                                                            : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
-                                                        }
+                                                // return <>
+                                                //     <tr className='hover-item'>
+                                                //         {allElementsChecked
+                                                //             ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
+                                                //             : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
+                                                //         }
 
-                                                        <td>ET001</td>
-                                                        <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
-                                                        <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
-                                                        <td className={`${plannedDateChecked ? '' : 'hidden'}`}>08/01/2024</td>
-                                                        <td className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${deadlineChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${effectiveDateChecked ? '' : 'hidden'}`}>11/04/2024 05:59:32</td>
-                                                        <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
-                                                        <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${activityTypeChecked ? '' : 'hidden'}`}>Tôn Đức Thắng erp: Phiếu nhập kho</td>
-                                                        <td className={`${statusChecked ? '' : 'hidden'}`}>Hoàn tất</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr className='hover-item'>
-                                                        {allElementsChecked
-                                                            ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
-                                                            : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
-                                                        }
-
-                                                        <td>ET001</td>
-                                                        <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
-                                                        <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
-                                                        <td className={`${plannedDateChecked ? '' : 'hidden'}`}>08/01/2024</td>
-                                                        <td className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${deadlineChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${effectiveDateChecked ? '' : 'hidden'}`}>11/04/2024 05:59:32</td>
-                                                        <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
-                                                        <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${activityTypeChecked ? '' : 'hidden'}`}>Tôn Đức Thắng erp: Phiếu nhập kho</td>
-                                                        <td className={`${statusChecked ? '' : 'hidden'}`}>Hoàn tất</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr className='hover-item'>
-                                                        {allElementsChecked
-                                                            ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
-                                                            : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
-                                                        }
-
-                                                        <td>ET001</td>
-                                                        <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
-                                                        <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
-                                                        <td className={`${plannedDateChecked ? '' : 'hidden'}`}>08/01/2024</td>
-                                                        <td className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${deadlineChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${effectiveDateChecked ? '' : 'hidden'}`}>11/04/2024 05:59:32</td>
-                                                        <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
-                                                        <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${activityTypeChecked ? '' : 'hidden'}`}>Tôn Đức Thắng erp: Phiếu nhập kho</td>
-                                                        <td className={`${statusChecked ? '' : 'hidden'}`}>Hoàn tất</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr className='hover-item'>
-                                                        {allElementsChecked
-                                                            ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
-                                                            : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
-                                                        }
-
-                                                        <td>ET001</td>
-                                                        <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
-                                                        <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
-                                                        <td className={`${plannedDateChecked ? '' : 'hidden'}`}>08/01/2024</td>
-                                                        <td className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${deadlineChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${effectiveDateChecked ? '' : 'hidden'}`}>11/04/2024 05:59:32</td>
-                                                        <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
-                                                        <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${activityTypeChecked ? '' : 'hidden'}`}>Tôn Đức Thắng erp: Phiếu nhập kho</td>
-                                                        <td className={`${statusChecked ? '' : 'hidden'}`}>Hoàn tất</td>
-                                                        <td></td>
-                                                    </tr>
-                                                </>
-                                                // return products.map((item, index) => (
-                                                //     <tr onClick={() => handleNavigateToProductPage(item.productId)} key={'product' + index} className='hover-item'>
-                                                //         <th scope="row">{index + 1}</th>
-                                                //         <td>{language === LANGUAGES.EN ? item.nameEn : item.nameVi}</td>
-                                                //         <td>{item.productId}</td>
-                                                //         <td>{language === LANGUAGES.EN ? item?.typeData?.valueEn : item?.typeData?.valueVi}</td>
-                                                //         <td>{language === LANGUAGES.EN ? item?.groupData?.valueEn : item?.groupData?.valueVi}</td>
-                                                //         <td>{item.cost}</td>
-                                                //         <td>{language === LANGUAGES.EN ? item?.unitData?.valueEn : item?.unitData?.valueVi}</td>
+                                                //         <td>ET001</td>
+                                                //         <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
+                                                //         <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
+                                                //         <td className={`${plannedDateChecked ? '' : 'hidden'}`}>08/01/2024</td>
+                                                //         <td className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
+                                                //         <td className={`${deadlineChecked ? '' : 'hidden'}`}></td>
+                                                //         <td className={`${effectiveDateChecked ? '' : 'hidden'}`}>11/04/2024 05:59:32</td>
+                                                //         <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
+                                                //         <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
+                                                //         <td className={`${activityTypeChecked ? '' : 'hidden'}`}>Tôn Đức Thắng erp: Phiếu nhập kho</td>
+                                                //         <td className={`${statusChecked ? '' : 'hidden'}`}>Hoàn tất</td>
+                                                //         <td></td>
                                                 //     </tr>
-                                                // ));
+                                                //     <tr className='hover-item'>
+                                                //         {allElementsChecked
+                                                //             ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
+                                                //             : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
+                                                //         }
+
+                                                //         <td>ET001</td>
+                                                //         <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
+                                                //         <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
+                                                //         <td className={`${plannedDateChecked ? '' : 'hidden'}`}>08/01/2024</td>
+                                                //         <td className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
+                                                //         <td className={`${deadlineChecked ? '' : 'hidden'}`}></td>
+                                                //         <td className={`${effectiveDateChecked ? '' : 'hidden'}`}>11/04/2024 05:59:32</td>
+                                                //         <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
+                                                //         <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
+                                                //         <td className={`${activityTypeChecked ? '' : 'hidden'}`}>Tôn Đức Thắng erp: Phiếu nhập kho</td>
+                                                //         <td className={`${statusChecked ? '' : 'hidden'}`}>Hoàn tất</td>
+                                                //         <td></td>
+                                                //     </tr>
+                                                //     <tr className='hover-item'>
+                                                //         {allElementsChecked
+                                                //             ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
+                                                //             : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
+                                                //         }
+
+                                                //         <td>ET001</td>
+                                                //         <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
+                                                //         <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
+                                                //         <td className={`${plannedDateChecked ? '' : 'hidden'}`}>08/01/2024</td>
+                                                //         <td className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
+                                                //         <td className={`${deadlineChecked ? '' : 'hidden'}`}></td>
+                                                //         <td className={`${effectiveDateChecked ? '' : 'hidden'}`}>11/04/2024 05:59:32</td>
+                                                //         <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
+                                                //         <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
+                                                //         <td className={`${activityTypeChecked ? '' : 'hidden'}`}>Tôn Đức Thắng erp: Phiếu nhập kho</td>
+                                                //         <td className={`${statusChecked ? '' : 'hidden'}`}>Hoàn tất</td>
+                                                //         <td></td>
+                                                //     </tr>
+                                                //     <tr className='hover-item'>
+                                                //         {allElementsChecked
+                                                //             ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
+                                                //             : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
+                                                //         }
+
+                                                //         <td>ET001</td>
+                                                //         <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
+                                                //         <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
+                                                //         <td className={`${plannedDateChecked ? '' : 'hidden'}`}>08/01/2024</td>
+                                                //         <td className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
+                                                //         <td className={`${deadlineChecked ? '' : 'hidden'}`}></td>
+                                                //         <td className={`${effectiveDateChecked ? '' : 'hidden'}`}>11/04/2024 05:59:32</td>
+                                                //         <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
+                                                //         <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
+                                                //         <td className={`${activityTypeChecked ? '' : 'hidden'}`}>Tôn Đức Thắng erp: Phiếu nhập kho</td>
+                                                //         <td className={`${statusChecked ? '' : 'hidden'}`}>Hoàn tất</td>
+                                                //         <td></td>
+                                                //     </tr>
+                                                // </>
+                                                return stockEntrys.map((item, index) => (
+                                                    <tr onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} key={'receipt' + index} className='hover-item'>
+                                                        {allElementsChecked
+                                                            ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
+                                                            : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
+                                                        }
+                                                        <td>{item.stockEntryId}</td>
+                                                        <td className={`${contactChecked ? '' : 'hidden'}`}>{item.providerId}</td>
+                                                        <td className={`${personInChargeChecked ? '' : 'hidden'}`}>{item.userId}</td>
+                                                        <td className={`${plannedDateChecked ? '' : 'hidden'}`}>{item.scheduledDate}</td>
+                                                        <td className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
+                                                        <td className={`${deadlineChecked ? '' : 'hidden'}`}></td>
+                                                        <td className={`${effectiveDateChecked ? '' : 'hidden'}`}>{item.createdAt}</td>
+                                                        <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
+                                                        <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
+                                                        <td className={`${activityTypeChecked ? '' : 'hidden'}`}>{item.warehouseId}: Phiếu nhập kho</td>
+                                                        <td className={`${statusChecked ? '' : 'hidden'}`}>{item.status}</td>
+                                                        <td></td>
+                                                    </tr>
+                                                ));
                                             } else {
                                                 return (
                                                     <tr>
