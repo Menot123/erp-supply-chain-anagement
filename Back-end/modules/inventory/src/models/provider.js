@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             ////
             Provider.hasMany(models.StockEntry, { foreignKey: 'providerId' })
+            Provider.hasMany(models.ProductProvider, { foreignKey: 'providerId' })
         }
         static generateId() {
             // Logic to generate providerId based on type and group

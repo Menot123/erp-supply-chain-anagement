@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             Product.hasMany(models.Stock, { foreignKey: 'productId' })
             Product.hasMany(models.StockEntryItem, { foreignKey: 'productId' })
             Product.hasMany(models.StockDeliveryItem, { foreignKey: 'productId' })
+            Product.hasMany(models.ProductProvider, { foreignKey: 'productId' })
         }
 
         static generateProductId() {

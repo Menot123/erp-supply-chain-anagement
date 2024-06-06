@@ -68,7 +68,7 @@ function CreateNewInputWarehouse() {
         // console.log(key);
     };
 
-    const handleChangeInputQuote = (e, type) => {
+    const handleChangeInputWarehouse = (e, type) => {
         switch (type) {
             case 'operationType':
                 setDataInputWarehouse((prevState) => ({
@@ -248,7 +248,7 @@ function CreateNewInputWarehouse() {
                                         (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                     }
                                     options={selectProvider}
-                                    onChange={(e) => handleChangeInputQuote(e, 'receiveFrom')}
+                                    onChange={(e) => handleChangeInputWarehouse(e, 'receiveFrom')}
                                 />
                             </div>
                             <div className='wrap-expiration-date'>
@@ -264,7 +264,7 @@ function CreateNewInputWarehouse() {
                                         (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                     }
                                     options={receiveFromSelect}
-                                    onChange={(e) => handleChangeInputQuote(e, 'operationType')}
+                                    onChange={(e) => handleChangeInputWarehouse(e, 'operationType')}
                                 />
                             </div>
 
