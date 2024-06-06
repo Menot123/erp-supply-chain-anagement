@@ -50,7 +50,7 @@ const handleGetProductsBasedOnProviderService = async(providerId) => {
                 // { model: db.all_code, as: 'groupData', attributes: ['valueVi', 'valueEn'] },
             ]
         });
-        console.log(1)
+        // console.log(1)
         if (products) {
             res.EC = 0
             res.EM = 'Get product based on provider successfully'

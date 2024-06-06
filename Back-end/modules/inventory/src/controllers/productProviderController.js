@@ -60,7 +60,7 @@ const handleGetProvidersBasedOnProduct = async(req, res, next) => {
 const handleCreateProductProvider = async(req, res, next) => {
     try {
         let dataProductProvider = req.body;
-        console.log(dataProductProvider);
+        // console.log(dataProductProvider);
         let response = await productProviderService.handleCreateProductProviderService(dataProductProvider.productId, dataProductProvider.providerId);
         return res.status(200).json({
             EM: response.EM,
