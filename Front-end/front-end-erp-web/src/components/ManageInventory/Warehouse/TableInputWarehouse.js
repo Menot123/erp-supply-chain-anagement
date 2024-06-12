@@ -28,16 +28,12 @@ export const TableInputWarehouse = (props) => {
     const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY', 'DD-MM-YYYY', 'DD-MM-YY'];
 
     const defaultProduct = {
+        stockEntryId: '',
         productId: '',
-        name: '',
         description: '',
+        scheduleDate: new Date(),
+        deadline: new Date(),
         quantity: '0.0',
-        price: '0.0',
-        tax: { value: 0, label: '' },
-        priceBeforeTax: '',
-        lineId: '',
-        emptyName: false,
-        emptyDes: false,
     }
 
     const taxOptions = [
@@ -53,7 +49,7 @@ export const TableInputWarehouse = (props) => {
                     return (
                         {
                             value: item.productId,
-                            label: item.nameVi
+                            label: item.productData.nameVi
                         }
                     )
                 })
@@ -62,39 +58,6 @@ export const TableInputWarehouse = (props) => {
             buildSelectProduct()
         }
     }, [props])
-
-    useEffect(() => {
-        const calculateTotalPrice = () => {
-            let totalBeforeTax = 0
-            let totalPrice = 0
-            if (listProduct && listProduct.length > 0) {
-                listProduct.forEach(item => {
-                    totalBeforeTax += +item.priceBeforeTax;
-                    totalPrice += +item.priceBeforeTax + (+item?.priceBeforeTax * +item?.tax?.value / 100)
-                });
-            }
-            setTotalPrice(totalBeforeTax);
-            setFinalPrice(totalPrice)
-        };
-
-        const calculateTaxTotals = () => {
-            const totals = {};
-            listProduct.forEach(item => {
-                if (item?.tax && item?.tax?.value !== 0) {
-                    const taxValue = +item?.priceBeforeTax * +item?.tax.value / 100;
-                    if (totals[item?.tax.value]) {
-                        totals[item?.tax.value] += taxValue;
-                    } else {
-                        totals[item?.tax.value] = taxValue;
-                    }
-                }
-            });
-            setTaxTotals(totals);
-        };
-
-        calculateTaxTotals();
-        calculateTotalPrice();
-    }, [listProduct]);
 
     // useEffect(() => {
 
@@ -168,6 +131,7 @@ export const TableInputWarehouse = (props) => {
         }
         _listProduct[_listProduct.length - 1] = creatingProduct
         // Cập nhật danh sách sản phẩm mới
+        console.log(_listProduct)
         setListProduct(_listProduct);
     }
 
@@ -245,6 +209,7 @@ export const TableInputWarehouse = (props) => {
                                     <tr key={'product' + index}>
                                         <td>
                                             <Select
+                                                key={index}
                                                 className={item?.emptyName
                                                     ? 'name-creating-product empty-data'
                                                     : 'name-creating-product'}
@@ -310,7 +275,10 @@ export const TableInputWarehouse = (props) => {
                         }
                         <tr>
                             <td colSpan='7'>
-                                <span onClick={() => handleAddNewInput()} className='add-sub-company'>Thêm một dòng</span>
+                                {props.hadProvider == true
+                                    ? <span onClick={() => handleAddNewInput()} className='add-sub-company'>Thêm một dòng</span>
+                                    : <span disabled className='add-sub-company'>Thêm một dòng</span>
+                                }
                             </td>
                         </tr>
                     </tbody>

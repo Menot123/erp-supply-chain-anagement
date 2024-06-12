@@ -4,7 +4,7 @@ import { RiImageAddLine } from "react-icons/ri";
 import { useState, useEffect } from 'react'
 import 'react-image-lightbox/style.css';
 import Lightbox from 'react-image-lightbox';
-import { createNewReceipt, getAllCode, getAllProducts, getProviders } from '../../../services/inventoryServices'
+import { createNewReceipt, getAllCode, getAllProducts, getProviders, getProductByProviderId } from '../../../services/inventoryServices'
 import { useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
@@ -49,6 +49,9 @@ function CreateNewInputWarehouse() {
     const [timePayment, setTimePayment] = useState([])
     const [otherInfoInputWarehouse, setOtherInfoInputWarehouse] = useState(defaultDataOtherInfoInputWarehouse)
 
+    const [showAddProduct, setShowAddProduct] = useState(false)
+    const [listProductOfProvider, setListProductOfProvider] = useState([])
+
 
     const onChangeDatePicker = (date, dateString) => {
         setDataInputWarehouse((prevState) => ({
@@ -65,10 +68,12 @@ function CreateNewInputWarehouse() {
     };
 
     const onChangeTab = (key) => {
+        if (dataInputWarehouse.providerId != '')
+            console.log(dataInputWarehouse.providerId);
         // console.log(key);
     };
 
-    const handleChangeInputQuote = (e, type) => {
+    const handleChangeInputWarehouse = (e, type) => {
         switch (type) {
             case 'operationType':
                 setDataInputWarehouse((prevState) => ({
@@ -93,15 +98,15 @@ function CreateNewInputWarehouse() {
 
     useEffect(() => {
         // console.log(idUser)
-        const fetchAllProduct = async () => {
-            const res = await getAllProducts()
-            if (res && res.EC === 0) {
-                setListProduct(res.DT)
-            } else {
-                toast.error(res.EM)
-            }
-            return res
-        }
+        // const fetchAllProduct = async () => {
+        //     const res = await getAllProducts()
+        //     if (res && res.EC === 0) {
+        //         setListProduct(res.DT)
+        //     } else {
+        //         toast.error(res.EM)
+        //     }
+        //     return res
+        // }
 
         const fetchProvider = async () => {
             const res = await getProviders()
@@ -113,9 +118,26 @@ function CreateNewInputWarehouse() {
             return res
         }
 
-        Promise.all([fetchAllProduct(), fetchProvider()])
+        Promise.all([fetchProvider()])
 
     }, [])
+
+    useEffect(() => {
+        const checkProviderSelected = async () => {
+            if (dataInputWarehouse.providerId != '') {
+                setShowAddProduct(true)
+                const res = await getProductByProviderId(dataInputWarehouse.providerId)
+                if (res && res.EC === 0) {
+                    setListProductOfProvider(res.DT)
+                    console.log(res.DT)
+                } else {
+                    toast.error(res.EM)
+                }
+            }
+            else setShowAddProduct(false)
+        }
+        checkProviderSelected()
+    }, [dataInputWarehouse.providerId])
 
     useEffect(() => {
         const buildSelectProvider = () => {
@@ -248,7 +270,7 @@ function CreateNewInputWarehouse() {
                                         (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                     }
                                     options={selectProvider}
-                                    onChange={(e) => handleChangeInputQuote(e, 'receiveFrom')}
+                                    onChange={(e) => handleChangeInputWarehouse(e, 'receiveFrom')}
                                 />
                             </div>
                             <div className='wrap-expiration-date'>
@@ -264,7 +286,7 @@ function CreateNewInputWarehouse() {
                                         (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                     }
                                     options={receiveFromSelect}
-                                    onChange={(e) => handleChangeInputQuote(e, 'operationType')}
+                                    onChange={(e) => handleChangeInputWarehouse(e, 'operationType')}
                                 />
                             </div>
 
@@ -293,7 +315,7 @@ function CreateNewInputWarehouse() {
                             items={[{
                                 label: `Hoạt động`,
                                 key: 'tab-1',
-                                children: <TableInputWarehouse listProductFromParent={listProduct} />,
+                                children: <TableInputWarehouse hadProvider={showAddProduct} listProductFromParent={listProductOfProvider} />,
                             },
                             {
                                 label: `Thông tin bổ sung`,

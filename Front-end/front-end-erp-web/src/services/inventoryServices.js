@@ -44,6 +44,10 @@ const createNewReceipt = (data) => {
     return axios.post(`/inventory/api/stockEntrys`, data)
 }
 
+const getProductByProviderId = (id) => {
+    return axios.get(`/inventory/api/productProviders/provider/${id}`)
+}
+
 export {
     createNewProduct,
     importNewProducts,
@@ -55,5 +59,6 @@ export {
     deleteProduct,
     getProviders,
     getStockEntrys,
-    createNewReceipt
+    createNewReceipt,
+    getProductByProviderId
 }

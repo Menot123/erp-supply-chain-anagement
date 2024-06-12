@@ -85,12 +85,12 @@ const handleCreateStockEntryService = async(data) => {
             return res
         }
 
-        await db.StockEntry.create({
+        let created = await db.StockEntry.create({
             ...data
         })
         res.EM = 'Create stockEntry successfully'
         res.EC = 0
-        res.DT = ''
+        res.DT = created.dataValues.stockEntryId
         return res
     } catch (e) {
         console.log('>>> error when create new stockEntry: ', e)

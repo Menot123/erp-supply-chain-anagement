@@ -9,6 +9,7 @@ import stockEntryController from '../controllers/stockEntryController'
 import stockEntryItemController from '../controllers/stockEntryItemController'
 import stockDeliveryController from '../controllers/stockDeliveryController'
 import stockDeliveryItemController from '../controllers/stockDeliveryItemController'
+import productProviderController from '../controllers/productProviderController'
 
 // import jwt from '../middleware/JWTServices';
 import apiController from '../controllers/apiController'
@@ -1415,6 +1416,123 @@ let initApiRoutes = (app) => {
      * 
      */
     router.delete('/stockDeliveryItems/:id', stockDeliveryItemController.handleDeleteStockDeliveryItem)
+
+    // ProductProvider API
+    /**
+     * @swagger
+     * /api/productProviders:
+     *  get:
+     *      tags:
+     *          - ProductProvider
+     *      summary: Get all productProviders
+     *      description: Get all information about productProviders                
+     *      responses:
+     *          200:
+     *              description: Return status and list of productProviders if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/productProviders', productProviderController.handleGetProductProviders)
+
+    /**
+     * @swagger
+     * /api/productProviders/provider/{id}:
+     *  get:
+     *      tags:
+     *          - ProductProvider
+     *      summary: Get products based on provider ID
+     *      description: Get information of products with provider id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of provider 
+     *      responses:
+     *          200:
+     *              description: Return status and info of relevant products.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/productProviders/provider/:id', productProviderController.handleGetProductsBasedOnProvider)
+
+    /**
+     * @swagger
+     * /api/productProviders/product/{id}:
+     *  get:
+     *      tags:
+     *          - ProductProvider
+     *      summary: Get providers based on product ID
+     *      description: Get information of providers with product id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of product 
+     *      responses:
+     *          200:
+     *              description: Return status and info of relevant providers.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/productProviders/product/:id', productProviderController.handleGetProvidersBasedOnProduct)
+
+    /**
+     * @swagger
+     * /api/productProviders:
+     *  post:
+     *      tags:
+     *          - ProductProvider
+     *      summary: Create new productProvider
+     *      description: Create new productProvider for ERP system
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          productId:
+     *                              type: string
+     *                          providerId:
+     *                              type: string  
+     *      responses:
+     *          200:
+     *              description: Return status of create new productProvider.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/productProviders', productProviderController.handleCreateProductProvider)
+
+    /**
+     * @swagger
+     * /api/productProviders/{id}:
+     *  delete:
+     *      tags:
+     *          - ProductProvider
+     *      summary: Delete productProvider with id
+     *      description: Delete a productProvider with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of productProvider you want to delete
+     *      responses:
+     *          200:
+     *              description: Return status and info of delete productProvider.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.delete('/productProviders/:id', productProviderController.handleDeleteProductProvider)
 
     return app.use("/api/", router)
 }
