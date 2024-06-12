@@ -391,7 +391,6 @@ export const NewQuote = () => {
                     <Tooltip placement="top" title='Back to "Báo giá"'>
                         <span onClick={backToQuote} className='title-quote' ><FormattedMessage id="title-new-quote" /></span>
                     </Tooltip>
-                    {/* <span onClick={backToQuote} className='title-quote' data-tooltip='Back to "Báo giá"'>Báo giá</span> */}
                     <span className='title-create'><FormattedMessage id="btn-new-quote" /></span>
                 </div>
             </div>

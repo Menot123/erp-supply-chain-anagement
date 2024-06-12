@@ -14,12 +14,16 @@ import { getBase64 } from '../../utils/functions'
 import { useReactToPrint } from 'react-to-print';
 import { ModalRejectQuote } from '../Sales/Modal/ModalRejectQuote';
 import { Comments } from '../Comments/Comments';
-import { FormattedMessage } from 'react-intl'
-import { getDataQuotePreview } from '../../services/saleServices'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { getDataQuotePreview, getDataInvoicePreview } from '../../services/saleServices'
 import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux';
+import logo from '../../assets/img/logo.png'
+
 
 export const ViewQuote = () => {
+
+    const intl = useIntl();
 
     const language = useSelector(state => state.language.value)
     const history = useHistory()
@@ -39,16 +43,37 @@ export const ViewQuote = () => {
     const location = useLocation();
     const [nameCustomer, setNameCustomer] = useState('')
     const [isLoadingData, setIsLoadingData] = useState(false)
+    const [currentURL, setCurrentURL] = useState("/")
+
 
     useEffect(() => {
         const path = location.pathname
         const orderId = path.split("/").pop();
+        const invoiceId = path.split("/").pop();
+        let currentURL = path.split("/")
+        currentURL = currentURL[currentURL.length - 2]
+        setCurrentURL(currentURL)
 
         const fetchDataQuotePreview = async () => {
             setIsLoadingData(true)
             const res = await getDataQuotePreview(orderId)
             if (res.EC === 0) {
                 let customer = res?.DT?.dataCustomer?.fullName
+                customer = customer.split(' ')
+                if (customer && customer.length > 0) {
+                    setNameCustomer(customer[customer.length - 1])
+                }
+                setDataPreview({ ...res?.DT, tax: JSON.parse(res?.DT?.tax), productList: JSON.parse(res?.DT?.productList) })
+                buildDataTableProduct(JSON.parse(res?.DT?.productList))
+            }
+            setIsLoadingData(false)
+        }
+
+        const fetchDataDraftInvoice = async () => {
+            setIsLoadingData(true)
+            const res = await getDataInvoicePreview(invoiceId)
+            if (res.EC === 0) {
+                let customer = res?.DT?.dataCustomerInvoice?.fullName
                 customer = customer.split(' ')
                 if (customer && customer.length > 0) {
                     setNameCustomer(customer[customer.length - 1])
@@ -67,8 +92,8 @@ export const ViewQuote = () => {
                         key: index,
                         product: product?.name,
                         quantity: product?.quantity,
-                        price: product?.price,
-                        tax: 'Thuế GTGT phải nộp ' + product?.tax?.label,
+                        price: Number(product?.price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
+                        tax: intl.formatMessage({ id: "table-preview-tax" }) + " " + product?.tax?.label,
                         total: product?.priceBeforeTax.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
                     })
                 })
@@ -76,8 +101,11 @@ export const ViewQuote = () => {
             setDataProducts(dataProducts)
         }
 
-
-        fetchDataQuotePreview()
+        if (currentURL === 'invoice') {
+            fetchDataDraftInvoice()
+        } else {
+            fetchDataQuotePreview()
+        }
     }, [location.pathname])
 
     useEffect(() => {
@@ -225,6 +253,26 @@ export const ViewQuote = () => {
         setNameCustomer(e.target.value)
     }
 
+    function addOneMonth(dateString) {
+        // Chuyển đổi chuỗi ngày tháng năm sang đối tượng Date
+        let parts = dateString.split('/');
+        let day = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10) - 1; // Tháng trong đối tượng Date bắt đầu từ 0
+        let year = parseInt(parts[2], 10);
+
+        let date = new Date(year, month, day);
+
+        // Cộng thêm 1 tháng
+        date.setMonth(date.getMonth() + 1);
+
+        // Định dạng lại thành chuỗi ngày tháng năm theo định dạng dd/mm/yyyy
+        let newDay = ("0" + date.getDate()).slice(-2);
+        let newMonth = ("0" + (date.getMonth() + 1)).slice(-2);
+        let newYear = date.getFullYear();
+
+        return `${newDay}/${newMonth}/${newYear}`;
+    }
+
     return (
         <>
             {isLoadingData
@@ -248,15 +296,21 @@ export const ViewQuote = () => {
                     closable
                 />
                 <div className='location-page'>
-                    <FaHome /> / <span><FormattedMessage id="new_quote.preview-location" /></span> / <span><FormattedMessage id="new_quote.preview-quote-code" />{dataPreview?.quoteId}</span>
+                    <FaHome /> / <span><FormattedMessage id={currentURL === "invoice" ? "new_invoice.preview-location" : "new_quote.preview-location"} />
+                    </span> / <span>
+                        <FormattedMessage id={currentURL === "invoice" ? "new_invoice.preview-location" : "new_quote.preview-quote-code"} />{currentURL === "invoice" ? "S" + dataPreview?.invoiceId : dataPreview?.quoteId}</span>
                 </div>
                 <div className='wrapper-content-view-quote'>
                     <div className='content-left'>
                         <Affix offsetTop={100} className='fixed-content-left'>
                             <div>
                                 <h2>{dataPreview && dataPreview?.totalPrice !== 0 ? (+dataPreview?.totalPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '0₫'}</h2>
-                                <button className='btn btn-main  btn-accept' onClick={handleShowModalSignature}><MdDone /><FormattedMessage id="new_quote.preview-btn-sign" /></button>
-                                <button className='btn btn-view-detail' onClick={generatePDF}><FaPrint /><FormattedMessage id="new_quote.preview-btn-save-pdf" /></button>
+                                {currentURL !== "invoice" &&
+                                    <button className='btn btn-main  btn-accept' onClick={handleShowModalSignature}><MdDone /><FormattedMessage id="new_quote.preview-btn-sign" /></button>
+                                }
+                                <button className='btn btn-view-detail d-flex align-items-center' onClick={generatePDF}><FaPrint className='me-1' />
+                                    <FormattedMessage id={currentURL === "invoice" ? "new_invoice.preview-btn-save-pdf" : "new_quote.preview-btn-save-pdf"} />
+                                </button>
                             </div>
                         </Affix>
 
@@ -268,7 +322,6 @@ export const ViewQuote = () => {
                                 className='my-3 text-center'
                                 description={
                                     <div>
-
                                         <b><FormattedMessage id="new_quote.preview-message-quote-canced" /> <FaComment className='hover-item' onClick={handleScrollToComment} /></b>
                                         {<FormattedMessage id="new_quote.preview-message-contact-us" />}
                                     </div>
@@ -279,26 +332,32 @@ export const ViewQuote = () => {
                         }
 
                         <div ref={componentPDF} style={{ width: '100%' }}>
-                            <h2><FormattedMessage id="new_quote.preview-title-quote-code" />{dataPreview?.quoteId}</h2>
-                            <div className='wrap-inf-quote d-flex gap-4'>
+                            <div className='wrap-title-preview d-flex justify-content-between align-items-center'>
+                                <h2 className='mb-0'><FormattedMessage id={currentURL === "invoice" ? "new_invoice.preview-title-invoice-code" : "new_quote.preview-title-quote-code"} />{currentURL === "invoice" ? dataPreview?.invoiceId : dataPreview?.quoteId}</h2>
+                                <div className='logo-company'>
+                                    <img className='ele-logo-company' src={logo} alt="company-logo" />
+                                </div>
+                            </div>
+
+                            <div className='wrap-inf-quote d-flex gap-4 mt-2'>
                                 <div className='inf-selling w-50 '>
                                     <h5><FormattedMessage id="new_quote.preview-inf-sale-order" /></h5>
                                     <hr className='mt-1 mb-2' />
                                     <div className='date-created d-flex'>
-                                        <span className='label-date'><FormattedMessage id="new_quote.preview-created-date" /></span>
-                                        <span>{formatDate(dataPreview?.createdAt)}</span>
+                                        <span className='label-date'><FormattedMessage id={currentURL === "invoice" ? "new_invoice.preview-created-date" : "new_quote.preview-created-date"} /></span>
+                                        <span className='ms-2'>{formatDate(dataPreview?.createdDate)}</span>
                                     </div>
                                     <div className='date-expiration d-flex'>
                                         <span className='label-date'><FormattedMessage id="new_quote.preview-date-expiration" /></span>
-                                        <span>{formatDate(dataPreview?.expirationDay)}</span>
+                                        <span className='ms-2'>{addOneMonth(formatDate(dataPreview?.createdDate))}</span>
                                     </div>
                                 </div>
 
                                 <div className='address-bill-delivery w-50 '>
                                     <h5><FormattedMessage id="new_quote.preview-shipping-address" /></h5>
                                     <hr className='mt-1 mb-2' />
-                                    <span>{dataPreview?.dataCustomer?.fullName}</span> <br />
-                                    <span><IoMdMail /> {dataPreview?.dataCustomer?.email}</span>
+                                    <span>{currentURL === "invoice" ? dataPreview?.dataCustomerInvoice?.fullName : dataPreview?.dataCustomer?.fullName}</span> <br />
+                                    <span><IoMdMail /> {currentURL === "invoice" ? dataPreview?.dataCustomerInvoice?.email : dataPreview?.dataCustomer?.email}</span>
                                 </div>
                             </div>
 
@@ -362,15 +421,19 @@ export const ViewQuote = () => {
                             </div>
                         </div>
 
-                        <div className='btn-actions d-flex justify-content-center gap-2'>
-                            <button className='btn btn-main' onClick={handleShowModalSignature}><MdDone /><FormattedMessage id="new_quote.preview-btn-sign" /></button>
-                            <button className='btn btn-reply hover-item' onClick={handleScrollToComment}><FaComment /> <FormattedMessage id="new_quote.preview-btn-comment" /></button>
-                            <button className='btn btn-danger' onClick={() => setIsShowModalRejectQuote(true)}><TiTimes /> <FormattedMessage id="new_quote.preview-btn-cancel" /></button>
+                        {!currentURL === "invoice" &&
+                            <>
+                                <div className='btn-actions d-flex justify-content-center gap-2'>
+                                    <button className='btn btn-main' onClick={handleShowModalSignature}><MdDone /><FormattedMessage id="new_quote.preview-btn-sign" /></button>
+                                    <button className='btn btn-reply hover-item' onClick={handleScrollToComment}><FaComment /> <FormattedMessage id="new_quote.preview-btn-comment" /></button>
+                                    <button className='btn btn-danger' onClick={() => setIsShowModalRejectQuote(true)}><TiTimes /> <FormattedMessage id="new_quote.preview-btn-cancel" /></button>
 
-                        </div>
+                                </div>
 
-                        <h4 className='mt-3' ref={commentRef}><FormattedMessage id="new_quote.preview-btn-history-comment" /></h4>
-                        <Comments />
+                                <h4 className='mt-3' ref={commentRef}><FormattedMessage id="new_quote.preview-btn-history-comment" /></h4>
+                                <Comments />
+                            </>
+                        }
                     </div>
                 </div>
             </div>

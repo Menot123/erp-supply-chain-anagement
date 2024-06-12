@@ -366,11 +366,11 @@ const initApiRoutes = (app) => {
      *  get:
      *      tags:
      *          - Sales
-     *      summary: Get the last quote
-     *      description: Get the last quote by created At
+     *      summary: Get the data quote for review
+     *      description: Get  data quote for review by quoteId
      *      responses:
      *          200:
-     *              description: Return a quote latest
+     *              description: Return data quote by id
      *          404:
      *              description: Error from server.
      * 
@@ -393,6 +393,39 @@ const initApiRoutes = (app) => {
      * 
      */
     router.post('/cancel-quote', upload.single('quoteFile'), apiController.postCancelQuote);
+
+    /**
+    * @swagger
+    * /api/invoice:
+    *  post:
+    *      tags:
+    *          - Sales
+    *      summary: Create an draft invoice
+    *      responses:
+    *          201:
+    *              description: Return status create an draft invoice. 
+    *          500:
+    *              description: Error from server.
+    * 
+    */
+    router.post('/invoice', apiController.postInvoice);
+
+    /**
+ * @swagger
+ * /api/invoice:
+ *  get:
+ *      tags:
+ *          - Sales
+ *      summary: Get data of the draft invoice by invoiceId
+ *      responses:
+ *          200:
+ *              description: Return a data invoice by id
+ *          404:
+ *              description: Error from server.
+ * 
+ */
+    router.get('/data-preview-invoice/:invoiceId', apiController.getDataPreviewInvoice);
+
 
     return app.use("/api/", router)
 

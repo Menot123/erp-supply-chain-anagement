@@ -60,7 +60,17 @@ const postDataCancelQuote = (data) => {
     })
 }
 
+const postDataInvoice = (data) => {
+    return axios.post('/sale/api/invoice', data)
+}
+
+const getDataInvoicePreview = (invoiceId) => {
+    return axios.get(`/sale/api/data-preview-invoice/${invoiceId}`)
+}
+
+
 export {
     getCustomers, getAllCodes, getComments, createAComment, editComment, deleteComment, getLatestQuoteCode,
-    sendingQuoteToCustomer, postDataQuote, confirmQuote, getDataQuotePreview, postDataCancelQuote
+    sendingQuoteToCustomer, postDataQuote, confirmQuote, getDataQuotePreview, postDataCancelQuote, postDataInvoice,
+    getDataInvoicePreview
 }
