@@ -13,10 +13,13 @@ import { validateData } from '../../../utils/functions'
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { QuotePDF } from './QuotePDF';
-import { getLatestQuoteCode, postDataQuote, postDataInvoice } from '../../../services/saleServices'
+import { getLatestQuoteCode, postDataQuote, postDataInvoice, confirmInvoice } from '../../../services/saleServices'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { ModalCancelQuote } from '../Modal/ModalCancelQuote';
+import { ModalSendInvoiceToEmail } from '../Modal/ModalSendInvoiceToEmail';
+import { InvoicePDF } from './InvoicePDF';
+import { ModalConfirmPaid } from '../Modal/ModalConfirmPaid';
 
 export const NewQuote = () => {
 
@@ -50,6 +53,7 @@ export const NewQuote = () => {
 
     const [dataQuote, setDataQuote] = useState(defaultDataQuote)
     const [currentStepQuote, setCurrentStepQuote] = useState(0);
+    const [currentStepInvoice, setCurrentStepInvoice] = useState(0);
     const [listProduct, setListProduct] = useState([])
     const [customersSelect, setCustomersSelect] = useState([])
     const [selectedCustomer, setSelectedCustomer] = useState([])
@@ -60,12 +64,14 @@ export const NewQuote = () => {
     const [timePayment, setTimePayment] = useState([])
     const [otherInfoQuote, setOtherInfoQuote] = useState(defaultDataOtherInfoQuote)
     const [isShowModalSendQuote, setIsShowModalSendQuote] = useState(false)
+    const [isShowModalSendInvoice, setIsShowModalSendInvoice] = useState(false)
     const [isShowModalCancelQuote, setIsShowModalCancelQuote] = useState(false)
     const [isSendingQuote, setIsSendingQuote] = useState(false)
     const [dataSendQuotePDF, setDataSendQuotePDF] = useState([])
     const [dataStep, setDataStep] = useState([])
     const [isCreateInvoice, setIsCreateInvoice] = useState(false)
     const [dateCreateInvoice, setDateCreateInvoice] = useState(null)
+    const [isShowModalConfirmPaid, setIsShowModalConfirmPaid] = useState(false)
 
     let defaultStep = {
         status1: 'process',
@@ -74,15 +80,22 @@ export const NewQuote = () => {
         status4: 'wait',
     }
 
-    let defaultCreateInvoiceStep = {
+    let defaultCreateInvoiceStep1 = {
         status1: 'process',
         status2: 'wait',
         status3: 'wait',
         status4: 'wait',
     }
 
+    let defaultCreateInvoiceStep2 = {
+        status1: 'wait',
+        status2: 'process',
+        status3: 'wait',
+        status4: 'wait',
+    }
+
     const [arrCurrentStep, setArrCurrentStep] = useState(defaultStep)
-    const [arrCurrentInvoiceStep, setArrInvoiceCurrentStep] = useState(defaultCreateInvoiceStep)
+    const [arrCurrentInvoiceStep, setArrInvoiceCurrentStep] = useState(defaultCreateInvoiceStep1)
 
     const fetchLatestQuoteCode = async () => {
         let res = await getLatestQuoteCode()
@@ -286,6 +299,7 @@ export const NewQuote = () => {
         }
     }
 
+
     const handleGeneratePdf = async (type) => {
         const quote = componentPDF.current
         try {
@@ -317,7 +331,11 @@ export const NewQuote = () => {
                 // setFilePDFBlob(pdf.output('blob'))
                 return pdf.output('blob');
             }
-            pdf.save("Quote.pdf");
+            if (isShowModalSendInvoice) {
+                pdf.save("INVOICE.pdf");
+            } else {
+                pdf.save("Quote.pdf");
+            }
         } catch (err) {
             console.log(err)
         }
@@ -387,6 +405,23 @@ export const NewQuote = () => {
         }
     }
 
+    const handleConfirmInvoice = async () => {
+        const arrValidateFieldsQuote = ['customer', 'paymentPolicy']
+        let check = validateData(arrValidateFieldsQuote, dataQuote)
+        if (check && check.length === 0 && dateCreateInvoice) {
+            let res = await confirmInvoice({ ...dataQuote, dateCreateInvoice: dateCreateInvoice })
+            if (res.EC !== 0) {
+                toast.error("Something wrong when confirm invoice, please try again later")
+            } else {
+                setArrInvoiceCurrentStep(defaultCreateInvoiceStep2)
+                setCurrentStepInvoice(1)
+            }
+        } else {
+            toast.warning(<FormattedMessage id="new_quote.confirm-toast-empty-field" />)
+        }
+
+    }
+
     const setTaxAndPriceBeforeTax = (type, value) => {
         if (type === 'tax') {
             setDataQuote((prevState) => ({
@@ -410,9 +445,19 @@ export const NewQuote = () => {
     }
 
     const handleChangeDateCreateInvoice = (date, dateString) => {
-        console.log('>>> check date', dateString)
         setDateCreateInvoice(dateString)
     };
+
+    const handleSendInvoice = () => {
+        const arrValidateFieldsInvoice = ['customer', 'expirationDay', 'paymentPolicy']
+        let check = validateData(arrValidateFieldsInvoice, dataQuote)
+        if (check && check.length === 0) {
+            setDataSendQuotePDF(dataQuote)
+            setIsShowModalSendInvoice(true)
+        } else {
+            toast.warning(<FormattedMessage id="new_quote.toast-empty-field" />)
+        }
+    }
 
     return (
         <div className='wrapper-create-quote'>
@@ -425,7 +470,7 @@ export const NewQuote = () => {
                         <span onClick={backToQuote} className='title-quote' ><FormattedMessage id="title-new-quote" /></span>
                     </Tooltip>
                     {/* <span onClick={backToQuote} className='title-quote' data-tooltip='Back to "Báo giá"'>Báo giá</span> */}
-                    <span className='title-create'><FormattedMessage id="btn-new-quote" /></span>
+                    <span className='title-create'>{currentStepInvoice === 1 ? "INV" + dataQuote?.quoteId : <FormattedMessage id="btn-new-quote" />}</span>
                 </div>
             </div>
             <div className='wrapper-body-create-quote'>
@@ -444,14 +489,24 @@ export const NewQuote = () => {
                         }
 
                         {
-                            isCreateInvoice ?
+                            isCreateInvoice && currentStepInvoice === 0 ?
                                 <>
-                                    <button className='btn btn-main' onClick={handleConfirmQuote}><FormattedMessage id="btn-confirm-quote" /></button>
+                                    <button className='btn btn-main' onClick={handleConfirmInvoice}><FormattedMessage id="btn-confirm-quote" /></button>
                                     <button className='btn btn-gray' onClick={() => handlePushDataQuotePreview("invoice")}><FormattedMessage id="btn-preview-quote" /></button>
                                     <button className='btn btn-gray' onClick={handleCancelQuote}><FormattedMessage id="btn-cancel-quote" /></button>
                                 </>
                                 :
                                 ""
+
+                        }
+                        {isCreateInvoice && currentStepInvoice === 1 ?
+                            <>
+                                <button className='btn btn-main' onClick={handleSendInvoice}><FormattedMessage id="btn-send-invoice" /></button>
+                                <button className='btn btn-main' onClick={() => setIsShowModalConfirmPaid(true)}><FormattedMessage id="btn-confirmed-payment" /></button>
+                                <button className='btn btn-gray' onClick={() => handlePushDataQuotePreview("invoice")}><FormattedMessage id="btn-preview-quote" /></button>
+                            </>
+                            :
+                            ""
                         }
                     </div>
                     <div className={isCreateInvoice ? 'quote-status w30' : 'quote-status'}>
@@ -459,7 +514,7 @@ export const NewQuote = () => {
                             <Steps
                                 type="navigation"
                                 size="small"
-                                current={0}
+                                current={currentStepInvoice}
                                 className="site-navigation-steps quote-step"
                                 items={[
                                     {
@@ -485,8 +540,12 @@ export const NewQuote = () => {
                     </div>
                 </div>
                 <div className='body-create-quote'>
+                    <span className='text-paid text-bg-success'>ĐÃ THANH TOÁN</span>
                     {isCreateInvoice ? <span style={{ fontWeight: "500" }}><FormattedMessage id="new_quote.create-invoice-title" /></span> : ""}
-                    <h3>{isCreateInvoice ? <FormattedMessage id="new_quote.create-invoice-draft" /> : (dataQuote?.quoteId ? `Báo giá - S${dataQuote?.quoteId}` : <FormattedMessage id="btn-new-quote" />)}</h3>
+                    <h3>{isCreateInvoice ?
+                        (currentStepInvoice === 1 ? "INV" + dataQuote?.quoteId : <FormattedMessage id="new_quote.create-invoice-draft" />)
+                        :
+                        (dataQuote?.quoteId ? `Báo giá - S${dataQuote?.quoteId}` : <FormattedMessage id="btn-new-quote" />)}</h3>
                     <div className='wrap-info-quote'>
                         <div className='content-left'>
                             <label htmlFor='select-customer'><FormattedMessage id="new_quote.customer" /></label>
@@ -616,6 +675,16 @@ export const NewQuote = () => {
                         changeStep={changeStep}
                     />
 
+                    <ModalSendInvoiceToEmail
+                        show={isShowModalSendInvoice}
+                        close={() => setIsShowModalSendInvoice(false)}
+                        dataQuote={dataQuote}
+                        fullDataCustomer={fullDataCustomer}
+                        downloadQuote={handleGeneratePdf}
+                        handleClearDataQuote={handleClearDataQuote}
+                    // changeStep={changeStep}
+                    />
+
                     <ModalCancelQuote
                         show={isShowModalCancelQuote}
                         close={() => setIsShowModalCancelQuote(false)}
@@ -623,6 +692,13 @@ export const NewQuote = () => {
                         fullDataCustomer={fullDataCustomer}
                         changeStep={changeStep}
                     />
+
+                    <ModalConfirmPaid
+                        dataQuote={dataQuote}
+                        show={isShowModalConfirmPaid}
+                        close={() => setIsShowModalConfirmPaid(false)}
+                    />
+
                 </div>
             </div>
 
@@ -634,6 +710,17 @@ export const NewQuote = () => {
                 />
                 : ''
             }
+
+            {isShowModalSendInvoice ?
+                <InvoicePDF
+                    componentPDF={componentPDF}
+                    fullDataCustomer={fullDataCustomer}
+                    paymentPolicyToQuote={paymentPolicyToQuote}
+                    dataInvoice={dataQuote} />
+                :
+                ""
+            }
+
         </div>
     )
 }

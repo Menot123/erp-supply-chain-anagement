@@ -40,6 +40,14 @@ const sendingQuoteToCustomer = (data) => {
     });
 };
 
+const sendingInvoiceToCustomer = (data) => {
+    return axios.post('/sale/api/sending-invoice', data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+};
+
 const postDataQuote = (data) => {
     return axios.post('/sale/api/quote', data)
 }
@@ -68,9 +76,12 @@ const getDataInvoicePreview = (invoiceId) => {
     return axios.get(`/sale/api/data-preview-invoice/${invoiceId}`)
 }
 
+const confirmInvoice = (dataInvoice) => {
+    return axios.put(`/sale/api/invoice`, dataInvoice)
+}
 
 export {
     getCustomers, getAllCodes, getComments, createAComment, editComment, deleteComment, getLatestQuoteCode,
     sendingQuoteToCustomer, postDataQuote, confirmQuote, getDataQuotePreview, postDataCancelQuote, postDataInvoice,
-    getDataInvoicePreview
+    getDataInvoicePreview, confirmInvoice, sendingInvoiceToCustomer
 }

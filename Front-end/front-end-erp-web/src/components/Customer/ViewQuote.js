@@ -417,7 +417,14 @@ export const ViewQuote = () => {
                             <div className='policy-condition mt-4'>
                                 <h5><FormattedMessage id="new_quote.preview-policy-payment" /></h5>
                                 <hr className='mt-1 mb-2' />
-                                <span><FormattedMessage id="new_quote.preview-policy-payment" /> {language === 'vi' ? dataPreview?.dataPaymentPolicy?.valueVi : dataPreview?.dataPaymentPolicy?.valueEn}</span>
+                                <span><FormattedMessage id="new_quote.preview-policy-payment" />
+                                    {
+                                        currentURL === "invoice" ?
+                                            language === 'vi' ? ": " + dataPreview?.invoicePaymentPolicy?.valueVi : ": " + dataPreview?.invoicePaymentPolicy?.valueEn
+                                            :
+                                            language === 'vi' ? ": " + dataPreview?.dataPaymentPolicy?.valueVi : ": " + dataPreview?.dataPaymentPolicy?.valueEn
+                                    }
+                                </span>
                             </div>
                         </div>
 

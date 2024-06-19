@@ -329,6 +329,23 @@ const initApiRoutes = (app) => {
     router.post('/sending-quote', upload.single('quoteFile'), apiController.sendingQuote);
 
     /**
+ * @swagger
+ * /api/sending-invoice:
+ *  get:
+ *      tags:
+ *          - Sales
+ *      summary: Sending invoice to email
+ *      description: Sending invoice to email and update status of invoice.
+ *      responses:
+ *          200:
+ *              description: Return status sending invoice and update status of invoice
+ *          404:
+ *              description: Error from server.
+ * 
+ */
+    router.post('/sending-invoice', upload.single('quoteFile'), apiController.sendingInvoice);
+
+    /**
     * @swagger
     * /api/quote:
     *  post:
@@ -410,25 +427,42 @@ const initApiRoutes = (app) => {
     */
     router.post('/invoice', apiController.postInvoice);
 
+
+
     /**
- * @swagger
- * /api/invoice:
- *  get:
- *      tags:
- *          - Sales
- *      summary: Get data of the draft invoice by invoiceId
- *      responses:
- *          200:
- *              description: Return a data invoice by id
- *          404:
- *              description: Error from server.
- * 
- */
+     * @swagger
+     * /api/invoice:
+     *  get:
+     *      tags:
+     *          - Sales
+     *      summary: Get data of the draft invoice by invoiceId
+     *      responses:
+     *          200:
+     *              description: Return a data invoice by id
+     *          404:
+     *              description: Error from server.
+     * 
+     */
     router.get('/data-preview-invoice/:invoiceId', apiController.getDataPreviewInvoice);
+
+    /**
+    * @swagger
+    * /api/invoice:
+    *  put:
+    *      tags:
+    *          - Sales
+    *      summary: Update status of the invoice
+    *      responses:
+    *          201:
+    *              description: Return status update status of the invoice. 
+    *          500:
+    *              description: Error from server.
+    * 
+    */
+    router.put('/invoice', apiController.confirmInvoice);
 
 
     return app.use("/api/", router)
-
 }
 
 export default initApiRoutes

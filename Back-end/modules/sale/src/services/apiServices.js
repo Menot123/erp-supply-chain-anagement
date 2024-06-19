@@ -1,6 +1,6 @@
 import db from '../models/index'
 const { Op } = require('sequelize');
-import { sendEmail } from './mailService';
+import { sendEmail, sendInvoice } from './mailService';
 
 
 const createCompanyDataService = async (dataCompany) => {
@@ -460,6 +460,42 @@ const sendingQuoteService = async (dataQuote, fullDataCustomer, bodySendQuote, q
     return res
 }
 
+const sendingInvoiceService = async (dataInvoice, fullDataCustomer, bodySendQuote, quoteFile) => {
+    let res = {}
+
+    if (dataInvoice && fullDataCustomer && bodySendQuote && quoteFile) {
+        const dataQuoteSend = JSON.parse(dataInvoice)
+        const fullDataCustomerSend = JSON.parse(fullDataCustomer)
+
+        try {
+            sendInvoice({
+                receiver: fullDataCustomerSend?.email,
+                name: fullDataCustomerSend?.fullName,
+                bodySendQuote: bodySendQuote,
+                quoteCode: dataQuoteSend?.quoteId,
+                currentLang: 'vi',
+                quoteFile: quoteFile,
+            })
+
+            res.EM = 'Sending a invoice successfully'
+            res.EC = 0
+            res.DT = ''
+        } catch (error) {
+            // Xử lý lỗi gửi email
+            console.error('Error sending email:', error)
+            res.EM = 'Sending a invoice failed'
+            res.EC = -1
+            res.DT = ''
+        }
+    } else {
+        res.EM = 'Sending a invoice failed'
+        res.EC = -2
+        res.DT = ''
+    }
+    return res
+}
+
+
 const postQuoteService = async (dataQuote) => {
     try {
         let res = {}
@@ -745,10 +781,61 @@ const getDataPreviewInvoiceService = async (invoiceId) => {
     }
 }
 
+const confirmInvoiceService = async (dataInvoice) => {
+    try {
+        let res = {}
+        let fieldCheck = ['quoteId', 'customer', 'dateCreateInvoice', 'paymentPolicy', 'productList', 'totalPrice']
+
+        if (dataInvoice) {
+            fieldCheck.forEach(element => {
+                if (!dataInvoice[element]) {
+                    res.EC = -2
+                    res.EM = 'Missing fields of quote'
+                    res.DT = ''
+                    return res
+                }
+            });
+            let invoice = await db.Invoice.findOne({
+                where: {
+                    invoiceId: dataInvoice?.quoteId
+                }
+            })
+            if (!invoice) {
+                await db.Invoice.create({
+                    ...dataInvoice,
+                    customerId: dataInvoice?.customer,
+                    tax: JSON.stringify(dataInvoice.tax),
+                    productList: JSON.stringify(dataInvoice.productList),
+                    invoiceId: dataInvoice?.quoteId,
+                    createdDate: dataInvoice?.dateCreateInvoice,
+                    status: dataInvoice?.status ?? 'S0'
+                })
+            } else {
+                if (invoice.status === 'S0') {
+                    await quote.update({ status: "S1" })
+                }
+            }
+            res.EM = 'Confirm a invoice successfully'
+            res.EC = 0
+            res.DT = ''
+            return res
+
+        } else {
+            res.EC = -1
+            res.EM = 'Missing parameters of quote'
+            res.DT = ''
+            return res
+        }
+    } catch (error) {
+        console.error('Error when confirm invoice service:', error)
+    }
+}
+
 module.exports = {
     createCompanyDataService, createBranchCompanyDataService, getBranchesService,
     getBranchService, getDetailCompanyService, handleDeleteCompanyService, updateConfirmQuoteService,
     getCustomersService, getAllCodesService, getCommentsService, postCommentService, updateCommentService,
     deleteCommentService, getLatestQuoteService, sendingQuoteService, postQuoteService, updateStatusQuoteService,
-    getDataPreviewQuoteService, postCancelQuoteService, sendEmailCancelQuote, postInvoiceService, getDataPreviewInvoiceService
+    getDataPreviewQuoteService, postCancelQuoteService, sendEmailCancelQuote, postInvoiceService, getDataPreviewInvoiceService,
+    confirmInvoiceService, sendingInvoiceService
 }

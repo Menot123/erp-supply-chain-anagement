@@ -241,6 +241,8 @@
     "title-new-quote": "Quotations",
     "btn-send-quote": "Send by Email",
     "btn-confirm-quote": "Confirm",
+    "btn-send-invoice": "Send Invoice",
+    "btn-confirmed-payment": "Register Payment",
     "btn-preview-quote": "Preview",
     "btn-cancel-quote": "Cancel",
     "btn-create-bill": "Create Invoice",
@@ -321,5 +323,6 @@
     "new_quote.preview-modal-reject-btn-cancel": "Cancel",
     "new_quote.create-invoice-title": "Customer Invoice",
     "new_quote.create-invoice-draft": "Draft",
-    "table-preview-tax": "Value Added Tax (VAT)"
+    "table-preview-tax": "Value Added Tax (VAT)",
+    "sub_title_new_inv": "Invoice"
 }

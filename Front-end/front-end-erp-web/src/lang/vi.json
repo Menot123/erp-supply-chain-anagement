@@ -241,6 +241,8 @@
     "title-new-quote": "Báo giá",
     "btn-send-quote": "Gửi qua email",
     "btn-confirm-quote": "Xác nhận",
+    "btn-send-invoice": "Gửi hóa đơn",
+    "btn-confirmed-payment": "Xác nhận thanh toán",
     "btn-preview-quote": "Xem trước",
     "btn-cancel-quote": "Hủy",
     "btn-create-bill": "Tạo hóa đơn",
@@ -321,5 +323,6 @@
     "new_quote.preview-modal-reject-btn-cancel": "Hủy bỏ",
     "new_quote.create-invoice-title": "Hóa đơn bán hàng",
     "new_quote.create-invoice-draft": "Nháp",
-    "table-preview-tax": "Thuế GTGT phải nộp"
+    "table-preview-tax": "Thuế GTGT phải nộp",
+    "sub_title_new_inv": "Hóa đơn"
 }

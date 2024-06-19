@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react'
+import './ModalSendQuoteToEmail.scss'
 import Modal from 'react-bootstrap/Modal';
 import { Select, Input } from "antd";
 import { FaRegFilePdf } from "react-icons/fa";
-import { postDataCancelQuote } from '../../../services/saleServices'
+import { sendingInvoiceToCustomer, confirmInvoice } from '../../../services/saleServices'
 import { toast } from 'react-toastify';
-import './ModalCancelQuote.scss'
+import { Tooltip } from "antd"
 
-export const ModalCancelQuote = (props) => {
+
+export const ModalSendInvoiceToEmail = (props) => {
 
     const defaultValue = `Xin chào,
+Đây là hoá đơn của bạn INV${props?.dataQuote?.quoteId} có số tiền là 110.000 ₫   . Vui lòng thanh toán vào thời điểm sớm nhất mà bạn thấy thuận tiện.
 
-Đã có quotation S${props?.dataQuote?.quoteId} có giá trị là ${props?.dataQuote?.totalPrice} đã sẵn sàng để bạn kiểm tra.
+Vui lòng điền thông tin thanh toán như sau: INV${props?.dataQuote?.quoteId}.
     
-Đừng ngần ngại liên hệ với chúng tôi nếu bạn có câu hỏi cần được giải đáp.
+Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng tôi.
 `;
 
 
@@ -26,38 +29,41 @@ export const ModalCancelQuote = (props) => {
             let receiverText = props?.fullDataCustomer?.fullName + ` <${props?.fullDataCustomer?.email}> `
             Promise.all([
                 setReceiver(receiverText),
-                setTitleSendQuote(props?.fullDataCustomer?.fullName + ' Báo giá (Mã ' + props?.dataQuote?.quoteId + ')'),
-                setBodySendQuote(`
-Kính gửi ${props?.fullDataCustomer?.fullName ?? "name"},
+                setTitleSendQuote(props?.fullDataCustomer?.fullName + ' - Hóa đơn (Mã INV' + props?.dataQuote?.quoteId + ')'),
+                setBodySendQuote(`Xin chào,
 
-Xin lưu ý rằng Đơn bán hàng S${props?.dataQuote?.quoteId ?? "0"} đã bị hủy. Do đó, bạn sẽ không bị tính thêm tiền cho đơn hàng này. Nếu cần hoàn tiền, việc này sẽ được thực hiện theo cách thuận tiện nhất.
+Đây là hoá đơn của bạn INV${props?.dataQuote?.quoteId} có số tiền là ${props?.dataQuote?.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}. Vui lòng thanh toán vào thời điểm sớm nhất mà bạn thấy thuận tiện.
 
-Đừng ngần ngại liên hệ với chúng tôi nếu bạn có câu hỏi cần được giải đáp.
-
-`)])
+Vui lòng điền thông tin thanh toán như sau: INV${props?.dataQuote?.quoteId}.
+    
+Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng tôi.`)])
         }
     }, [props])
 
     const { TextArea } = Input;
 
-    const handleSendingEmailCancelQuote = async () => {
+    const handleSendingInvoiceToEmail = async () => {
+
         try {
             setIsSendingEmail(true)
+            let response = await confirmInvoice({ ...props?.dataQuote, status: "S1" })
+            let quoteFile = await props?.downloadQuote('POST_API');
 
             // Tạo FormData và thêm các dữ liệu khác
             const formData = new FormData();
-            formData.append('dataQuote', JSON.stringify({ ...props?.dataQuote, status: "deleted" }));
+            formData.append('quoteFile', quoteFile, 'invoice.pdf'); // Chuyển đổi Blob thành file
+            formData.append('dataQuote', JSON.stringify({ ...props?.dataQuote, status: "S1" }));
             formData.append('fullDataCustomer', JSON.stringify(props?.fullDataCustomer));
             formData.append('bodySendQuote', bodySendQuote);
 
             // Gửi request POST sử dụng axios và chờ phản hồi
-            let res = await postDataCancelQuote(formData);
+            let res = await sendingInvoiceToCustomer(formData);
             setTimeout(() => {
                 setIsSendingEmail(false);
-                props?.changeStep(3)
                 if (res && res.EC === 0) {
-                    toast.success(`Cancel quote S${props?.dataQuote?.quoteId} successfully!`)
-                    props?.close()
+                    toast.success(`Sending quote to ${props?.fullDataCustomer?.email} successfully!`)
+                    Promise.all([props?.close(),
+                    props?.handleClearDataQuote()])
                 }
             }, 3000);
         } catch (error) {
@@ -76,18 +82,12 @@ Xin lưu ý rằng Đơn bán hàng S${props?.dataQuote?.quoteId ?? "0"} đã b�
             >
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        <h4>Hủy đơn bán hàng</h4>
+                        <h4>Gửi hóa đơn</h4>
                     </Modal.Title>
 
                 </Modal.Header>
                 <Modal.Body>
-
-                    <div className='wrap-body-modal-cancel'>
-
-                        <div className='wrap-message-confirm-cancel'>
-                            <span>Bạn có chắc chắn muốn hủy đơn hàng này không?</span>
-                        </div>
-
+                    <div className='wrap-body-modal'>
                         <div className='wrap-select-customer'>
                             <label htmlFor='select-customer'>Người nhận</label>
                             <Input variant="borderless" value={receiver ?? ''} disabled />
@@ -105,10 +105,24 @@ Xin lưu ý rằng Đơn bán hàng S${props?.dataQuote?.quoteId ?? "0"} đã b�
 
                         <hr />
 
+                        <div className='wrap-quote-file'>
+                            {/* <Tooltip placement="bottom" title={"Tải xuống hóa đơn"}> */}
+                            <div className='icon-quote hover-item' onClick={() => props?.downloadQuote()}>
+                                <FaRegFilePdf className='icon-file-quote ' />
+                            </div>
+                            {/* </Tooltip> */}
+
+
+                            <div className='wrap-name-type-file'>
+                                <span>Hóa đơn - INV{props?.dataQuote?.quoteId}.pdf</span>
+                                <strong>PDF</strong>
+                            </div>
+                        </div>
+
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button className='btn btn-main' onClick={handleSendingEmailCancelQuote}>Gửi và hủy</button>
+                    <button className='btn btn-main' onClick={handleSendingInvoiceToEmail}>Gửi</button>
                     <button className='btn btn-gray' onClick={props?.close}> Hủy bỏ</button>
                 </Modal.Footer>
             </Modal >

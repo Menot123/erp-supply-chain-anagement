@@ -266,6 +266,25 @@ const sendingQuote = async (req, res, next) => {
     }
 }
 
+const sendingInvoice = async (req, res, next) => {
+    try {
+        const { dataQuote, fullDataCustomer, bodySendQuote } = req.body;
+        const quoteFile = req.file;
+        let response = await apiService.sendingInvoiceService(dataQuote, fullDataCustomer, bodySendQuote, quoteFile);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in sending invoice controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 const postQuote = async (req, res, next) => {
     try {
         const dataQuote = req.body;
@@ -374,9 +393,27 @@ const getDataPreviewInvoice = async (req, res, next) => {
     }
 }
 
+const confirmInvoice = async (req, res, next) => {
+    try {
+        const dataInvoice = req.body;
+        let response = await apiService.confirmInvoiceService(dataInvoice);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in confirm invoice controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 module.exports = {
     createCompanyData, createBranchCompanyData, getBranches, getBranch, getDetailCompany,
     handleDeleteCompany, updateConfirmQuote, getCustomers, getAllCodes, getComments, postComment,
     updateComment, deleteComment, getLatestQuote, sendingQuote, postQuote, updateStatusQuote, getDataPreviewQuote,
-    postCancelQuote, postInvoice, getDataPreviewInvoice
+    postCancelQuote, postInvoice, getDataPreviewInvoice, confirmInvoice, sendingInvoice
 }
