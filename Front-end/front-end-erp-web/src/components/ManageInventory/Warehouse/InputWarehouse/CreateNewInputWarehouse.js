@@ -4,11 +4,11 @@ import { RiImageAddLine } from "react-icons/ri";
 import { useState, useEffect } from 'react'
 import 'react-image-lightbox/style.css';
 import Lightbox from 'react-image-lightbox';
-import { createNewReceipt, getAllCode, getAllProducts, getProviders, getProductByProviderId, createProductListOfReceipt } from '../../../services/inventoryServices'
+import { createNewReceipt, getAllCode, getAllProducts, getProviders, getProductByProviderId, createProductListOfReceipt } from '../../../../services/inventoryServices'
 import { useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
-import { LANGUAGES } from '../../../utils/constant'
+import { LANGUAGES } from '../../../../utils/constant'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Steps, Select, Tooltip, DatePicker, Tabs, Input } from "antd";
 import { TableInputWarehouse } from './TableInputWarehouse';
@@ -233,12 +233,12 @@ function CreateNewInputWarehouse() {
                         <button className='btn btn-gray'>In nhãn</button>
                         <button className='btn btn-gray'>Hủy</button>
                     </div>
-                    <div className='quote-status'>
+                    <div className='input-warehouse-status'>
                         <Steps
                             type="navigation"
                             size="small"
                             current={currentStepInputWarehouse}
-                            className="site-navigation-steps quote-step"
+                            className="site-navigation-steps input-warehouse-step"
                             items={[
                                 {
                                     status: 'process',
@@ -256,8 +256,8 @@ function CreateNewInputWarehouse() {
                         />
                     </div>
                 </div>
-                <div className='body-create-quote'>
-                    <div className='wrap-info-quote pt-5'>
+                <div className='body-create-input-warehouse'>
+                    <div className='wrap-info-input-warehouse pt-5'>
                         <div className='content-left'>
                             <div className='wrap-expiration-date'>
                                 <label htmlFor='select-receive-from'>Nhập từ</label>

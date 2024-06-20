@@ -28,11 +28,11 @@
                 display: flex;
                 gap: 4px;
             }
-            .quote-status {
+            .input-warehouse-status {
                 display: flex;
                 align-items: center;
                 width: 38%;
-                .quote-step {
+                .input-warehouse-step {
                     padding-top: 0;
                     .ant-steps-item-process {
                         .ant-steps-item-container {
@@ -45,14 +45,14 @@
                 }
             }
         }
-        .body-create-quote {
+        .body-create-input-warehouse {
             min-height: 500px;
             margin-bottom: 24px;
             width: 100%;
             border: 1px solid #ccc;
             border-radius: 4px;
             padding: 24px;
-            .wrap-info-quote {
+            .wrap-info-input-warehouse {
                 display: flex;
                 gap: 28px;
                 // justify-content: space-between;

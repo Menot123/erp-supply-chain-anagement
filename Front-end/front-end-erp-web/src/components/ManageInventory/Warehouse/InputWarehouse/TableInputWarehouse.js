@@ -207,7 +207,7 @@ export const TableInputWarehouse = (props) => {
 
     return (
         <div>
-            <div className='body-content-sub-company'>
+            <div className='body-content-input-warehouse'>
                 <table className="table table-striped table-hover table-products">
                     <thead>
                         <tr>
@@ -293,8 +293,8 @@ export const TableInputWarehouse = (props) => {
                         <tr>
                             <td colSpan='7'>
                                 {props.hadProvider == true
-                                    ? <span onClick={() => handleAddNewInput()} className='add-sub-company'>Thêm một dòng</span>
-                                    : <span disabled className='add-sub-company'>Thêm một dòng</span>
+                                    ? <span onClick={() => handleAddNewInput()} className='add-input-warehouse'>Thêm một dòng</span>
+                                    : <span disabled className='add-input-warehouse'>Thêm một dòng</span>
                                 }
                             </td>
                         </tr>

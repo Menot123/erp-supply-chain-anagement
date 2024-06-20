@@ -1,25 +1,25 @@
 import React from 'react'
-import './InputWarehouse.scss'
-import FilterHeader from '../../FilterHeader/FilterHeader';
+import './OutputWarehouse.scss'
+import FilterHeader from '../../../FilterHeader/FilterHeader';
 import { IoOptions } from "react-icons/io5";
 import {
     useHistory
 } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux';
-import { getStockEntrys } from '../../../services/inventoryServices'
-import { LANGUAGES } from '../../../utils/constant'
+import { getStockDeliverys } from '../../../../services/inventoryServices'
+import { LANGUAGES } from '../../../../utils/constant'
 import { toast } from 'react-toastify';
 import { FormattedMessage } from 'react-intl'
 
-function InputWarehouse() {
+function OutputWarehouse() {
     const history = useHistory();
     const [currentView, setCurrentView] = useState('list')
     const [currentLimit] = useState(16)
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPage, setTotalPage] = useState(0)
 
-    const [stockEntrys, setStockEntrys] = useState([])
+    const [stockDeliverys, setStockDeliverys] = useState([])
     const tempProductsLength = 1
     const language = useSelector(state => state.language.value)
 
@@ -60,7 +60,7 @@ function InputWarehouse() {
 
 
     const exampleItem = {
-        reference: 'WH/IN/001',
+        reference: 'WH/OUT/001',
         contact: '0123456789',
         responsible: 'Nguyễn Tiến Đạt',
         scheduledDate: '08/01/2024',
@@ -69,7 +69,7 @@ function InputWarehouse() {
         effectiveDate: '05/09/2024 04:18:45',
         sourceDocument: '',
         backOrderof: '',
-        operationType: 'Nhập kho',
+        operationType: 'Xuất kho',
         status: 'Sẵn sàng',
     }
 
@@ -131,29 +131,29 @@ function InputWarehouse() {
 
 
     useEffect(() => {
-        const fetchStockEntrys = async () => {
-            const response = await getStockEntrys()
+        const fetchStockDeliverys = async () => {
+            const response = await getStockDeliverys()
             if (response.EC == 0) {
-                Promise.all([setStockEntrys(response?.DT)])
+                Promise.all([setStockDeliverys(response?.DT)])
                 console.log(response.DT)
             } else {
                 toast.error(response?.EM)
             }
         }
 
-        fetchStockEntrys()
+        fetchStockDeliverys()
     }, [currentPage, currentLimit])
 
-    const handleNavigateToReceiptPage = (receiptId) => {
-        history.push('/manage-inventory/input-warehouse/' + receiptId)
+    const handleNavigateToDeliveryPage = (deliveryId) => {
+        history.push('/manage-inventory/output-warehouse/' + deliveryId)
     }
 
     return (
         <>
-            <div className='body-manage-input-warehouse'>
+            <div className='body-manage-output-warehouse'>
                 <FilterHeader
-                    namePage={language === LANGUAGES.EN ? 'Receipts' : 'Phiếu nhập kho'}
-                    urlNewItem={'/manage-inventory/input-warehouse/create'}
+                    namePage={language === LANGUAGES.EN ? 'Deliverys' : 'Phiếu xuất kho'}
+                    urlNewItem={'/manage-inventory/output-warehouse/create'}
                     setCurrentViewProduct={setCurrentView}
                     currentView={currentView}
                     totalPageProduct={totalPage}
@@ -162,26 +162,26 @@ function InputWarehouse() {
                     setShowActions={setIsShowActions}
                     listCheckedItems={listCheckedItems}
                     numberCheckedItems={numberCheckedItems}
-                    urlImportProduct={'/manage-inventory/input-warehouse/import'}
+                    urlImportProduct={'/manage-inventory/output-warehouse/import'}
                 />
 
 
                 {currentView === 'block'
                     ?
-                    <div className='manage-input-warehouse-container container-fluid mt-3 ps-5 pe-5'>
+                    <div className='manage-output-warehouse-container container-fluid mt-3 ps-5 pe-5'>
 
-                        <div className='input-warehouse-items-wrap row'>
+                        <div className='output-warehouse-items-wrap row'>
                             {/* {products && products.length > 0 &&
                                 products.map((item, index) => {
                                     return (
-                                        <div key={index} className='input-warehouse-item d-flex col-4  ' onClick={() => handleNavigateToProductPage(item.productId)}>
-                                            <div className='image-input-warehouse'>
-                                                <img className='img-input-warehouse' src={item.image} alt='input-warehouse img' />
+                                        <div key={index} className='output-warehouse-item d-flex col-4  ' onClick={() => handleNavigateToProductPage(item.productId)}>
+                                            <div className='image-output-warehouse'>
+                                                <img className='img-output-warehouse' src={item.image} alt='output-warehouse img' />
                                             </div>
-                                            <div className='des-input-warehouse'>
-                                                <span className='name-input-warehouse '><FormattedMessage id="nav.manage-inventory-product" />: {language === LANGUAGES.EN ? item.nameEn : item.nameVi}</span>
-                                                <span className='barcode-input-warehouse'><MdBarcodeReader /> <FormattedMessage id="product-view-barcode" />: {item.barCode}</span>
-                                                <span className='cost-input-warehouse'><FaCoins /><FormattedMessage id='nav.manage-inventory-create-product-cost' />: {formatCurrency(item.cost)}</span>
+                                            <div className='des-output-warehouse'>
+                                                <span className='name-output-warehouse '><FormattedMessage id="nav.manage-inventory-product" />: {language === LANGUAGES.EN ? item.nameEn : item.nameVi}</span>
+                                                <span className='barcode-output-warehouse'><MdBarcodeReader /> <FormattedMessage id="product-view-barcode" />: {item.barCode}</span>
+                                                <span className='cost-output-warehouse'><FaCoins /><FormattedMessage id='nav.manage-inventory-create-product-cost' />: {formatCurrency(item.cost)}</span>
                                             </div>
                                         </div>
                                     )
@@ -192,7 +192,7 @@ function InputWarehouse() {
                     </div>
                     :
                     <>
-                        <div className='manage-input-warehouse-container'>
+                        <div className='manage-output-warehouse-container'>
                             <table className="table table-striped table-hover">
                                 <thead className='table-heading'>
                                     <tr className='table-row-heading'>
@@ -296,7 +296,7 @@ function InputWarehouse() {
                                 </thead>
                                 <tbody>
                                     {/* {tempProductsLength > 0 ? ( */}
-                                    {stockEntrys ? (
+                                    {stockDeliverys ? (
                                         (() => {
                                             // if (products.length > 0) {
                                             if (tempProductsLength > 0) {
@@ -378,13 +378,13 @@ function InputWarehouse() {
                                                 //         <td></td>
                                                 //     </tr>
                                                 // </>
-                                                return stockEntrys.map((item, index) => (
-                                                    <tr onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} key={'receipt' + index} className='hover-item'>
+                                                return stockDeliverys.map((item, index) => (
+                                                    <tr onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} key={'delivery' + index} className='hover-item'>
                                                         {allElementsChecked
                                                             ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
                                                             : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
                                                         }
-                                                        <td>{item.stockEntryId}</td>
+                                                        <td>{item.stockDeliveryId}</td>
                                                         <td className={`${contactChecked ? '' : 'hidden'}`}>{item.providerId}</td>
                                                         <td className={`${personInChargeChecked ? '' : 'hidden'}`}>{item.userId}</td>
                                                         <td className={`${plannedDateChecked ? '' : 'hidden'}`}>{item.scheduledDate}</td>
@@ -425,4 +425,4 @@ function InputWarehouse() {
     )
 }
 
-export default InputWarehouse
+export default OutputWarehouse
