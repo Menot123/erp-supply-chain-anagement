@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             AllCode.hasMany(models.Quote, { foreignKey: 'currency', as: 'dataCurrency' })
             AllCode.hasMany(models.Quote, { foreignKey: 'paymentPolicy', as: 'dataPaymentPolicy' })
+            AllCode.hasMany(models.Invoice, { foreignKey: 'paymentPolicy', as: 'invoicePaymentPolicy' })
         }
     };
     AllCode.init({

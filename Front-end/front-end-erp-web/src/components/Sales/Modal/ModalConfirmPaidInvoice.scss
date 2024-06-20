@@ -1,0 +1,51 @@
+.wrap-body-modal-paid-invoice {
+
+    .wrap-message-confirm-cancel {
+        color           : #8c5e00;
+        background-color: #fbebcc;
+        border-color    : #f8e2b3;
+        margin          : 0 -16px;
+        padding         : 12px 16px;
+    }
+
+    hr {
+        height          : 1px;
+        border          : none;
+        background-color: #017e84;
+        opacity         : 1;
+    }
+
+    .wrap-select-customer,
+    .wrap-input-title {
+        display: flex;
+
+        label {
+            font-weight: 500;
+            width      : 36%;
+        }
+
+        .select-date-paid,
+        .select-customer,
+        .input-title {
+            height          : 28px !important;
+            border-radius   : 0px !important;
+            border-bottom   : 1px solid #fff;
+            // width        : 85% !important;
+            width           : 60%;
+
+            .ant-select-arrow {
+                display: none;
+            }
+
+            &:hover {
+                border-bottom: 1px solid #000;
+
+                .ant-select-arrow {
+                    display: block;
+                }
+            }
+        }
+
+    }
+
+}

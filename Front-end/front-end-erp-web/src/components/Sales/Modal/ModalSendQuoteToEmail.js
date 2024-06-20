@@ -107,7 +107,7 @@ export const ModalSendQuoteToEmail = (props) => {
                             </div>
 
                             <div className='wrap-name-type-file'>
-                                <span>Báo giá - S00005.pdf</span>
+                                <span>Báo giá - S{props?.dataQuote?.quoteId}.pdf</span>
                                 <strong>PDF</strong>
                             </div>
                         </div>

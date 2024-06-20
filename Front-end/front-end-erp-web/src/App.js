@@ -48,7 +48,7 @@ function App() {
         <Route path={[path.HOME, path.HOME2]} exact>
           <Home />
         </Route>
-        <PrivateRoute path={path.VIEW_QUOTE} component={ViewQuote}>
+        <PrivateRoute path={[path.VIEW_QUOTE, path.VIEW_DRAFT_INVOICE]} component={ViewQuote}>
         </PrivateRoute>
         <Route path="*" exact>
           <NotFound404 />

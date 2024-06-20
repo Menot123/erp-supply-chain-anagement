@@ -266,6 +266,25 @@ const sendingQuote = async (req, res, next) => {
     }
 }
 
+const sendingInvoice = async (req, res, next) => {
+    try {
+        const { dataQuote, fullDataCustomer, bodySendQuote } = req.body;
+        const quoteFile = req.file;
+        let response = await apiService.sendingInvoiceService(dataQuote, fullDataCustomer, bodySendQuote, quoteFile);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in sending invoice controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 const postQuote = async (req, res, next) => {
     try {
         const dataQuote = req.body;
@@ -338,9 +357,63 @@ const postCancelQuote = async (req, res, next) => {
     }
 }
 
+const postInvoice = async (req, res, next) => {
+    try {
+        const dataInvoice = req.body;
+        let response = await apiService.postInvoiceService(dataInvoice);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in create an draft invoice controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const getDataPreviewInvoice = async (req, res, next) => {
+    try {
+        const invoiceId = req.params.invoiceId
+        let response = await apiService.getDataPreviewInvoiceService(invoiceId);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in get data preview invoice controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const confirmInvoice = async (req, res, next) => {
+    try {
+        const dataInvoice = req.body;
+        let response = await apiService.confirmInvoiceService(dataInvoice);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in confirm invoice controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 module.exports = {
     createCompanyData, createBranchCompanyData, getBranches, getBranch, getDetailCompany,
     handleDeleteCompany, updateConfirmQuote, getCustomers, getAllCodes, getComments, postComment,
     updateComment, deleteComment, getLatestQuote, sendingQuote, postQuote, updateStatusQuote, getDataPreviewQuote,
-    postCancelQuote
+    postCancelQuote, postInvoice, getDataPreviewInvoice, confirmInvoice, sendingInvoice
 }

@@ -13,10 +13,13 @@ import { validateData } from '../../../utils/functions'
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { QuotePDF } from './QuotePDF';
-import { getLatestQuoteCode, confirmQuote, postDataQuote } from '../../../services/saleServices'
+import { getLatestQuoteCode, postDataQuote, postDataInvoice, confirmInvoice } from '../../../services/saleServices'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { ModalCancelQuote } from '../Modal/ModalCancelQuote';
+import { ModalSendInvoiceToEmail } from '../Modal/ModalSendInvoiceToEmail';
+import { InvoicePDF } from './InvoicePDF';
+import { ModalConfirmPaid } from '../Modal/ModalConfirmPaid';
 
 export const NewQuote = () => {
 
@@ -26,7 +29,6 @@ export const NewQuote = () => {
     const intl = useIntl();
     const language = useSelector(state => state.language.value)
     const email = useSelector(state => state.user.email)
-
 
     const defaultDataQuote = {
         quoteId: '',
@@ -51,6 +53,7 @@ export const NewQuote = () => {
 
     const [dataQuote, setDataQuote] = useState(defaultDataQuote)
     const [currentStepQuote, setCurrentStepQuote] = useState(0);
+    const [currentStepInvoice, setCurrentStepInvoice] = useState(0);
     const [listProduct, setListProduct] = useState([])
     const [customersSelect, setCustomersSelect] = useState([])
     const [selectedCustomer, setSelectedCustomer] = useState([])
@@ -61,10 +64,15 @@ export const NewQuote = () => {
     const [timePayment, setTimePayment] = useState([])
     const [otherInfoQuote, setOtherInfoQuote] = useState(defaultDataOtherInfoQuote)
     const [isShowModalSendQuote, setIsShowModalSendQuote] = useState(false)
+    const [isShowModalSendInvoice, setIsShowModalSendInvoice] = useState(false)
     const [isShowModalCancelQuote, setIsShowModalCancelQuote] = useState(false)
     const [isSendingQuote, setIsSendingQuote] = useState(false)
     const [dataSendQuotePDF, setDataSendQuotePDF] = useState([])
     const [dataStep, setDataStep] = useState([])
+    const [isCreateInvoice, setIsCreateInvoice] = useState(false)
+    const [dateCreateInvoice, setDateCreateInvoice] = useState(null)
+    const [isShowModalConfirmPaid, setIsShowModalConfirmPaid] = useState(false)
+
     let defaultStep = {
         status1: 'process',
         status2: 'wait',
@@ -72,7 +80,22 @@ export const NewQuote = () => {
         status4: 'wait',
     }
 
+    let defaultCreateInvoiceStep1 = {
+        status1: 'process',
+        status2: 'wait',
+        status3: 'wait',
+        status4: 'wait',
+    }
+
+    let defaultCreateInvoiceStep2 = {
+        status1: 'wait',
+        status2: 'process',
+        status3: 'wait',
+        status4: 'wait',
+    }
+
     const [arrCurrentStep, setArrCurrentStep] = useState(defaultStep)
+    const [arrCurrentInvoiceStep, setArrInvoiceCurrentStep] = useState(defaultCreateInvoiceStep1)
 
     const fetchLatestQuoteCode = async () => {
         let res = await getLatestQuoteCode()
@@ -141,7 +164,6 @@ export const NewQuote = () => {
     }
 
     useEffect(() => {
-        console.log(">>> check data: ", currentStepQuote)
         if (currentStepQuote === 3) {
             setDataStep([
                 {
@@ -277,6 +299,7 @@ export const NewQuote = () => {
         }
     }
 
+
     const handleGeneratePdf = async (type) => {
         const quote = componentPDF.current
         try {
@@ -308,7 +331,11 @@ export const NewQuote = () => {
                 // setFilePDFBlob(pdf.output('blob'))
                 return pdf.output('blob');
             }
-            pdf.save("Quote.pdf");
+            if (isShowModalSendInvoice) {
+                pdf.save("INVOICE.pdf");
+            } else {
+                pdf.save("Quote.pdf");
+            }
         } catch (err) {
             console.log(err)
         }
@@ -325,16 +352,31 @@ export const NewQuote = () => {
         }
     }
 
-    const handlePushDataQuotePreview = async () => {
-        const arrValidateFieldsQuote = ['customer', 'expirationDay', 'currency', 'paymentPolicy']
+    const handlePushDataQuotePreview = async (type) => {
+        const arrValidateFieldsQuote = isCreateInvoice ? ['customer', 'currency', 'paymentPolicy'] : ['customer', 'expirationDay', 'currency', 'paymentPolicy']
         let check = validateData(arrValidateFieldsQuote, dataQuote)
         if (check && check.length === 0) {
-            let res = await postDataQuote({ ...dataQuote, status: 'S0' })
-            if (res?.EC === 0) {
-                const newTabUrl = `/my/orders/${dataQuote?.quoteId}`;
-                window.open(newTabUrl, '_blank');
+            // Create an voice
+            if (type === "invoice") {
+                if (dateCreateInvoice) {
+                    let res = await postDataInvoice({ ...dataQuote, status: 'S0', dateCreateInvoice: dateCreateInvoice, invoiceId: dataQuote?.quoteId })
+                    if (res?.EC === 0) {
+                        const newTabUrl = `/my/invoice/${dataQuote?.quoteId}`;
+                        window.open(newTabUrl, '_blank');
+                    } else {
+                        toast.error(<FormattedMessage id='new_quote.preview-toast-error' />)
+                    }
+                } else {
+                    toast.warning(<FormattedMessage id="new_quote.preview-toast-empty-field" />)
+                }
             } else {
-                toast.error(<FormattedMessage id='new_quote.preview-toast-error' />)
+                let res = await postDataQuote({ ...dataQuote, status: 'S0', dateCreateInvoice: dateCreateInvoice })
+                if (res?.EC === 0) {
+                    const newTabUrl = `/my/orders/${dataQuote?.quoteId}`;
+                    window.open(newTabUrl, '_blank');
+                } else {
+                    toast.error(<FormattedMessage id='new_quote.preview-toast-error' />)
+                }
             }
         } else {
             toast.warning(<FormattedMessage id="new_quote.preview-toast-empty-field" />)
@@ -363,6 +405,23 @@ export const NewQuote = () => {
         }
     }
 
+    const handleConfirmInvoice = async () => {
+        const arrValidateFieldsQuote = ['customer', 'paymentPolicy']
+        let check = validateData(arrValidateFieldsQuote, dataQuote)
+        if (check && check.length === 0 && dateCreateInvoice) {
+            let res = await confirmInvoice({ ...dataQuote, dateCreateInvoice: dateCreateInvoice })
+            if (res.EC !== 0) {
+                toast.error("Something wrong when confirm invoice, please try again later")
+            } else {
+                setArrInvoiceCurrentStep(defaultCreateInvoiceStep2)
+                setCurrentStepInvoice(1)
+            }
+        } else {
+            toast.warning(<FormattedMessage id="new_quote.confirm-toast-empty-field" />)
+        }
+
+    }
+
     const setTaxAndPriceBeforeTax = (type, value) => {
         if (type === 'tax') {
             setDataQuote((prevState) => ({
@@ -381,6 +440,25 @@ export const NewQuote = () => {
         setIsShowModalCancelQuote(true)
     }
 
+    const handleCreateInvoice = () => {
+        setIsCreateInvoice(true)
+    }
+
+    const handleChangeDateCreateInvoice = (date, dateString) => {
+        setDateCreateInvoice(dateString)
+    };
+
+    const handleSendInvoice = () => {
+        const arrValidateFieldsInvoice = ['customer', 'expirationDay', 'paymentPolicy']
+        let check = validateData(arrValidateFieldsInvoice, dataQuote)
+        if (check && check.length === 0) {
+            setDataSendQuotePDF(dataQuote)
+            setIsShowModalSendInvoice(true)
+        } else {
+            toast.warning(<FormattedMessage id="new_quote.toast-empty-field" />)
+        }
+    }
+
     return (
         <div className='wrapper-create-quote'>
             <div className='header-create-quote'>
@@ -392,16 +470,16 @@ export const NewQuote = () => {
                         <span onClick={backToQuote} className='title-quote' ><FormattedMessage id="title-new-quote" /></span>
                     </Tooltip>
                     {/* <span onClick={backToQuote} className='title-quote' data-tooltip='Back to "Báo giá"'>Báo giá</span> */}
-                    <span className='title-create'><FormattedMessage id="btn-new-quote" /></span>
+                    <span className='title-create'>{currentStepInvoice === 1 ? "INV" + dataQuote?.quoteId : <FormattedMessage id="btn-new-quote" />}</span>
                 </div>
             </div>
             <div className='wrapper-body-create-quote'>
                 <div className='actions-status'>
                     <div className='wrap-btn-actions'>
                         {
-                            currentStepQuote === 3 ? "" :
+                            currentStepQuote === 3 || isCreateInvoice ? "" :
                                 <>
-                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handlePushDataQuotePreview}><FormattedMessage id="btn-create-bill" /></button>}
+                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCreateInvoice}><FormattedMessage id="btn-create-bill" /></button>}
                                     {currentStepQuote !== 2 && <button className='btn btn-main' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
                                     {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
                                     {currentStepQuote !== 2 && <button className='btn btn-gray' onClick={handleConfirmQuote}><FormattedMessage id="btn-confirm-quote" /></button>}
@@ -409,19 +487,65 @@ export const NewQuote = () => {
                                     {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCancelQuote}><FormattedMessage id="btn-cancel-quote" /></button>}
                                 </>
                         }
+
+                        {
+                            isCreateInvoice && currentStepInvoice === 0 ?
+                                <>
+                                    <button className='btn btn-main' onClick={handleConfirmInvoice}><FormattedMessage id="btn-confirm-quote" /></button>
+                                    <button className='btn btn-gray' onClick={() => handlePushDataQuotePreview("invoice")}><FormattedMessage id="btn-preview-quote" /></button>
+                                    <button className='btn btn-gray' onClick={handleCancelQuote}><FormattedMessage id="btn-cancel-quote" /></button>
+                                </>
+                                :
+                                ""
+
+                        }
+                        {isCreateInvoice && currentStepInvoice === 1 ?
+                            <>
+                                <button className='btn btn-main' onClick={handleSendInvoice}><FormattedMessage id="btn-send-invoice" /></button>
+                                <button className='btn btn-main' onClick={() => setIsShowModalConfirmPaid(true)}><FormattedMessage id="btn-confirmed-payment" /></button>
+                                <button className='btn btn-gray' onClick={() => handlePushDataQuotePreview("invoice")}><FormattedMessage id="btn-preview-quote" /></button>
+                            </>
+                            :
+                            ""
+                        }
                     </div>
-                    <div className='quote-status'>
-                        <Steps
-                            type="navigation"
-                            size="small"
-                            current={currentStepQuote}
-                            className="site-navigation-steps quote-step"
-                            items={dataStep ?? []}
-                        />
+                    <div className={isCreateInvoice ? 'quote-status w30' : 'quote-status'}>
+                        {isCreateInvoice ?
+                            <Steps
+                                type="navigation"
+                                size="small"
+                                current={currentStepInvoice}
+                                className="site-navigation-steps quote-step"
+                                items={[
+                                    {
+                                        status: arrCurrentInvoiceStep?.status1,
+                                        title: <FormattedMessage id="step-draw-invoice" />,
+                                    },
+                                    {
+                                        status: arrCurrentInvoiceStep?.status2,
+                                        title: <FormattedMessage id="step-invoiced" />,
+                                    }
+                                ]} />
+                            :
+                            <Steps
+                                type="navigation"
+                                size="small"
+                                current={currentStepQuote}
+                                className="site-navigation-steps quote-step"
+                                items={dataStep ?? []}
+
+                            />
+                        }
+
                     </div>
                 </div>
                 <div className='body-create-quote'>
-                    <h3>{dataQuote?.quoteId ? `Báo giá - S${dataQuote?.quoteId}` : <FormattedMessage id="btn-new-quote" />}</h3>
+                    <span className='text-paid text-bg-success'>ĐÃ THANH TOÁN</span>
+                    {isCreateInvoice ? <span style={{ fontWeight: "500" }}><FormattedMessage id="new_quote.create-invoice-title" /></span> : ""}
+                    <h3>{isCreateInvoice ?
+                        (currentStepInvoice === 1 ? "INV" + dataQuote?.quoteId : <FormattedMessage id="new_quote.create-invoice-draft" />)
+                        :
+                        (dataQuote?.quoteId ? `Báo giá - S${dataQuote?.quoteId}` : <FormattedMessage id="btn-new-quote" />)}</h3>
                     <div className='wrap-info-quote'>
                         <div className='content-left'>
                             <label htmlFor='select-customer'><FormattedMessage id="new_quote.customer" /></label>
@@ -442,35 +566,55 @@ export const NewQuote = () => {
 
                         </div>
                         <div className='content-right'>
-                            <div className='wrap-expiration-date'>
-                                <label htmlFor='select-date-expiration'><FormattedMessage id="new_quote.expire-date" /></label>
-                                <DatePicker
-                                    className='select-date-expiration'
-                                    onChange={onChangeDatePicker}
-                                    suffixIcon={false}
-                                    variant="borderless"
-                                    placeholder=''
-                                    size='middle'
-                                    id='select-date-expiration'
-                                />
-                            </div>
-                            <div className='wrap-currency'>
-                                <label htmlFor='select-currency'><FormattedMessage id="new_quote.currency" /></label>
-                                <Select
-                                    id='select-currency'
-                                    className='select-currency'
-                                    showSearch
-                                    variant="borderless"
-                                    style={{ width: 200 }}
-                                    optionFilterProp="children"
-                                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                                    filterSort={(optionA, optionB) =>
-                                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                                    }
-                                    onChange={(e) => handleChangeInputQuote(e, 'currency')}
-                                    options={currencySelect}
-                                />
-                            </div>
+                            {/* Ngay tao hoa don */}
+                            {isCreateInvoice ?
+                                <div className='wrap-createInvoice-date'>
+                                    <label htmlFor='select-date-createInvoice'><FormattedMessage id="new_quote.createInvoice-date" /></label>
+                                    <DatePicker
+                                        className='select-date-createInvoice'
+                                        onChange={handleChangeDateCreateInvoice}
+                                        suffixIcon={false}
+                                        variant="borderless"
+                                        placeholder=''
+                                        size='middle'
+                                        id='select-date-createInvoice'
+                                        key="create-invoice"
+                                    />
+                                </div>
+                                :
+                                <div className='wrap-expiration-date'>
+                                    <label htmlFor='select-date-expiration'><FormattedMessage id="new_quote.expire-date" /></label>
+                                    <DatePicker
+                                        key="expiration-date"
+                                        className='select-date-expiration'
+                                        onChange={onChangeDatePicker}
+                                        suffixIcon={false}
+                                        variant="borderless"
+                                        placeholder=''
+                                        size='middle'
+                                        id='select-date-expiration'
+                                    />
+                                </div>
+                            }
+                            {!isCreateInvoice &&
+                                <div className='wrap-currency'>
+                                    <label htmlFor='select-currency'><FormattedMessage id="new_quote.currency" /></label>
+                                    <Select
+                                        id='select-currency'
+                                        className='select-currency'
+                                        showSearch
+                                        variant="borderless"
+                                        style={{ width: 200 }}
+                                        optionFilterProp="children"
+                                        filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                        filterSort={(optionA, optionB) =>
+                                            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                        }
+                                        onChange={(e) => handleChangeInputQuote(e, 'currency')}
+                                        options={currencySelect}
+                                    />
+                                </div>
+                            }
 
                             <div className='wrap-payment-method'>
                                 <label htmlFor='select-payment-method'><FormattedMessage id="new_quote.payment-policy" /></label>
@@ -498,7 +642,7 @@ export const NewQuote = () => {
                             type="card"
                             items={
                                 !isSendingQuote ? [{
-                                    label: <FormattedMessage id="new_quote.detail-order" />,
+                                    label: isCreateInvoice ? <FormattedMessage id="new_quote.detail-invoice" /> : <FormattedMessage id="new_quote.detail-order" />,
                                     key: 'tab-1',
                                     children: <TableProducts listProductFromParent={listProduct} handleChangeDataQuote={handleChangeInputQuote} isSendingQuote={isSendingQuote}
                                         setTaxAndPriceBeforeTax={setTaxAndPriceBeforeTax}
@@ -531,6 +675,16 @@ export const NewQuote = () => {
                         changeStep={changeStep}
                     />
 
+                    <ModalSendInvoiceToEmail
+                        show={isShowModalSendInvoice}
+                        close={() => setIsShowModalSendInvoice(false)}
+                        dataQuote={dataQuote}
+                        fullDataCustomer={fullDataCustomer}
+                        downloadQuote={handleGeneratePdf}
+                        handleClearDataQuote={handleClearDataQuote}
+                    // changeStep={changeStep}
+                    />
+
                     <ModalCancelQuote
                         show={isShowModalCancelQuote}
                         close={() => setIsShowModalCancelQuote(false)}
@@ -538,6 +692,13 @@ export const NewQuote = () => {
                         fullDataCustomer={fullDataCustomer}
                         changeStep={changeStep}
                     />
+
+                    <ModalConfirmPaid
+                        dataQuote={dataQuote}
+                        show={isShowModalConfirmPaid}
+                        close={() => setIsShowModalConfirmPaid(false)}
+                    />
+
                 </div>
             </div>
 
@@ -549,6 +710,17 @@ export const NewQuote = () => {
                 />
                 : ''
             }
+
+            {isShowModalSendInvoice ?
+                <InvoicePDF
+                    componentPDF={componentPDF}
+                    fullDataCustomer={fullDataCustomer}
+                    paymentPolicyToQuote={paymentPolicyToQuote}
+                    dataInvoice={dataQuote} />
+                :
+                ""
+            }
+
         </div>
     )
 }

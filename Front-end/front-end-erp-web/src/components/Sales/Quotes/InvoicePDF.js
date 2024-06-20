@@ -1,15 +1,17 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { IoMdMail } from "react-icons/io";
 import { Table } from 'antd';
+import logo from '../../../assets/img/logo.png'
 
-export const QuotePDF = (props) => {
+
+export const InvoicePDF = (props) => {
 
     const [dataProducts, setDataProducts] = useState([])
     const [totalPrice, setTotalPrice] = useState(0);
     const [finalPrice, setFinalPrice] = useState(0);
     const [taxTotals, setTaxTotals] = useState({});
 
-    const memoizedProductName = useMemo(() => props?.dataQuote?.productList, [props?.dataQuote?.productList]);
+    const memoizedProductName = useMemo(() => props?.dataInvoice?.productList, [props?.dataInvoice?.productList]);
 
     const buildDataTableProduct = (products) => {
         let dataProducts = []
@@ -31,8 +33,8 @@ export const QuotePDF = (props) => {
     const calculateTotalPrice = () => {
         let totalBeforeTax = 0
         let totalPrice = 0
-        if (props?.dataQuote?.productList && props?.dataQuote?.productList.length > 0) {
-            props?.dataQuote?.productList.forEach(item => {
+        if (props?.dataInvoice?.productList && props?.dataInvoice?.productList.length > 0) {
+            props?.dataInvoice?.productList.forEach(item => {
                 totalBeforeTax += +item.priceBeforeTax;
                 totalPrice += +item.priceBeforeTax + (+item?.priceBeforeTax * +item?.tax?.value / 100)
             });
@@ -42,7 +44,7 @@ export const QuotePDF = (props) => {
 
     const calculateTaxTotals = () => {
         const totals = {};
-        props?.dataQuote?.productList.forEach(item => {
+        props?.dataInvoice?.productList.forEach(item => {
             if (item?.tax && item?.tax?.value !== 0) {
                 const taxValue = +item?.priceBeforeTax * +item?.tax.value / 100;
                 if (totals[item?.tax.value]) {
@@ -56,14 +58,15 @@ export const QuotePDF = (props) => {
     };
 
     useEffect(() => {
-        if (props?.dataQuote?.productList && props?.dataQuote?.productList.length > 0) {
-            let productsBuild = buildDataTableProduct(props?.dataQuote?.productList)
+        if (props?.dataInvoice?.productList && props?.dataInvoice?.productList.length > 0) {
+            let productsBuild = buildDataTableProduct(props?.dataInvoice?.productList)
             setDataProducts(productsBuild)
             calculateTaxTotals();
             calculateTotalPrice();
         }
 
-    }, [props?.dataQuote?.productList]);
+    }, [props?.dataInvoice?.productList]);
+
 
 
     const columns = [
@@ -101,22 +104,40 @@ export const QuotePDF = (props) => {
         return `${currentYear}/${currentMonth}/${currentDay}`;
     }
 
+    const formatDate = (dateString) => {
+        let parts = dateString.split('/');
+        let year = parts[0];
+        let month = parts[1];
+        let day = parts[2];
+
+        // Đảm bảo tháng và ngày có hai chữ số
+        month = ("0" + month).slice(-2);
+        day = ("0" + day).slice(-2);
+
+        // Kết hợp lại các phần tử thành chuỗi theo định dạng yyyy-mm-dd
+        return `${year}-${month}-${day}`;
+    }
 
     return (
-
         <div ref={props?.componentPDF} style={{ width: '100%', }} >
-            <h2>Báo giá - S00003</h2>
+            <div className='heading-invoice d-flex justify-content-between align-items-center'>
+                <h2 style={{ color: "#6464b5" }}>Hóa đơn - INV{props?.dataInvoice?.quoteId}</h2>
+                <div className='wrap-img-element'>
+                    <img src={logo} alt="logo company" />
+                </div>
+            </div>
+
             <div className='wrap-inf-quote d-flex gap-4'>
                 <div className='inf-selling w-50 '>
                     <h5>Thông tin bán hàng</h5>
                     <hr className='mt-1 mb-2' />
                     <div className='date-created d-flex'>
-                        <span className='label-date me-2'>Ngày:</span>
-                        <span>{getCurrentDate()}</span>
+                        <span className='label-date me-2'>Ngày lập hóa đơn:</span>
+                        <span>{formatDate(getCurrentDate())}</span>
                     </div>
                     <div className='date-expiration d-flex'>
-                        <span className='label-date me-2'>Ngày hết hạn:</span>
-                        <span>{props?.dataQuote?.expirationDay}</span>
+                        <span className='label-date me-2'>Ngày đến hạn: </span>
+                        <span>{props?.dataInvoice?.expirationDay}</span>
                     </div>
                 </div>
 
@@ -164,7 +185,7 @@ export const QuotePDF = (props) => {
             <div className='policy-condition mt-4'>
                 <h5>Điều khoản & điều kiện</h5>
                 <hr className='mt-1 mb-2' />
-                <span>{props?.dataQuote?.policyAndCondition}</span>
+                <span>{props?.dataInvoice?.policyAndCondition}</span>
             </div>
 
             <div className='policy-condition mt-4'>
@@ -172,6 +193,6 @@ export const QuotePDF = (props) => {
                 <hr className='mt-1 mb-2' />
                 <span>Điều khoản thanh toán: {props?.paymentPolicyToQuote}</span>
             </div>
-        </div>
+        </div >
     )
 }
