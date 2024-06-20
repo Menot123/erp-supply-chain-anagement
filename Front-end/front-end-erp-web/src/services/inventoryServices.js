@@ -36,6 +36,10 @@ const getProviders = () => {
     return axios.get(`/inventory/api/providers`)
 }
 
+const getCustomers = () => {
+    return axios.get(`/inventory/api/customers`)
+}
+
 const getStockEntrys = () => {
     return axios.get(`/inventory/api/stockEntrys`)
 }
@@ -47,12 +51,20 @@ const createNewReceipt = (data) => {
     return axios.post(`/inventory/api/stockEntrys`, data)
 }
 
+const createNewDelivery = (data) => {
+    return axios.post(`/inventory/api/stockDeliverys`, data)
+}
+
 const getProductByProviderId = (id) => {
     return axios.get(`/inventory/api/productProviders/provider/${id}`)
 }
 
 const createProductListOfReceipt = (data) => {
     return axios.post(`/inventory/api/stockEntryItems`, data)
+}
+
+const createProductListOfDelivery = (data) => {
+    return axios.post(`/inventory/api/stockDeliveryItems`, data)
 }
 
 export {
@@ -65,9 +77,12 @@ export {
     getAllCode,
     deleteProduct,
     getProviders,
+    getCustomers,
     getStockEntrys,
     getStockDeliverys,
     createNewReceipt,
+    createNewDelivery,
     getProductByProviderId,
-    createProductListOfReceipt
+    createProductListOfReceipt,
+    createProductListOfDelivery
 }
