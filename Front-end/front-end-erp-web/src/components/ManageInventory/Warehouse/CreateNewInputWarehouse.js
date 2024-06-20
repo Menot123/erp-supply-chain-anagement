@@ -4,7 +4,7 @@ import { RiImageAddLine } from "react-icons/ri";
 import { useState, useEffect } from 'react'
 import 'react-image-lightbox/style.css';
 import Lightbox from 'react-image-lightbox';
-import { createNewReceipt, getAllCode, getAllProducts, getProviders, getProductByProviderId } from '../../../services/inventoryServices'
+import { createNewReceipt, getAllCode, getAllProducts, getProviders, getProductByProviderId, createProductListOfReceipt } from '../../../services/inventoryServices'
 import { useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
@@ -51,6 +51,7 @@ function CreateNewInputWarehouse() {
 
     const [showAddProduct, setShowAddProduct] = useState(false)
     const [listProductOfProvider, setListProductOfProvider] = useState([])
+    const [stockCreateId, setStockCreateId] = useState('');
 
 
     const onChangeDatePicker = (date, dateString) => {
@@ -196,6 +197,7 @@ function CreateNewInputWarehouse() {
         if (check.length === 0) {
             let res = await createNewReceipt(dataInputWarehouse)
             if (res.EC === 0) {
+                setStockCreateId(res.DT)
                 toast.success(res.EM)
                 handleCancelCreateInputWarehouse()
             } else {
@@ -315,7 +317,7 @@ function CreateNewInputWarehouse() {
                             items={[{
                                 label: `Hoạt động`,
                                 key: 'tab-1',
-                                children: <TableInputWarehouse hadProvider={showAddProduct} listProductFromParent={listProductOfProvider} />,
+                                children: <TableInputWarehouse createProductListOfReceipt={createProductListOfReceipt} stockCreateId={stockCreateId} hadProvider={showAddProduct} listProductFromParent={listProductOfProvider} />,
                             },
                             {
                                 label: `Thông tin bổ sung`,

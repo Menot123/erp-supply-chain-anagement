@@ -59,6 +59,23 @@ export const TableInputWarehouse = (props) => {
         }
     }, [props])
 
+    useEffect(() => {
+        if (props.stockCreateId !== '') {
+            listProduct.forEach(async (product, index) => {
+                await props.createProductListOfReceipt(
+                    {
+                        stockEntryId: props.stockCreateId,
+                        productId: product.productId,
+                        description: product.description,
+                        scheduledDate: product.scheduledDate,
+                        deadline: product.deadline,
+                        quantity: product.quantity
+                    }
+                )
+            })
+        }
+    }, [props.stockCreateId])
+
     // useEffect(() => {
 
     // }, [listProduct]);
