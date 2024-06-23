@@ -9,16 +9,8 @@ export const OtherInfo = () => {
     const user = useSelector(state => state.user)
     const userName = user.lastName + ' ' + user.firstName
 
-    const handleChangeInputQuote = () => {
-
-    }
-
-    const onChangeDatePicker = () => {
-
-    }
-
     return (
-        <div className='wrapper-other-info-quote d-flex'>
+        <div className='wrapper-other-info-input-warehouse d-flex'>
             <div className='content-left'>
                 <div className='content-left-title'>
                     <span className='text-title'>THÔNG TIN KHÁC</span>
@@ -40,7 +32,6 @@ export const OtherInfo = () => {
                             { value: 1, label: userName },
                         ]}
                         value={1}
-                        onChange={(e) => handleChangeInputQuote(e, 'customer')}
                     />
                 </div>
             </div>

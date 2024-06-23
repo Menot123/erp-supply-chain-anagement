@@ -59,6 +59,23 @@ export const TableInputWarehouse = (props) => {
         }
     }, [props])
 
+    useEffect(() => {
+        if (props.stockCreateId !== '') {
+            listProduct.forEach(async (product, index) => {
+                await props.createProductListOfReceipt(
+                    {
+                        stockEntryId: props.stockCreateId,
+                        productId: product.productId,
+                        description: product.description,
+                        scheduledDate: product.scheduledDate,
+                        deadline: product.deadline,
+                        quantity: product.quantity
+                    }
+                )
+            })
+        }
+    }, [props.stockCreateId])
+
     // useEffect(() => {
 
     // }, [listProduct]);
@@ -190,7 +207,7 @@ export const TableInputWarehouse = (props) => {
 
     return (
         <div>
-            <div className='body-content-sub-company'>
+            <div className='body-content-input-warehouse'>
                 <table className="table table-striped table-hover table-products">
                     <thead>
                         <tr>
@@ -276,8 +293,8 @@ export const TableInputWarehouse = (props) => {
                         <tr>
                             <td colSpan='7'>
                                 {props.hadProvider == true
-                                    ? <span onClick={() => handleAddNewInput()} className='add-sub-company'>Thêm một dòng</span>
-                                    : <span disabled className='add-sub-company'>Thêm một dòng</span>
+                                    ? <span onClick={() => handleAddNewInput()} className='add-input-warehouse'>Thêm một dòng</span>
+                                    : <span disabled className='add-input-warehouse'>Thêm một dòng</span>
                                 }
                             </td>
                         </tr>

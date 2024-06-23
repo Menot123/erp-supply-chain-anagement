@@ -1,30 +1,30 @@
 import React from 'react'
-import './CreateNewInputWarehouse.scss'
+import './CreateNewOutputWarehouse.scss'
 import { RiImageAddLine } from "react-icons/ri";
 import { useState, useEffect } from 'react'
 import 'react-image-lightbox/style.css';
 import Lightbox from 'react-image-lightbox';
-import { createNewReceipt, getAllCode, getAllProducts, getProviders, getProductByProviderId } from '../../../services/inventoryServices'
+import { createNewDelivery, getAllCode, getAllProducts, getCustomers, createProductListOfDelivery } from '../../../../services/inventoryServices'
 import { useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
-import { LANGUAGES } from '../../../utils/constant'
+import { LANGUAGES } from '../../../../utils/constant'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Steps, Select, Tooltip, DatePicker, Tabs, Input } from "antd";
-import { TableInputWarehouse } from './TableInputWarehouse';
+import { TableOutputWarehouse } from './TableOutputWarehouse';
 import { OtherInfo } from './OtherInfo';
 
 
-function CreateNewInputWarehouse() {
+function CreateNewOutputWarehouse() {
 
     const idUser = useSelector(state => state.user.id)
 
     //âha
     const history = useHistory()
 
-    const defaultDataInputWarehouse = {
-        providerId: '',
-        operationType: 'Phiếu nhập kho',
+    const defaultDataOutputWarehouse = {
+        customerId: '',
+        operationType: 'Phiếu xuất kho',
         warehouseId: 'WH001',
         scheduledDay: '',
         productList: [],
@@ -33,58 +33,57 @@ function CreateNewInputWarehouse() {
         status: 'draft'
     }
 
-    const defaultDataOtherInfoInputWarehouse = {
+    const defaultDataOtherInfoOutputWarehouse = {
         employeeId: '',
         deliveryDate: '',
     }
 
-    const [dataInputWarehouse, setDataInputWarehouse] = useState(defaultDataInputWarehouse)
-    const [currentStepInputWarehouse, setCurrentStepInputWarehouse] = useState(0);
+    const [dataOutputWarehouse, setDataOutputWarehouse] = useState(defaultDataOutputWarehouse)
+    const [currentStepOutputWarehouse, setCurrentStepOutputWarehouse] = useState(0);
     const [listProduct, setListProduct] = useState([])
-    const [listProvider, setListProvider] = useState([])
-    const [selectProvider, setSelectProvider] = useState([])
+    const [listCustomer, setListCustomer] = useState([])
+    const [selectCustomer, setSelectCustomer] = useState([])
     // const [operationType, setOperationType] = useState([])
     const [operationTypesSelect, setOperationTypesSelect] = useState([])
-    const [receiveFromSelect, setReceiveFromSelect] = useState([{ value: 'actionEntry', label: 'Nhập kho' }])
+    const [deliveryToSelect, setDeliveryToSelect] = useState([{ value: 'actionDelivery', label: 'Xuất kho' }])
     const [timePayment, setTimePayment] = useState([])
-    const [otherInfoInputWarehouse, setOtherInfoInputWarehouse] = useState(defaultDataOtherInfoInputWarehouse)
+    const [otherInfoOutputWarehouse, setOtherInfoOutputWarehouse] = useState(defaultDataOtherInfoOutputWarehouse)
 
-    const [showAddProduct, setShowAddProduct] = useState(false)
-    const [listProductOfProvider, setListProductOfProvider] = useState([])
+    const [stockCreateId, setStockCreateId] = useState('');
 
 
     const onChangeDatePicker = (date, dateString) => {
-        setDataInputWarehouse((prevState) => ({
+        setDataOutputWarehouse((prevState) => ({
             ...prevState,
             scheduledDay: dateString
         }))
     };
 
     const onChangeNote = (event) => {
-        setDataInputWarehouse((prevState) => ({
+        setDataOutputWarehouse((prevState) => ({
             ...prevState,
             note: event.target.value
         }))
     };
 
     const onChangeTab = (key) => {
-        if (dataInputWarehouse.providerId != '')
-            console.log(dataInputWarehouse.providerId);
+        if (dataOutputWarehouse.customerId != '')
+            console.log(dataOutputWarehouse.customerId);
         // console.log(key);
     };
 
-    const handleChangeInputWarehouse = (e, type) => {
+    const handleChangeOutputWarehouse = (e, type) => {
         switch (type) {
             case 'operationType':
-                setDataInputWarehouse((prevState) => ({
+                setDataOutputWarehouse((prevState) => ({
                     ...prevState,
                     operationType: e
                 }))
                 break;
-            case 'receiveFrom':
-                setDataInputWarehouse((prevState) => ({
+            case 'deliveryTo':
+                setDataOutputWarehouse((prevState) => ({
                     ...prevState,
-                    providerId: e
+                    customerId: e
                 }))
                 break;
             default:
@@ -97,70 +96,54 @@ function CreateNewInputWarehouse() {
     const intl = useIntl();
 
     useEffect(() => {
-        // console.log(idUser)
-        // const fetchAllProduct = async () => {
-        //     const res = await getAllProducts()
-        //     if (res && res.EC === 0) {
-        //         setListProduct(res.DT)
-        //     } else {
-        //         toast.error(res.EM)
-        //     }
-        //     return res
-        // }
-
-        const fetchProvider = async () => {
-            const res = await getProviders()
+        const fetchAllProduct = async () => {
+            const res = await getAllProducts()
             if (res && res.EC === 0) {
-                setListProvider(res.DT)
+                setListProduct(res.DT)
             } else {
                 toast.error(res.EM)
             }
             return res
         }
 
-        Promise.all([fetchProvider()])
+        const fetchCustomer = async () => {
+            const res = await getCustomers()
+            if (res && res.EC === 0) {
+                setListCustomer(res.DT)
+                console.log(res.DT)
+            } else {
+                toast.error(res.EM)
+            }
+            return res
+        }
+
+        Promise.all([fetchAllProduct(), fetchCustomer()])
 
     }, [])
 
     useEffect(() => {
-        const checkProviderSelected = async () => {
-            if (dataInputWarehouse.providerId != '') {
-                setShowAddProduct(true)
-                const res = await getProductByProviderId(dataInputWarehouse.providerId)
-                if (res && res.EC === 0) {
-                    setListProductOfProvider(res.DT)
-                    console.log(res.DT)
-                } else {
-                    toast.error(res.EM)
-                }
-            }
-            else setShowAddProduct(false)
-        }
-        checkProviderSelected()
-    }, [dataInputWarehouse.providerId])
-
-    useEffect(() => {
-        const buildSelectProvider = () => {
-            let providerSelect = listProvider.map((item, index) => {
+        const buildSelectCustomer = () => {
+            console.log(listCustomer)
+            let customerSelect = listCustomer.map((item, index) => {
                 return (
                     {
-                        value: item.providerId,
+                        value: item.customerId,
                         label: item.nameVi
                     }
                 )
             })
-            setSelectProvider(providerSelect)
+            setSelectCustomer(customerSelect)
         }
-        buildSelectProvider()
-    }, [listProvider])
+        buildSelectCustomer()
+    }, [listCustomer])
 
 
     const validateDataReceipt = () => {
-        const fieldCheck = ['providerId', 'operationType', 'scheduledDay'];
+        const fieldCheck = ['customerId', 'operationType', 'scheduledDay'];
         const missingFields = [];
 
         fieldCheck.forEach(field => {
-            if (!dataInputWarehouse[field]) {
+            if (!dataOutputWarehouse[field]) {
                 missingFields.push(field);
             }
         });
@@ -168,12 +151,12 @@ function CreateNewInputWarehouse() {
         return missingFields;
     };
 
-    const handleSaveInputWarehouse = async () => {
+    const handleSaveOutputWarehouse = async () => {
         // Validate data
         // let check = validateDataReceipt()
 
         // if (check.length === 0) {
-        //     let res = await createNewReceipt(dataProduct)
+        //     let res = await createNewDelivery(dataProduct)
         //     if (res.EC === 0) {
         //         cleanValueSubmit()
         //         toast.success(res.EM)
@@ -185,19 +168,20 @@ function CreateNewInputWarehouse() {
         // }
     }
 
-    const handleCancelCreateInputWarehouse = () => {
-        history.push('/manage-inventory/input-warehouse')
+    const handleCancelCreateOutputWarehouse = () => {
+        history.push('/manage-inventory/output-warehouse')
     }
 
     const handleSetReadyReceipt = async () => {
-        console.log(dataInputWarehouse)
+        console.log(dataOutputWarehouse)
         let check = validateDataReceipt()
 
         if (check.length === 0) {
-            let res = await createNewReceipt(dataInputWarehouse)
+            let res = await createNewDelivery(dataOutputWarehouse)
             if (res.EC === 0) {
+                setStockCreateId(res.DT)
                 toast.success(res.EM)
-                handleCancelCreateInputWarehouse()
+                handleCancelCreateOutputWarehouse()
             } else {
                 toast.error(res.EM)
             }
@@ -211,16 +195,16 @@ function CreateNewInputWarehouse() {
     }
 
     return (
-        <div className='wrapper-create-input-warehouse'>
+        <div className='wrapper-create-output-warehouse'>
             <div className='header-create'>
                 <span className='title-create'>
-                    <span onClick={() => handleCancelCreateInputWarehouse()} className='bold'>{language === LANGUAGES.EN ? 'Reicept' : 'Phiếu nhập kho'}</span>
+                    <span onClick={() => handleCancelCreateOutputWarehouse()} className='bold'>{language === LANGUAGES.EN ? 'Delivery' : 'Phiếu xuất kho'}</span>
                     <span> / </span>
                     <span><FormattedMessage id='nav.manage-inventory-create-product-title' /></span>
                 </span>
                 <div className='btn-actions'>
-                    <button onClick={() => handleSaveInputWarehouse()} className='btn btn-primary btn-main'><FormattedMessage id='btn-save' /></button>
-                    <button onClick={() => handleCancelCreateInputWarehouse()} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='btn-cancel' /></button>
+                    <button onClick={() => handleSaveOutputWarehouse()} className='btn btn-primary btn-main'><FormattedMessage id='btn-save' /></button>
+                    <button onClick={() => handleCancelCreateOutputWarehouse()} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='btn-cancel' /></button>
                 </div>
             </div>
             <div className='container-fluid create-product-container'>
@@ -231,12 +215,12 @@ function CreateNewInputWarehouse() {
                         <button className='btn btn-gray'>In nhãn</button>
                         <button className='btn btn-gray'>Hủy</button>
                     </div>
-                    <div className='quote-status'>
+                    <div className='output-warehouse-status'>
                         <Steps
                             type="navigation"
                             size="small"
-                            current={currentStepInputWarehouse}
-                            className="site-navigation-steps quote-step"
+                            current={currentStepOutputWarehouse}
+                            className="site-navigation-steps output-warehouse-step"
                             items={[
                                 {
                                     status: 'process',
@@ -254,11 +238,11 @@ function CreateNewInputWarehouse() {
                         />
                     </div>
                 </div>
-                <div className='body-create-quote'>
-                    <div className='wrap-info-quote pt-5'>
+                <div className='body-create-output-warehouse'>
+                    <div className='wrap-info-output-warehouse pt-5'>
                         <div className='content-left'>
                             <div className='wrap-expiration-date'>
-                                <label htmlFor='select-receive-from'>Nhập từ</label>
+                                <label htmlFor='select-receive-from'>Người nhận</label>
                                 <Select
                                     showSearch
                                     id='select-receive-from'
@@ -269,8 +253,8 @@ function CreateNewInputWarehouse() {
                                     filterSort={(optionA, optionB) =>
                                         (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                     }
-                                    options={selectProvider}
-                                    onChange={(e) => handleChangeInputWarehouse(e, 'receiveFrom')}
+                                    options={selectCustomer}
+                                    onChange={(e) => handleChangeOutputWarehouse(e, 'deliveryTo')}
                                 />
                             </div>
                             <div className='wrap-expiration-date'>
@@ -285,8 +269,8 @@ function CreateNewInputWarehouse() {
                                     filterSort={(optionA, optionB) =>
                                         (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                     }
-                                    options={receiveFromSelect}
-                                    onChange={(e) => handleChangeInputWarehouse(e, 'operationType')}
+                                    options={deliveryToSelect}
+                                    onChange={(e) => handleChangeOutputWarehouse(e, 'operationType')}
                                 />
                             </div>
 
@@ -315,7 +299,7 @@ function CreateNewInputWarehouse() {
                             items={[{
                                 label: `Hoạt động`,
                                 key: 'tab-1',
-                                children: <TableInputWarehouse hadProvider={showAddProduct} listProductFromParent={listProductOfProvider} />,
+                                children: <TableOutputWarehouse createProductListOfDelivery={createProductListOfDelivery} stockCreateId={stockCreateId} listProductFromParent={listProduct} />,
                             },
                             {
                                 label: `Thông tin bổ sung`,
@@ -343,4 +327,4 @@ function CreateNewInputWarehouse() {
     )
 }
 
-export default CreateNewInputWarehouse
+export default CreateNewOutputWarehouse

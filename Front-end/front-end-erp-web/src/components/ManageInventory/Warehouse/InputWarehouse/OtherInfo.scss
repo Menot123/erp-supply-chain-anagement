@@ -1,28 +1,22 @@
-.wrapper-other-info-quote {
+.wrapper-other-info-input-warehouse {
     gap: 24px;
-
     .content-left,
     .content-right {
         width: 50%;
-
         .content-left-title,
         .content-right-title {
             border-bottom: 1px solid #ccc;
-
             .text-title {
                 font-weight: bold;
             }
         }
-
         .content-left-employee,
         .content-right-delivery {
             label {
                 font-weight: 500;
-                font-size  : 0.875rem;
+                font-size: 0.875rem;
                 line-height: 1.5;
             }
         }
     }
-
-
 }
