@@ -790,7 +790,7 @@ const confirmInvoiceService = async (dataInvoice) => {
             fieldCheck.forEach(element => {
                 if (!dataInvoice[element]) {
                     res.EC = -2
-                    res.EM = 'Missing fields of quote'
+                    res.EM = 'Missing fields of Invoice'
                     res.DT = ''
                     return res
                 }
@@ -812,7 +812,7 @@ const confirmInvoiceService = async (dataInvoice) => {
                 })
             } else {
                 if (invoice.status === 'S0') {
-                    await quote.update({ status: "S1" })
+                    await invoice.update({ status: "S1" })
                 }
             }
             res.EM = 'Confirm a invoice successfully'
@@ -831,11 +831,69 @@ const confirmInvoiceService = async (dataInvoice) => {
     }
 }
 
+const paidInvoiceService = async (dataPaidInvoice) => {
+    try {
+        let res = {}
+        let fieldCheck = ['datePaid', 'total', 'paymentMethod', 'contentTransfer']
+
+        if (dataPaidInvoice) {
+            fieldCheck.forEach(element => {
+                if (!dataPaidInvoice[element]) {
+                    res.EC = -2
+                    res.EM = 'Missing fields paid of invoice'
+                    res.DT = ''
+                    return res
+                }
+            });
+            await db.InvoicePaid.create({
+                ...dataPaidInvoice,
+                invoiceId: dataPaidInvoice?.invoiceId,
+
+            })
+            res.EM = 'Create a paid of invoice successfully'
+            res.EC = 0
+            res.DT = ''
+            return res
+
+        } else {
+            res.EC = -1
+            res.EM = 'Missing parameters paid of invoice'
+            res.DT = ''
+            return res
+        }
+    } catch (error) {
+        console.error('Error create paid invoice service:', error)
+    }
+}
+
+const getInvoicesService = async () => {
+    try {
+        let res = {}
+        let invoices = await db.InvoicePaid.findAll({
+            order: [
+                ['createdAt', 'DESC']
+            ],
+        });
+        if (invoices) {
+            res.EC = 0
+            res.EM = 'Get all paid invoices successfully'
+            res.DT = invoices
+        } else {
+            res.EM = 'Get all paid invoices failed'
+            res.EC = 1
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
 module.exports = {
     createCompanyDataService, createBranchCompanyDataService, getBranchesService,
     getBranchService, getDetailCompanyService, handleDeleteCompanyService, updateConfirmQuoteService,
     getCustomersService, getAllCodesService, getCommentsService, postCommentService, updateCommentService,
     deleteCommentService, getLatestQuoteService, sendingQuoteService, postQuoteService, updateStatusQuoteService,
     getDataPreviewQuoteService, postCancelQuoteService, sendEmailCancelQuote, postInvoiceService, getDataPreviewInvoiceService,
-    confirmInvoiceService, sendingInvoiceService
+    confirmInvoiceService, sendingInvoiceService, paidInvoiceService, getInvoicesService
 }

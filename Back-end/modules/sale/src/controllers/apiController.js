@@ -411,9 +411,44 @@ const confirmInvoice = async (req, res, next) => {
     }
 }
 
+const paidInvoice = async (req, res, next) => {
+    try {
+        const dataPaymentInvoice = req.body;
+        let response = await apiService.paidInvoiceService(dataPaymentInvoice);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in create paid invoice controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const getInvoices = async (req, res, next) => {
+    try {
+        let response = await apiService.getInvoicesService();
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in get all paid invoice controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 module.exports = {
     createCompanyData, createBranchCompanyData, getBranches, getBranch, getDetailCompany,
     handleDeleteCompany, updateConfirmQuote, getCustomers, getAllCodes, getComments, postComment,
     updateComment, deleteComment, getLatestQuote, sendingQuote, postQuote, updateStatusQuote, getDataPreviewQuote,
-    postCancelQuote, postInvoice, getDataPreviewInvoice, confirmInvoice, sendingInvoice
+    postCancelQuote, postInvoice, getDataPreviewInvoice, confirmInvoice, sendingInvoice, paidInvoice, getInvoices
 }

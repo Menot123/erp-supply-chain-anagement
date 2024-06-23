@@ -461,6 +461,37 @@ const initApiRoutes = (app) => {
     */
     router.put('/invoice', apiController.confirmInvoice);
 
+    /**
+    * @swagger
+    * /api/invoice/paid:
+    *  post:
+    *      tags:
+    *          - Sales
+    *      summary: Confirm paid invoice
+    *      responses:
+    *          201:
+    *              description: Return status create paid of the invoice. 
+    *          500:
+    *              description: Error from server.
+    * 
+    */
+    router.post('/invoice/paid', apiController.paidInvoice);
+
+    /**
+    * @swagger
+    * /api/invoices:
+    *  get:
+    *      tags:
+    *          - Sales
+    *      summary: Get all paid invoices
+    *      responses:
+    *          201:
+    *              description: Return status get all paid invoices. 
+    *          500:
+    *              description: Error from server.
+    * 
+    */
+    router.get('/invoices', apiController.getInvoices);
 
     return app.use("/api/", router)
 }

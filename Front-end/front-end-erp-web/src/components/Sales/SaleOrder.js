@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './SaleOrder.scss'
 import SalesHeader from './SalesHeader/SalesHeader'
 import { FaTimes } from "react-icons/fa";
@@ -13,6 +13,7 @@ import { FaCheck } from "react-icons/fa";
 import { ModalConfirmQuote } from './Modal/ModalConfirmQuote';
 import Form from 'react-bootstrap/Form';
 import { IoTimeOutline } from "react-icons/io5";
+import { getAllPaidInvoice } from '../../services/saleServices'
 
 function SaleOrder() {
 
@@ -22,6 +23,17 @@ function SaleOrder() {
     const [showModalStep2, setShowModalStep2] = useState(false)
     const [isHaveQuote, setIsHaveQuote] = useState(true)
     const [selectedItems, setSelectedItems] = useState([])
+    const [invoices, setInvoices] = useState([])
+
+    useEffect(() => {
+        const fetchAllPaidInvoices = async () => {
+            const res = await getAllPaidInvoice()
+            if (res?.EC === 0) {
+                setInvoices(res?.DT)
+            }
+        }
+        fetchAllPaidInvoices()
+    }, [])
 
     const handleShowModalStep1 = () => {
         setShowModalDataCompany(true)
@@ -61,11 +73,23 @@ function SaleOrder() {
         }
     }
 
+    const convertDateTime = (input) => {
+        // Tách chuỗi thành ngày và giờ
+        let datePart = input.split('T')[0];
+        let timePart = input.split('T')[1].split('.')[0];
+
+        // Kết hợp ngày và giờ theo định dạng mong muốn
+        let output = datePart + ' ' + timePart;
+
+        return output;
+    }
+
+
     return (
 
         <>
             <SalesHeader />
-            {isHaveQuote ?
+            {!isHaveQuote ?
                 <div>
                     <DataCompanyModal
                         show={showModalDataCompany}
@@ -191,26 +215,34 @@ function SaleOrder() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr className='hover-item'>
-                            <th scope="row">
-                                <Form.Check // prettier-ignore
-                                    type={'checkbox'}
-                                    id={`quote1}`}
-                                    value={'quote1'}
-                                    label={`S00001`}
-                                    onChange={(e) => handleChangeCheckBox(e)}
-                                    checked={selectedItems.includes('quote1')}
-                                />
-                            </th>
-                            <td>22/04/2024 20:30:20</td>
-                            <td>Huỳnh Khánh Duy</td>
-                            <td>Huỳnh Khánh Duy</td>
-                            <td><IoTimeOutline className='icon-activities' /></td>
-                            <td><span className='cost'>1.458 ₫</span></td>
-                            <td> <span className='status-quote'>Báo giá đã gửi</span> </td>
-                        </tr>
+                        {invoices && invoices.length > 0 &&
+                            invoices.map((item, index) => {
+                                return (
+                                    <tr className='hover-item'>
+                                        <th scope="row">
+                                            <Form.Check // prettier-ignore
+                                                type={'checkbox'}
+                                                id={item?.invoiceId}
+                                                value={item?.invoiceId}
+                                                label={`INV${item?.invoiceId}`}
+                                                onChange={(e) => handleChangeCheckBox(e)}
+                                                checked={selectedItems.includes(item?.invoiceId)}
+                                            />
+                                        </th>
+                                        <td>{convertDateTime(item?.createdAt)}</td>
+                                        <td>Huỳnh Khánh Duy</td>
+                                        <td>Nguyễn Bá Thành</td>
+                                        <td><IoTimeOutline className='icon-activities' /></td>
+                                        <td><span className='cost'>
+                                            {Number(item?.total).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                        </span></td>
+                                        <td> <span className='status-quote'>Báo giá đã gửi</span> </td>
+                                    </tr>
+                                )
+                            })}
 
-                        <tr className='hover-item'>
+
+                        {/* <tr className='hover-item'>
                             <th scope="row">
                                 <Form.Check // prettier-ignore
                                     type={'checkbox'}
@@ -227,7 +259,7 @@ function SaleOrder() {
                             <td><IoTimeOutline className='icon-activities' /></td>
                             <td><span className='cost'>1.458 ₫</span></td>
                             <td> <span className='status-quote'>Báo giá đã gửi</span> </td>
-                        </tr>
+                        </tr> */}
                     </tbody>
                     <tfoot>
                         <tr >

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import './ModalConfirmPaidInvoice.scss'
 import Modal from 'react-bootstrap/Modal';
-import { Select, Input, DatePicker } from "antd";
+import { Select, Input, DatePicker, Popconfirm } from "antd";
+import { toast } from 'react-toastify';
+import { createPaidInvoice, confirmInvoice } from '../../../services/saleServices'
 
 
 export const ModalConfirmPaid = (props) => {
@@ -19,7 +21,7 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
     const [total, setTotal] = useState(0)
     const [paymentMethod, setPaymentMethod] = useState('')
     const [contentTransfer, setContentTransfer] = useState('')
-
+    const [isCreatingPaidInvoice, setIsCreatingPaidInvoice] = useState(false)
     useEffect(() => {
         if (props?.dataQuote) {
             Promise.all([
@@ -37,6 +39,37 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
     const handleChangeDatePaid = (date, dateString) => {
         setDatePaid(dateString)
     };
+
+    const handleConfirmPaid = async () => {
+        if (datePaid && total && paymentMethod && contentTransfer) {
+            if (props?.close && props?.showBannerPaid) {
+                setIsCreatingPaidInvoice(true)
+                let resCreatePaid = await createPaidInvoice({
+                    invoiceId: props?.dataQuote?.quoteId,
+                    datePaid,
+                    total,
+                    paymentMethod,
+                    contentTransfer
+                })
+                let resUpdateStatus = await confirmInvoice({ ...props?.dataQuote, status: 'S2' })
+
+                if (resCreatePaid?.EC === 0 && resUpdateStatus?.EC === 0) {
+                    setTimeout(() => {
+                        props?.close()
+                        props?.hiddenBtnConfirmPayment()
+                        setIsCreatingPaidInvoice(false)
+                        toast.success("Thanh toán hóa đơn " + props?.dataQuote?.quoteId + " thành công!")
+                        props?.showBannerPaid(true)
+                    }, 2000);
+                } else {
+                    setIsCreatingPaidInvoice(false)
+                    toast.error("Có lỗi xảy ra khi thanh toán hóa đơn, vui lòng thử lại sau!")
+                }
+            }
+        } else {
+            toast.warning("Vui lòng điền đầy đủ thông tin trước khi ghi nhận thanh toán")
+        }
+    }
 
     return (
         <>
@@ -72,7 +105,7 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
 
                         <div className='wrap-input-title col-6'>
                             <label htmlFor='input-total'>Số tiền</label>
-                            <Input variant="borderless" id='input-total' className='input-title' value={total}
+                            <Input variant="borderless" id='input-total' className='input-title' value={total.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                                 onChange={(e) => setTotal(e.target.value)}
                             />
                         </div>
@@ -105,17 +138,27 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button className='btn btn-main' onClick={""}>Tạo thanh toán</button>
+                    <Popconfirm
+                        placement="bottom"
+                        title={`Xác nhận thanh toán hóa đơn INV${props?.dataQuote?.quoteId}`}
+                        description={`Vui lòng kiểm tra lại thông tin trước khi xác nhận thanh toán.`}
+                        okText="Xác nhận"
+                        cancelText="Hủy bỏ"
+                        onConfirm={handleConfirmPaid}
+                    >
+                        <button className='btn btn-main'>Tạo thanh toán</button>
+                    </Popconfirm>
+
                     <button className='btn btn-gray' onClick={props?.close}> Hủy bỏ</button>
                 </Modal.Footer>
             </Modal >
-            {/* {isSendingEmail
+            {isCreatingPaidInvoice
                 ?
                 <div className="loading-overlay">
                     <div className="loading-spinner"></div>
                 </div>
                 : ''
-            } */}
+            }
         </>
     )
 }
