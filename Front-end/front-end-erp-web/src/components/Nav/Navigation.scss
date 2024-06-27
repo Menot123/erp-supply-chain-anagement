@@ -1,193 +1,153 @@
 .wrap-navigation-home {
     position: relative;
-
     .navigation-home {
         background-color: #714B67;
-        color           : #fff;
-
+        color: #fff;
         .container-fluid {
             .content-left {
                 .icon-header {
-
                     &:hover {
-                        cursor : pointer;
+                        cursor: pointer;
                         opacity: 0.8;
                     }
                 }
-
                 .logo-page {
-                    width : 100px;
+                    width: 100px;
                     height: 50px;
-
                     .img-avatar {
-                        width : 100%;
+                        width: 100%;
                         height: 100%;
                     }
                 }
-
                 .current-app {
                     color: #fff !important;
                 }
-
                 .nav-manage-employees,
                 .nav-sales {
                     margin-left: 48px;
-                    display    : flex;
-                    gap        : 16px;
-
+                    display: flex;
+                    gap: 16px;
                     .nav-link-me-employees,
                     .nav-link-me-department,
                     .nav-link-me-sales {
                         text-decoration: none !important;
-                        color          : #fff;
+                        color: #fff;
                     }
-
                     .nav-link-me-sales {
                         &:hover {
                             cursor: pointer;
                         }
                     }
-
-
                 }
-
             }
-
             .content-right {
                 .icon-notifications {
                     &:hover {
                         cursor: pointer;
                     }
                 }
-
                 .text-login {
                     color: #fff
                 }
-
                 .user-profile {
                     margin: 0 14px;
-
                     &:hover {
                         cursor: pointer;
                     }
-
                     .avatar-user {
-                        position        : relative;
-                        width           : 18px;
-                        height          : 18px;
+                        position: relative;
+                        width: 18px;
+                        height: 18px;
                         background-color: #fff;
-                        border-radius   : 8px;
-                        margin-right    : 6px;
-
+                        border-radius: 8px;
+                        margin-right: 6px;
                         .img-avatar {
-                            position     : absolute;
-                            top          : 0;
-                            object-fit   : cover;
-                            width        : 100%;
-                            height       : 100%;
+                            position: absolute;
+                            top: 0;
+                            object-fit: cover;
+                            width: 100%;
+                            height: 100%;
                             border-radius: 8px;
-
                         }
                     }
-
-
                 }
-
                 .languages {
                     display: flex;
-                    gap    : 4px;
-
+                    gap: 4px;
                     .language-vi {
                         margin-right: 4px;
-
                         &.active {
                             color: #f78613 !important;
                         }
-
                         &:hover {
                             cursor: pointer;
                         }
                     }
-
                     .language-en {
                         &:hover {
                             cursor: pointer;
                         }
-
                         &.active {
                             color: #f78613 !important;
                         }
                     }
-
                 }
-
             }
         }
     }
-
     .drop-down-menu-apps {
-        position                  : absolute;
-        height                    : 240px;
-        width                     : 110px;
-        background-color          : #fff;
-        display                   : flex;
-        flex-direction            : column;
-        box-shadow                : 0 0 5px rgba(0, 0, 0, 0.3);
+        position: absolute;
+        width: 110px;
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         border-bottom-right-radius: 4px;
-        border-bottom-left-radius : 4px;
-        z-index                   : 999;
-
+        border-bottom-left-radius: 4px;
+        z-index: 999;
         .item-app-menu {
             padding: 8px 8px;
-
             &:hover {
                 background-color: #c49bb8;
-                cursor          : pointer;
+                cursor: pointer;
             }
         }
     }
-
     .drop-down-user-apps {
-        z-index                   : 10;
-        position                  : absolute;
-        right                     : 0px;
-        width                     : 180px;
-        background-color          : #fff;
-        display                   : flex;
-        flex-direction            : column;
-        box-shadow                : 0 0 5px rgba(0, 0, 0, 0.3);
+        z-index: 10;
+        position: absolute;
+        right: 0px;
+        width: 180px;
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         border-bottom-right-radius: 4px;
-        border-bottom-left-radius : 4px;
-
+        border-bottom-left-radius: 4px;
         .item-app-user {
             padding: 8px 8px;
-
             &:hover {
                 background-color: #c49bb8;
-                cursor          : pointer;
+                cursor: pointer;
             }
         }
-
     }
-
     .drop-down-menu-order {
-        z-index         : 10;
-        position        : absolute;
-        left            : 236px;
-        top             : 80%;
-        width           : 236px;
+        z-index: 10;
+        position: absolute;
+        left: 236px;
+        top: 80%;
+        width: 236px;
         background-color: #fff;
-        display         : flex;
-        flex-direction  : column;
-        box-shadow      : 0 0 5px rgba(0, 0, 0, 0.3);
-        border-radius   : 4px;
-
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        border-radius: 4px;
         .item-order-menu {
             padding: 8px 8px;
-
             &:hover {
                 background-color: #c49bb8;
-                cursor          : pointer;
+                cursor: pointer;
             }
         }
     }
