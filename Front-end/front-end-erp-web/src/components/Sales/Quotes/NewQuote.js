@@ -72,6 +72,8 @@ export const NewQuote = () => {
     const [isCreateInvoice, setIsCreateInvoice] = useState(false)
     const [dateCreateInvoice, setDateCreateInvoice] = useState(null)
     const [isShowModalConfirmPaid, setIsShowModalConfirmPaid] = useState(false)
+    const [isShowBannerPaid, setIsShowBannerPaid] = useState(false)
+    const [isPaid, setIsPaid] = useState(false)
 
     let defaultStep = {
         status1: 'process',
@@ -502,7 +504,7 @@ export const NewQuote = () => {
                         {isCreateInvoice && currentStepInvoice === 1 ?
                             <>
                                 <button className='btn btn-main' onClick={handleSendInvoice}><FormattedMessage id="btn-send-invoice" /></button>
-                                <button className='btn btn-main' onClick={() => setIsShowModalConfirmPaid(true)}><FormattedMessage id="btn-confirmed-payment" /></button>
+                                {!isPaid && <button className='btn btn-main' onClick={() => setIsShowModalConfirmPaid(true)}><FormattedMessage id="btn-confirmed-payment" /></button>}
                                 <button className='btn btn-gray' onClick={() => handlePushDataQuotePreview("invoice")}><FormattedMessage id="btn-preview-quote" /></button>
                             </>
                             :
@@ -540,7 +542,9 @@ export const NewQuote = () => {
                     </div>
                 </div>
                 <div className='body-create-quote'>
-                    <span className='text-paid text-bg-success'>ĐÃ THANH TOÁN</span>
+                    {
+                        isShowBannerPaid && <span className='text-paid text-bg-success'>ĐÃ THANH TOÁN</span>
+                    }
                     {isCreateInvoice ? <span style={{ fontWeight: "500" }}><FormattedMessage id="new_quote.create-invoice-title" /></span> : ""}
                     <h3>{isCreateInvoice ?
                         (currentStepInvoice === 1 ? "INV" + dataQuote?.quoteId : <FormattedMessage id="new_quote.create-invoice-draft" />)
@@ -697,6 +701,8 @@ export const NewQuote = () => {
                         dataQuote={dataQuote}
                         show={isShowModalConfirmPaid}
                         close={() => setIsShowModalConfirmPaid(false)}
+                        showBannerPaid={setIsShowBannerPaid}
+                        hiddenBtnConfirmPayment={() => setIsPaid(true)}
                     />
 
                 </div>

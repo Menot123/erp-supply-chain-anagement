@@ -80,8 +80,16 @@ const confirmInvoice = (dataInvoice) => {
     return axios.put(`/sale/api/invoice`, dataInvoice)
 }
 
+const createPaidInvoice = (dataPaidInvoice) => {
+    return axios.post(`/sale/api/invoice/paid`, dataPaidInvoice)
+}
+
+const getAllPaidInvoice = () => {
+    return axios.get(`/sale/api/invoices`)
+}
+
 export {
     getCustomers, getAllCodes, getComments, createAComment, editComment, deleteComment, getLatestQuoteCode,
     sendingQuoteToCustomer, postDataQuote, confirmQuote, getDataQuotePreview, postDataCancelQuote, postDataInvoice,
-    getDataInvoicePreview, confirmInvoice, sendingInvoiceToCustomer
+    getDataInvoicePreview, confirmInvoice, sendingInvoiceToCustomer, createPaidInvoice, getAllPaidInvoice
 }
