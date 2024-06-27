@@ -1021,6 +1021,30 @@ let initApiRoutes = (app) => {
 
     /**
      * @swagger
+     * /api/stockEntryItemsBaseOnReceipt/{id}:
+     *  get:
+     *      tags:
+     *          - StockEntryItem
+     *      summary: Get stockEntryItemsBaseOnReceipt with id
+     *      description: Get information about stockEntryItemsBaseOnReceipt with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of receipt you want to get information 
+     *      responses:
+     *          200:
+     *              description: Return status and info of stockEntryItemsBaseOnReceipt if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/stockEntryItemsBaseOnReceipt/:id', stockEntryItemController.handleGetStockEntryItemsBaseOnReceiptId)
+
+    /**
+     * @swagger
      * /api/stockEntryItems:
      *  post:
      *      tags:

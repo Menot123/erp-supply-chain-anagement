@@ -5,6 +5,7 @@ import CreateNewProduct from '../components/ManageInventory/ManageProduct/Create
 import DetailProduct from '../components/ManageInventory/ManageProduct/DetailProduct';
 import ImportProduct from '../components/ManageInventory/ManageProduct/ImportProduct';
 import InputWarehouse from '../components/ManageInventory/Warehouse/InputWarehouse/InputWarehouse';
+import ViewReceipt from '../components/ManageInventory/Warehouse/InputWarehouse/ViewReceipt';
 import CreateNewInputWarehouse from '../components/ManageInventory/Warehouse/InputWarehouse/CreateNewInputWarehouse';
 import OutputWarehouse from '../components/ManageInventory/Warehouse/OutputWarehouse/OutputWarehouse';
 import CreateNewOutputWarehouse from '../components/ManageInventory/Warehouse/OutputWarehouse/CreateNewOutputWarehouse';
@@ -27,6 +28,7 @@ function ManageEmployeeRoute() {
                 <Route path={path.MANAGE_PRODUCTS} component={ListProduct} />
                 {/* In-Out Warehouse */}
                 <Route path={path.CREATE_INPUT_WAREHOUSE} component={CreateNewInputWarehouse} />
+                <Route path={path.VIEW_RECEIPT} component={ViewReceipt} />
                 <Route path={path.INPUT_WAREHOUSE} component={InputWarehouse} />
                 <Route path={path.CREATE_OUTPUT_WAREHOUSE} component={CreateNewOutputWarehouse} />
                 <Route path={path.OUTPUT_WAREHOUSE} component={OutputWarehouse} />

@@ -43,6 +43,15 @@ const getCustomers = () => {
 const getStockEntrys = () => {
     return axios.get(`/inventory/api/stockEntrys`)
 }
+
+const getStockEntryInfo = (id) => {
+    return axios.get(`/inventory/api/stockEntrys/${id}`)
+}
+
+const getReceiptListItems = (id) => {
+    return axios.get(`/inventory/api/stockEntryItemsBaseOnReceipt/${id}`)
+}
+
 const getStockDeliverys = () => {
     return axios.get(`/inventory/api/stockDeliverys`)
 }
@@ -79,6 +88,8 @@ export {
     getProviders,
     getCustomers,
     getStockEntrys,
+    getStockEntryInfo,
+    getReceiptListItems,
     getStockDeliverys,
     createNewReceipt,
     createNewDelivery,

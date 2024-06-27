@@ -1,0 +1,72 @@
+.body-manage-input-warehouse {
+    background-color: #f9f9f9;
+    .table {
+        .table-heading {
+            .table-row-heading {
+                .dropdown-setting {
+                    position: absolute;
+                    top: 30vh;
+                    right: 5px;
+                    padding: 10px;
+                    background-color: white;
+                    border: 1px solid #ccc;
+                    z-index: 1;
+                    .item {
+                        padding-top: 3px;
+                        padding-bottom: 3px;
+                    }
+                    .item:hover {
+                        background-color: #ccc;
+                    }
+                }
+            }
+        }
+    }
+    .hidden {
+        display: none;
+    }
+    .manage-input-warehouse-container {
+        height: 100vh;
+        .input-warehouse-items-wrap {
+            display: flex;
+            gap: 8px;
+            .input-warehouse-item {
+                width: calc(25% - 7px);
+                height: 100px;
+                border: 1px solid #ccc;
+                border-radius: 2px;
+                margin: 8px 0 0;
+                padding: 0px !important;
+                background-color: #fff;
+                &:hover {
+                    cursor: pointer;
+                    opacity: 0.8;
+                }
+                .image-input-warehouse {
+                    .img-input-warehouse {
+                        height: 100%;
+                        width: 90px;
+                        object-fit: cover;
+                    }
+                }
+                .sumary-title {
+                    margin: auto;
+                    width: 60%;
+                    padding: 10px;
+                    text-align: center;
+                }
+                .des-input-warehouse {
+                    margin-left: 8px;
+                    display: flex;
+                    flex-direction: column;
+                    padding: 4px;
+                    width: 100%;
+                    .barcode-input-warehouse {}
+                    .cost-input-warehouse {
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+    }
+}
