@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
             StockEntry.belongsTo(models.Provider, { foreignKey: 'providerId', targetKey: 'providerId', as: 'providerData' })
             StockEntry.belongsTo(models.Warehouse, { foreignKey: 'warehouseId', targetKey: 'warehouseId', as: 'warehouseData' })
                 // StockEntry.belongsTo(models.User, { foreignKey: 'userId', targetKey: 'userId', as: 'userData' })
-            StockEntry.hasMany(models.StockEntryItem, { foreignKey: 'stockEntryId' })
+            StockEntry.hasMany(models.StockEntryItem, { foreignKey: 'stockEntryId', as: 'items' })
         }
         static generateId() {
             // Logic to generate stockEntryId based on type and group

@@ -1,11 +1,11 @@
-.wrapper-create-input-warehouse {
+.wrapper-view-input-warehouse {
     background-color: #fff;
     height: 100vh;
-    .header-create {
+    .header-view {
         padding: 12px !important;
         height: 84px;
         border-bottom: 1px solid #eee;
-        .title-create {
+        .title-view {
             color: #714b67 !important;
             font-size: 18px !important;
             font-weight: normal !important;
@@ -15,7 +15,7 @@
             }
         }
     }
-    .create-product-container {
+    .view-product-container {
         margin-top: 12px;
         height: 400px;
         width: 100%;
@@ -45,7 +45,7 @@
                 }
             }
         }
-        .body-create-input-warehouse {
+        .body-view-input-warehouse {
             min-height: 500px;
             margin-bottom: 24px;
             width: 100%;

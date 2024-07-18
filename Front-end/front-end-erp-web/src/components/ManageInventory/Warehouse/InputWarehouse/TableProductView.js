@@ -4,16 +4,18 @@ import { IoOptions } from "react-icons/io5";
 import { FaRegBuilding } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { useState } from 'react'
-import './TableInputWarehouse.scss'
+import './TableProductView.scss'
+import { getProductWithId } from '../../../../services/inventoryServices'
 import _ from 'lodash'
 import { Flex, Input, Select, Tooltip, DatePicker } from 'antd';
 import { useEffect } from 'react'
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
+import moment from 'moment';
 
 const { TextArea } = Input;
 
-export const TableInputWarehouse = (props) => {
+export const TableProductView = (props) => {
 
     const [listProduct, setListProduct] = useState([])
     const [creatingProduct, setCreatingProduct] = useState({})
@@ -43,36 +45,37 @@ export const TableInputWarehouse = (props) => {
     ]
 
     useEffect(() => {
-        if (props && props?.listProductFromParent) {
-            const buildSelectProduct = () => {
-                let productSelect = props?.listProductFromParent.map((item, index) => {
-                    return (
-                        {
-                            value: item.productId,
-                            label: item.productData.nameVi
-                        }
-                    )
-                })
-                setSelectProduct(productSelect)
-            }
-            buildSelectProduct()
+        if (props && props?.listProduct) {
+            console.log(props.listProduct)
+            // const buildSelectProduct = () => {
+            //     let productSelect = props?.listProductFromParent.map((item, index) => {
+            //         return (
+            //             {
+            //                 value: item.productId,
+            //                 label: item.productData.nameVi
+            //             }
+            //         )
+            //     })
+            //     setSelectProduct(productSelect)
+            // }
+            // buildSelectProduct()
         }
     }, [props])
 
     useEffect(() => {
         if (props.stockCreateId !== '') {
             listProduct.forEach(async (product, index) => {
-                await props.createProductListOfReceipt(
-                    {
-                        stockEntryId: props.stockCreateId,
-                        productId: product.productId,
-                        description: product.description,
-                        scheduledDate: product.scheduledDate,
-                        deadline: product.deadline,
-                        quantity: product.quantity
-                    }
-                )
-                // console.log(product)
+                // await props.createProductListOfReceipt(
+                //     {
+                //         stockEntryId: props.stockCreateId,
+                //         productId: product.productId,
+                //         description: product.description,
+                //         scheduledDate: product.scheduledDate,
+                //         deadline: product.deadline,
+                //         quantity: product.quantity
+                //     }
+                // )
+                console.log(product)
             })
         }
     }, [props.stockCreateId])
@@ -208,7 +211,7 @@ export const TableInputWarehouse = (props) => {
 
     return (
         <div>
-            <div className='body-content-input-warehouse'>
+            <div className='body-content-product-view'>
                 <table className="table table-striped table-hover table-products">
                     <thead>
                         <tr>
@@ -222,7 +225,7 @@ export const TableInputWarehouse = (props) => {
                     </thead>
                     <tbody>
                         {
-                            listProduct.map((item, index) => {
+                            props.listProduct.map((item, index) => {
                                 return (
                                     <tr key={'product' + index}>
                                         <td>
@@ -241,7 +244,9 @@ export const TableInputWarehouse = (props) => {
                                                 filterSort={(optionA, optionB) =>
                                                     (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                                 }
-                                                options={selectProduct}
+                                                // options={selectProduct}
+                                                options={[{ value: index, label: item.productData.nameVi }]}
+                                                defaultValue={index}
                                             />
                                         </td>
                                         <td>
@@ -257,22 +262,26 @@ export const TableInputWarehouse = (props) => {
                                             <DatePicker
                                                 className='select-date-expiration'
                                                 onChange={onChangeDatePickerItem}
+                                                defaultValue={moment(item.scheduledDate)}
                                                 suffixIcon={false}
                                                 variant="borderless"
                                                 placeholder=''
                                                 size='middle'
                                                 id='select-date-expiration'
+                                                format="DD-MM-YYYY"
                                             />
                                         </td>
                                         <td>
                                             <DatePicker
                                                 className='select-date-expiration'
                                                 onChange={onChangeDatePickerItem}
+                                                defaultValue={moment(item.deadline)}
                                                 suffixIcon={false}
                                                 variant="borderless"
                                                 placeholder=''
                                                 size='middle'
                                                 id='select-date-expiration'
+                                                format="DD-MM-YYYY"
                                             />
                                         </td>
                                         <td>
@@ -294,8 +303,8 @@ export const TableInputWarehouse = (props) => {
                         <tr>
                             <td colSpan='7'>
                                 {props.hadProvider == true
-                                    ? <span onClick={() => handleAddNewInput()} className='add-input-warehouse'>Thêm một dòng</span>
-                                    : <span disabled className='add-input-warehouse'>Thêm một dòng</span>
+                                    ? <span onClick={() => handleAddNewInput()} className='add-product-view'>Thêm một dòng</span>
+                                    : <span disabled className='add-product-view'>Thêm một dòng</span>
                                 }
                             </td>
                         </tr>

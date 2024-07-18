@@ -42,6 +42,35 @@ function InputWarehouse() {
     const [activityTypeChecked, setActivityTypeChecked] = useState(false);
     const [statusChecked, setStatusChecked] = useState(true);
 
+    const status = [
+        { id: 1, status: 'draft' },
+        { id: 2, status: 'ready' },
+        { id: 3, status: 'done' }
+    ];
+
+    const renderStatus = (item) => {
+        console.log(1)
+        let statusClass = '';
+        let statusText = '';
+
+        if (item === 'draft') {
+            statusClass = 'gray';
+            statusText = 'Nháp';
+        } else if (item === 'ready') {
+            statusClass = 'yellow';
+            statusText = 'Sẵn sàng';
+        } else if (item === 'done') {
+            statusClass = 'green';
+            statusText = 'Hoàn thành';
+        }
+
+        return (
+            <td key={item.id} className={statusClass}>
+                {statusText}
+            </td>
+        );
+    };
+
     const csvDataExportVi = [
         ["Mã tham chiếu", "Liên hệ", "Người phụ trách", "Ngày theo kế hoạch", "Tình trạng còn hàng của sản phẩm", "Hạn chót", "Ngày hiệu lực", "Chứng từ gốc", "Đơn hàng chậm trễ của", "Loại hoạt động", "Trạng thái"],
         // ["WH/IN/001", "0123456789", "Nguyễn Tiến Đạt", "08/01/2024", "", "", "05/09/2024 04:18:45", "", "", "Nhập kho", "Hoàn tất"],
@@ -394,7 +423,7 @@ function InputWarehouse() {
                                                         <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
                                                         <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
                                                         <td className={`${activityTypeChecked ? '' : 'hidden'}`}>{item.warehouseId}: Phiếu nhập kho</td>
-                                                        <td className={`${statusChecked ? '' : 'hidden'}`}>{item.status}</td>
+                                                        {renderStatus(item.status)}
                                                         <td></td>
                                                     </tr>
                                                 ));

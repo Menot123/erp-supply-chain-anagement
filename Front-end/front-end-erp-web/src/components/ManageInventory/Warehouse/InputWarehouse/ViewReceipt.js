@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import { getStockEntryInfo, getReceiptListItems } from '../../../../services/inventoryServices'
 import { LANGUAGES } from '../../../../utils/constant'
 import { toast } from 'react-toastify';
-import { TableInputWarehouse } from './TableInputWarehouse';
+import { TableProductView } from './TableProductView';
 import { FormattedMessage } from 'react-intl'
 import moment from 'moment'
 import { Steps, Select, Tooltip, DatePicker, Tabs, Input } from "antd";
@@ -32,8 +32,8 @@ function ViewReceipt() {
             const res = await getStockEntryInfo(idReceipt)
             if (res && res.EC === 0) {
                 setReceiptInfo(res.DT)
-                console.log('Receipt Info:')
-                console.log(res.DT)
+                // console.log('Receipt Info:')
+                // console.log(res.DT)
             } else {
                 toast.error(res.EM)
             }
@@ -44,8 +44,8 @@ function ViewReceipt() {
             const res = await getReceiptListItems(idReceipt)
             if (res && res.EC === 0) {
                 setReceiptItems(res.DT)
-                console.log('Product list of receipt info:')
-                console.log(res.DT)
+                // console.log('Product list of receipt info:')
+                // console.log(res.DT)
             } else {
                 toast.error(res.EM)
             }
@@ -59,9 +59,9 @@ function ViewReceipt() {
     return (
         <>
             {receiptInfo &&
-                <div className='wrapper-create-input-warehouse'>
-                    <div className='header-create'>
-                        <span className='title-create'>
+                <div className='wrapper-view-input-warehouse'>
+                    <div className='header-view'>
+                        <span className='title-view'>
                             <span className='bold'>{language === LANGUAGES.EN ? 'Reicept' : 'Phiếu nhập kho'}</span>
                             <span> / </span>
                             <span>({idString})</span>
@@ -71,7 +71,7 @@ function ViewReceipt() {
                             <button className='ms-1 btn btn-outline-secondary'><FormattedMessage id='btn-cancel' /></button>
                         </div>
                     </div>
-                    <div className='container-fluid create-product-container'>
+                    <div className='container-fluid view-product-container'>
                         <div className='actions-status'>
                             <div className='wrap-btn-actions'>
                                 <button className='btn btn-main'>Xác nhận</button>
@@ -101,7 +101,7 @@ function ViewReceipt() {
                                 />
                             </div>
                         </div>
-                        <div className='body-create-input-warehouse'>
+                        <div className='body-view-input-warehouse'>
                             <div className='wrap-info-input-warehouse pt-5'>
                                 <div className='content-left'>
                                     <div className='wrap-expiration-date'>
@@ -165,7 +165,7 @@ function ViewReceipt() {
                                     items={[{
                                         label: `Hoạt động`,
                                         key: 'tab-1',
-                                        children: <TableInputWarehouse />,
+                                        children: <TableProductView listProduct={receiptItems} />,
                                     },
                                     {
                                         label: `Thông tin bổ sung`,
