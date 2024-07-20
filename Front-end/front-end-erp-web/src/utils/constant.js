@@ -25,6 +25,7 @@ export const path = {
     CREATE_OUTPUT_WAREHOUSE: '/manage-inventory/output-warehouse/create',
     SALE_ORDER: '/sale-order',
     CREATE_QUOTE: '/sale-order/new-quote',
+    OPEN_QUOTE: '/sale-order/:id',
     VIEW_QUOTE: '/my/orders',
     VIEW_DRAFT_INVOICE: '/my/invoice',
 };

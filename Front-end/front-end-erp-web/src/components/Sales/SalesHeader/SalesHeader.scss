@@ -36,4 +36,33 @@
         justify-content: flex-end;
     }
 
+    .num-selectedItems {
+        color           : #017e84;
+        background-color: #e6f2f3;
+        border-color    : #017e84;
+        border-radius   : 0.1875rem;
+        padding         : 8px 16px;
+        border          : 1px solid rgba(0, 0, 0, 0.125);
+        line-height     : 1;
+        display         : flex;
+        gap             : 4px;
+        align-items     : center;
+        justify-content : center;
+    }
+
+    .actions-selected {
+        display         : inline-block;
+        font-weight     : 500;
+        line-height     : 1.5;
+        color           : #374151;
+        text-align      : center;
+        vertical-align  : middle;
+        background-color: #e7e9ed;
+        border-color    : #e7e9ed;
+        border          : 1px solid transparent;
+        padding         : 0.3125rem 0.625rem;
+        font-size       : 0.875rem;
+        border-radius   : 0.25rem;
+    }
+
 }

@@ -193,4 +193,12 @@
         }
     }
 
+    .ant-select-disabled {
+        .ant-select-selection-item {
+            color: #000 !important;
+            /* Màu đỏ cho các mục bị vô hiệu hóa */
+        }
+
+    }
+
 }

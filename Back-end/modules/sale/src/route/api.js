@@ -493,6 +493,38 @@ const initApiRoutes = (app) => {
     */
     router.get('/invoices', apiController.getInvoices);
 
+    /**
+    * @swagger
+    * /api/quotes-sent:
+    *  get:
+    *      tags:
+    *          - Sales
+    *      summary: Get all paid invoices
+    *      responses:
+    *          201:
+    *              description: Return status get all paid invoices. 
+    *          500:
+    *              description: Error from server.
+    * 
+    */
+    router.get('/quotes-sent', apiController.getQuotesSent);
+
+    /**
+    * @swagger
+    * /api/delete-quotes-sent:
+    *  get:
+    *      tags:
+    *          - Sales
+    *      summary: delete quotes sent in sale order list
+    *      responses:
+    *          201:
+    *              description: Return status delete quotes sent in sale order list. 
+    *          500:
+    *              description: Error from server.
+    * 
+    */
+    router.delete('/delete-quotes-sent', apiController.deleteQuotesSent);
+
     return app.use("/api/", router)
 }
 

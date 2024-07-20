@@ -697,17 +697,20 @@ const sendEmailCancelQuote = async (dataQuote, fullDataCustomer, bodySendQuote) 
 const postInvoiceService = async (dataInvoice) => {
     try {
         let res = {}
-        let fieldCheck = ['invoiceId', 'customer', 'dateCreateInvoice', 'paymentPolicy', 'productList', 'totalPrice']
-
+        let fieldCheck = dataInvoice?.customerId !== undefined ?
+            ['invoiceId', 'customerId', 'dateCreateInvoice', 'paymentPolicy', 'productList', 'totalPrice']
+            :
+            ['invoiceId', 'customer', 'dateCreateInvoice', 'paymentPolicy', 'productList', 'totalPrice']
         if (dataInvoice) {
-            fieldCheck.forEach(element => {
-                if (!dataInvoice[element]) {
+            for (const element of fieldCheck) {
+                if (!dataInvoice[element] || dataInvoice[element] === undefined) {
                     res.EC = -2
                     res.EM = 'Missing fields of invoice'
                     res.DT = ''
                     return res
                 }
-            });
+            }
+
             let invoice = await db.Invoice.findOne({
                 where: {
                     invoiceId: dataInvoice?.invoiceId
@@ -716,7 +719,7 @@ const postInvoiceService = async (dataInvoice) => {
             if (!invoice) {
                 await db.Invoice.create({
                     ...dataInvoice,
-                    customerId: dataInvoice?.customer,
+                    customerId: dataInvoice?.customerId ? dataInvoice?.customerId : dataInvoice?.customer,
                     tax: JSON.stringify(dataInvoice.tax),
                     productList: JSON.stringify(dataInvoice.productList),
                     createdDate: dataInvoice?.dateCreateInvoice,
@@ -870,6 +873,9 @@ const getInvoicesService = async () => {
     try {
         let res = {}
         let invoices = await db.InvoicePaid.findAll({
+            where: {
+                delete_flag: false
+            },
             order: [
                 ['createdAt', 'DESC']
             ],
@@ -889,11 +895,77 @@ const getInvoicesService = async () => {
     }
 }
 
+const getQuotesSentService = async (page, pageSize) => {
+    try {
+        let res = {};
+        let quotes = await db.Quote.findAndCountAll({
+            where: {
+                [Op.or]: [{ status: 'S1' }, { status: 'S2' }]
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ],
+            include: [
+                {
+                    model: db.Customer,
+                    as: 'dataCustomer',
+                },
+            ],
+            limit: pageSize,
+            offset: (page - 1) * pageSize
+        });
+
+        if (quotes) {
+            res.EC = 0;
+            res.EM = 'Get all quotes sent successfully';
+            res.DT = quotes.rows;
+            res.total = quotes.count;
+        } else {
+            res.EM = 'Get all quotes sent failed';
+            res.EC = 1;
+            res.DT = '';
+        }
+        return res;
+    } catch (e) {
+        console.log('>>> error: ', e);
+        return {
+            EC: 1,
+            EM: 'Error occurred',
+            DT: ''
+        };
+    }
+};
+
+const listQuoteDeleteService = async (listQuote) => {
+    try {
+        let res = {}
+        if (!listQuote || listQuote.length === 0) {
+            res.EM = 'error from server in delete quotes sent: empty list quote'
+            res.EC = 1
+            res.DT = ''
+        } else {
+            await db.Quote.update({ status: 'deleted' }, {
+                where: {
+                    quoteId: listQuote
+                }
+            });
+            res.EC = 0
+            res.EM = 'delete quotes sent successfully'
+            res.DT = ''
+        }
+        return res
+
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
 module.exports = {
     createCompanyDataService, createBranchCompanyDataService, getBranchesService,
     getBranchService, getDetailCompanyService, handleDeleteCompanyService, updateConfirmQuoteService,
     getCustomersService, getAllCodesService, getCommentsService, postCommentService, updateCommentService,
     deleteCommentService, getLatestQuoteService, sendingQuoteService, postQuoteService, updateStatusQuoteService,
     getDataPreviewQuoteService, postCancelQuoteService, sendEmailCancelQuote, postInvoiceService, getDataPreviewInvoiceService,
-    confirmInvoiceService, sendingInvoiceService, paidInvoiceService, getInvoicesService
+    confirmInvoiceService, sendingInvoiceService, paidInvoiceService, getInvoicesService, getQuotesSentService,
+    listQuoteDeleteService
 }

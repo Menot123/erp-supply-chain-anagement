@@ -81,7 +81,6 @@ function ManageAccount() {
 
     const fetchEmployeesPagination = async () => {
         let res = await getEmployeesPagination(currentPage, currentLimit)
-        console.log('check res >>> ', res)
         if (res.EC === 0 && res?.DT?.employees.length > 0) {
             Promise.all([setEmployees(res?.DT?.employees), setTotalPage(res?.DT?.totalPage)])
         } else {

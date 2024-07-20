@@ -88,8 +88,22 @@ const getAllPaidInvoice = () => {
     return axios.get(`/sale/api/invoices`)
 }
 
+const getAllQuotesSent = (page, pageSize) => {
+    return axios.get('/sale/api/quotes-sent', {
+        params: {
+            page: page,
+            pageSize: pageSize
+        }
+    });
+}
+
+const deleteQuotesSent = (listQuote) => {
+    return axios.delete(`/sale/api/delete-quotes-sent`, { data: listQuote })
+}
+
 export {
     getCustomers, getAllCodes, getComments, createAComment, editComment, deleteComment, getLatestQuoteCode,
     sendingQuoteToCustomer, postDataQuote, confirmQuote, getDataQuotePreview, postDataCancelQuote, postDataInvoice,
-    getDataInvoicePreview, confirmInvoice, sendingInvoiceToCustomer, createPaidInvoice, getAllPaidInvoice
+    getDataInvoicePreview, confirmInvoice, sendingInvoiceToCustomer, createPaidInvoice, getAllPaidInvoice, getAllQuotesSent,
+    deleteQuotesSent
 }

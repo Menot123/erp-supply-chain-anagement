@@ -12,10 +12,14 @@ import { useState } from 'react'
 import { FaCheck } from "react-icons/fa";
 import { ModalConfirmQuote } from './Modal/ModalConfirmQuote';
 import Form from 'react-bootstrap/Form';
-import { IoTimeOutline } from "react-icons/io5";
-import { getAllPaidInvoice } from '../../services/saleServices'
+import { getAllPaidInvoice, getAllQuotesSent } from '../../services/saleServices'
+import { useHistory } from 'react-router-dom'
+import { v4 as uuidv4 } from 'uuid';
+import { Pagination } from 'antd';
 
 function SaleOrder() {
+
+    const history = useHistory()
 
     const [showModalDataCompany, setShowModalDataCompany] = useState(false)
     const [isDoneStep1, setIsDoneStep1] = useState(false)
@@ -24,16 +28,58 @@ function SaleOrder() {
     const [isHaveQuote, setIsHaveQuote] = useState(true)
     const [selectedItems, setSelectedItems] = useState([])
     const [invoices, setInvoices] = useState([])
+    const [totalQuotes, setTotalQuotes] = useState(0)
+    const [quotesSent, setQuotesSent] = useState([])
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(50);
+    const [totalQuotesSent, setTotalQuotesSent] = useState(0)
+    const [searchQuotesSent, setSearchQuotesSent] = useState("")
+    const [isCheckAll, setIsCheckAll] = useState(false)
+
+    const onChangePagination = (page, pageSize) => {
+        setPage(page);
+        setPageSize(pageSize);
+    };
+
+    const fetchAllQuotesSent = async (page, pageSize) => {
+        const res = await getAllQuotesSent(page, pageSize)
+        if (res?.EC === 0) {
+            setQuotesSent(res?.DT)
+            setTotalQuotesSent(res?.total)
+        }
+    }
 
     useEffect(() => {
-        const fetchAllPaidInvoices = async () => {
-            const res = await getAllPaidInvoice()
-            if (res?.EC === 0) {
-                setInvoices(res?.DT)
+        const calculateTotalQuotesSent = () => {
+            let totalCurrent = 0
+            if (quotesSent && quotesSent.length > 0) {
+                quotesSent.forEach((quoteSent) => {
+                    totalCurrent += Number(quoteSent?.totalPrice)
+                })
+                setTotalQuotes(totalCurrent)
             }
         }
-        fetchAllPaidInvoices()
-    }, [])
+        calculateTotalQuotesSent()
+    }, [quotesSent])
+
+    useEffect(() => {
+        fetchAllQuotesSent(page, pageSize);
+    }, [page, pageSize]);
+
+    // useEffect(() => {
+    //     const fetchAllPaidInvoices = async () => {
+    //         const res = await getAllPaidInvoice()
+    //         if (res?.EC === 0) {
+    //             calculateTotalQuotesSent(res?.DT)
+    //             setInvoices(res?.DT)
+    //         }
+    //     }
+
+
+
+    //     // fetchAllPaidInvoices()
+    //     // fetchAllQuotesSent()
+    // }, [])
 
     const handleShowModalStep1 = () => {
         setShowModalDataCompany(true)
@@ -66,11 +112,18 @@ function SaleOrder() {
     }
 
     const handleCheckAll = () => {
-        if (2 === +selectedItems.length) {
+        let currentStatus = isCheckAll
+        setIsCheckAll(!currentStatus)
+        if (currentStatus) {
             setSelectedItems([])
         } else {
-            setSelectedItems(['quote1', 'quote2'])
+            setSelectedItems(quotesSent.map(item => item?.quoteId?.toString()))
         }
+    }
+
+    const handleUnCheckAll = () => {
+        setIsCheckAll(false)
+        setSelectedItems([])
     }
 
     const convertDateTime = (input) => {
@@ -84,11 +137,15 @@ function SaleOrder() {
         return output;
     }
 
+    const handleViewQuoteFromSaleOrder = (invoiceId) => {
+        history.push(`/sale-order/${invoiceId}`)
+    }
 
     return (
 
         <>
-            <SalesHeader />
+            <SalesHeader changeFilter={setSearchQuotesSent} selectedItems={selectedItems} handleUncheckAll={handleUnCheckAll}
+                reloadData={() => fetchAllQuotesSent(page, pageSize)} />
             {!isHaveQuote ?
                 <div>
                     <DataCompanyModal
@@ -195,54 +252,114 @@ function SaleOrder() {
                     </div>
                 </div>
                 :
-                <table className="table table-striped table-hover table-quotes">
-                    <thead>
-                        <tr>
-                            <th scope="col">
-                                <Form.Check // prettier-ignore
-                                    type={'checkbox'}
-                                    id={`quote1}`}
-                                    label={`Số`}
-                                    onChange={handleCheckAll}
-                                />
-                            </th>
-                            <th scope="col">Ngày tạo</th>
-                            <th scope="col">Khách hàng</th>
-                            <th scope="col">Nhân viên kinh doanh</th>
-                            <th scope="col">Hoạt động</th>
-                            <th scope="col">Tổng</th>
-                            <th scope="col">Trạng thái</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {invoices && invoices.length > 0 &&
-                            invoices.map((item, index) => {
-                                return (
-                                    <tr className='hover-item'>
-                                        <th scope="row">
-                                            <Form.Check // prettier-ignore
-                                                type={'checkbox'}
-                                                id={item?.invoiceId}
-                                                value={item?.invoiceId}
-                                                label={`INV${item?.invoiceId}`}
-                                                onChange={(e) => handleChangeCheckBox(e)}
-                                                checked={selectedItems.includes(item?.invoiceId)}
-                                            />
-                                        </th>
-                                        <td>{convertDateTime(item?.createdAt)}</td>
-                                        <td>Huỳnh Khánh Duy</td>
-                                        <td>Nguyễn Bá Thành</td>
-                                        <td><IoTimeOutline className='icon-activities' /></td>
-                                        <td><span className='cost'>
-                                            {Number(item?.total).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                                        </span></td>
-                                        <td> <span className='status-quote'>Báo giá đã gửi</span> </td>
-                                    </tr>
-                                )
-                            })}
+                <div className='pb-3'>
+                    <table className="table table-striped table-hover table-quotes">
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    <Form.Check // prettier-ignore
+                                        type={'checkbox'}
+                                        id={`checkAll}`}
+                                        label={`Số`}
+                                        onChange={handleCheckAll}
+                                        checked={isCheckAll}
+                                    />
+                                </th>
+                                <th scope="col">Ngày tạo</th>
+                                <th scope="col">Khách hàng</th>
+                                <th scope="col">Nhân viên kinh doanh</th>
+                                <th scope="col">Tổng</th>
+                                <th scope="col">Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {invoices && invoices.length > 0 &&
+                                invoices.map((item, index) => {
+                                    return (
+                                        <tr className='hover-item' key={uuidv4()} >
+                                            <th scope="row">
+                                                <Form.Check // prettier-ignore
+                                                    type={'checkbox'}
+                                                    id={item?.invoiceId}
+                                                    value={item?.invoiceId}
+                                                    label={`INV${item?.invoiceId}`}
+                                                    onChange={(e) => handleChangeCheckBox(e)}
+                                                    checked={selectedItems.includes(item?.invoiceId)}
+                                                />
+                                            </th>
+                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}>{convertDateTime(item?.createdAt)}</td>
+                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}>Huỳnh Khánh Duy</td>
+                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}>Nguyễn Bá Thành</td>
+                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}><span className='cost'>
+                                                {Number(item?.total).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                            </span></td>
+                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}> <span className='status-quote'>Báo giá đã gửi</span> </td>
+                                        </tr>
+
+                                    )
+                                })
+                            }
+
+                            {
+                                quotesSent && quotesSent.length > 0 ?
+                                    (
+                                        (() => {
+                                            const filteredQuotes = quotesSent.filter((item) => {
+                                                return searchQuotesSent.toLowerCase() === '' ||
+                                                    (item?.dataCustomer?.fullName.toLowerCase().includes(searchQuotesSent.toLowerCase()) ||
+                                                        ("QUO" + item?.quoteId.toString()).toLowerCase().includes(searchQuotesSent.toLowerCase()));
+                                            })
+
+                                            if (filteredQuotes.length > 0) {
+                                                return filteredQuotes.map((item, index) => (
+                                                    <tr className='hover-item' >
+                                                        <th scope="row">
+                                                            <Form.Check // prettier-ignore
+                                                                type={'checkbox'}
+                                                                id={item?.quoteId}
+                                                                value={item?.quoteId}
+                                                                label={`QUO${item?.quoteId}`}
+                                                                onChange={(e) => handleChangeCheckBox(e)}
+                                                                checked={selectedItems.includes(item?.quoteId.toString())}
+                                                            />
+                                                        </th>
+                                                        <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>{convertDateTime(item?.createdAt)}</td>
+                                                        <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>{item?.dataCustomer?.fullName}</td>
+                                                        <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>Nguyễn Bá Thành</td>
+                                                        <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}><span className='cost'>
+                                                            {Number(item?.totalPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                                        </span></td>
+                                                        <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>
+                                                            {item?.status === 'S1' ?
+                                                                <span className='status-quote'>Báo giá đã gửi</span>
+                                                                :
+                                                                <span className='status-wait-invoice'>Đơn bán hàng</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+
+                                                )
+                                                )
+                                            } else {
+                                                return (
+                                                    <tr>
+                                                        <td colSpan="6">
+                                                            <div className='text-center w-100 fw-medium'>
+                                                                <span>Báo giá hoặc hóa đơn không tồn tại</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            }
+                                        })()
+                                    )
+                                    :
+                                    <span>no data filter</span>
+
+                            }
 
 
-                        {/* <tr className='hover-item'>
+                            {/* <tr className='hover-item'>
                             <th scope="row">
                                 <Form.Check // prettier-ignore
                                     type={'checkbox'}
@@ -260,21 +377,29 @@ function SaleOrder() {
                             <td><span className='cost'>1.458 ₫</span></td>
                             <td> <span className='status-quote'>Báo giá đã gửi</span> </td>
                         </tr> */}
-                    </tbody>
-                    <tfoot>
-                        <tr >
-                            <th scope="row">
+                        </tbody>
+                        <tfoot>
+                            <tr >
+                                <th scope="row">
 
-                            </th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td><span className='total-cost' data-tooltip="Tổng đã gồm thuế">999.458 ₫</span></td>
-                            <td></td>
-                        </tr>
-                    </tfoot>
-                </table >
+                                </th>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <span className='total-cost' data-tooltip="Tổng đã gồm thuế">
+                                        {Number(totalQuotes).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                    </span>
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table >
+                    <div className='d-flex justify-content-end pe-4'>
+                        <Pagination defaultCurrent={page} total={totalQuotesSent} pageSize={pageSize} onChange={onChangePagination} />
+                    </div>
+                </div >
             }
         </>
     )

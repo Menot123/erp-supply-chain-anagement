@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { FaRegBuilding } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
@@ -46,7 +46,10 @@ export const TableProducts = (props) => {
     ]
 
     useEffect(() => {
-        if (props && props?.listProductFromParent) {
+        if (props?.listProductFromParent) {
+            if (props?.productAdded) {
+                setListProduct(props?.productAdded)
+            }
             const buildSelectProduct = () => {
                 let productSelect = props?.listProductFromParent.map((item, index) => {
                     return (
@@ -60,11 +63,10 @@ export const TableProducts = (props) => {
             }
             buildSelectProduct()
         }
-    }, [props])
+    }, [props?.listProductFromParent, props?.productAdded])
 
 
     useEffect(() => {
-
         const calculateTotalPrice = () => {
             let totalBeforeTax = 0
             let totalPrice = 0
@@ -93,14 +95,12 @@ export const TableProducts = (props) => {
             props?.setTaxAndPriceBeforeTax('tax', totals)
         };
 
-        calculateTaxTotals();
-        calculateTotalPrice();
+        clearTimeout();
+        setTimeout(() => {
+            calculateTaxTotals();
+            calculateTotalPrice();
+        }, 1000);
     }, [listProduct]);
-
-
-    // useEffect(() => {
-
-    // }, [listProduct]);
 
 
     const updateEmptyFieldProduct = (productCreating, type) => {
@@ -168,7 +168,7 @@ export const TableProducts = (props) => {
 
     const handleChangeInputCreatingProduct = (e, type, product) => {
         // Tìm sản phẩm trong danh sách dựa trên productId
-        const updatedProducts = listProduct.map((item, index) => {
+        const updatedProducts = listProduct.map((item) => {
             const reg = /^-?\d*(\.\d*)?$/;
             if (+item.lineId === +product?.lineId) {
                 // Cập nhật giá trị của trường (field) tương ứng
@@ -185,7 +185,6 @@ export const TableProducts = (props) => {
                             priceBeforeTax: +e.target.value * +item.quantity
                         };
                     }
-
                 } else if (type === 'quantity') {
                     if (reg.test(e.target.value) || e.target.value === '' || e.target.value === '-') {
                         return {
@@ -208,9 +207,14 @@ export const TableProducts = (props) => {
 
         // Cập nhật danh sách sản phẩm mới
         setListProduct(updatedProducts);
-        props?.handleChangeDataQuote(updatedProducts, 'productList')
 
-    }
+        // Sử dụng timeout để cập nhật dữ liệu sau 2 giây nếu không có thay đổi khác
+        clearTimeout(handleChangeInputCreatingProduct.timeout);
+        handleChangeInputCreatingProduct.timeout = setTimeout(() => {
+            props?.handleChangeDataQuote(updatedProducts, 'productList');
+        }, 2000);
+    };
+
 
     const handleRemoveProduct = (product) => {
         let _listProduct = _.cloneDeep(listProduct);
@@ -256,6 +260,7 @@ export const TableProducts = (props) => {
                                                     (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                                 }
                                                 options={selectProduct}
+                                                value={{ label: item?.name, value: item?.productId }}
                                             />
                                         </td>
                                         <td>
@@ -321,6 +326,7 @@ export const TableProducts = (props) => {
                         <TextArea autoSize variant="borderless" className='input-policy'
                             placeholder={intl.formatMessage({ id: "new_quote.condition-policy" })}
                             onChange={(e) => props?.handleChangeDataQuote(e, 'policyAndCondition')}
+                            value={props?.policyAndCondition && props?.policyAndCondition}
                         />
                     </div>
                     <div className='wrap-tax-price'>

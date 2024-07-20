@@ -106,7 +106,7 @@ export const ViewQuote = () => {
         } else {
             fetchDataQuotePreview()
         }
-    }, [location.pathname])
+    }, [location.pathname, intl])
 
     useEffect(() => {
         const autoSignature = (name) => {
@@ -345,11 +345,11 @@ export const ViewQuote = () => {
                                     <hr className='mt-1 mb-2' />
                                     <div className='date-created d-flex'>
                                         <span className='label-date'><FormattedMessage id={currentURL === "invoice" ? "new_invoice.preview-created-date" : "new_quote.preview-created-date"} /></span>
-                                        <span className='ms-2'>{formatDate(dataPreview?.createdDate)}</span>
+                                        <span className='ms-2'>{currentURL !== "invoice" ? formatDate(new Date()) : formatDate(dataPreview?.createdDate)}</span>
                                     </div>
                                     <div className='date-expiration d-flex'>
                                         <span className='label-date'><FormattedMessage id="new_quote.preview-date-expiration" /></span>
-                                        <span className='ms-2'>{addOneMonth(formatDate(dataPreview?.createdDate))}</span>
+                                        <span className='ms-2'>{currentURL !== "invoice" ? formatDate(dataPreview?.expirationDay) : addOneMonth(formatDate(dataPreview?.createdDate))}</span>
                                     </div>
                                 </div>
 

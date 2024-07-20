@@ -21,6 +21,7 @@ export const ModalSendQuoteToEmail = (props) => {
     const [receiver, setReceiver] = useState('')
     const [isSendingEmail, setIsSendingEmail] = useState(false)
 
+
     useEffect(() => {
         if (props?.dataQuote && props?.fullDataCustomer) {
             let receiverText = props?.fullDataCustomer?.fullName + ` <${props?.fullDataCustomer?.email}> `
