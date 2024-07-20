@@ -37,6 +37,25 @@ const handleGetStockEntryItem = async(req, res, next) => {
     }
 }
 
+// Get stockEntryItem base on receipt id
+const handleGetStockEntryItemsBaseOnReceiptId = async(req, res, next) => {
+    try {
+        let receiptId = req.params.id
+        let data = await stockEntryItemService.handleGetStockEntryItemsBaseOnReceiptId(receiptId)
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in getStockEntryItem controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 // Create a new stockEntryItem
 const handleCreateStockEntryItem = async(req, res, next) => {
     try {
@@ -99,6 +118,7 @@ const handleDeleteStockEntryItem = async(req, res, next) => {
 module.exports = {
     handleGetStockEntryItems,
     handleGetStockEntryItem,
+    handleGetStockEntryItemsBaseOnReceiptId,
     handleCreateStockEntryItem,
     handleUpdateStockEntryItem,
     handleDeleteStockEntryItem

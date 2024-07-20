@@ -15,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { path } from './utils/constant'
 import ManageEmployeeRoute from './routes/ManageEmployeeRoute';
 import ManageInventoryRoute from './routes/ManageInventoryRoute';
+import ManageAccountingRoute from './routes/ManageAccountingRoute';
 import ModalProfile from './components/ProfileEmployee/ModalProfile';
 import PrivateRoute from './routes/PrivateRoute'
 import SaleOrderRoute from './routes/SaleOrderRoute';
@@ -38,6 +39,8 @@ function App() {
         <PrivateRoute path={path.SALE_ORDER} component={SaleOrderRoute}>
         </PrivateRoute>
         <PrivateRoute path={path.MANAGE_INVENTORY} component={ManageInventoryRoute}>
+        </PrivateRoute>
+        <PrivateRoute path={path.MANAGE_ACCOUNTING} component={ManageAccountingRoute}>
         </PrivateRoute>
         <Route path={path.SIGN_IN} exact>
           <SignIn />

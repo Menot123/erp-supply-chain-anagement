@@ -1,0 +1,47 @@
+.body-manage-accounting {
+    background-color: #f9f9f9;
+    .manage-accounting-container {
+        height: 100vh;
+        .accounting-items-wrap {
+            display: flex;
+            gap: 8px;
+            .accounting-item {
+                width: calc(25% - 7px);
+                height: 100px;
+                border: 1px solid #ccc;
+                border-radius: 2px;
+                margin: 8px 0 0;
+                padding: 0px !important;
+                background-color: #fff;
+                &:hover {
+                    cursor: pointer;
+                    opacity: 0.8;
+                }
+                .image-accounting {
+                    .img-accounting {
+                        height: 100%;
+                        width: 90px;
+                        object-fit: cover;
+                    }
+                }
+                .sumary-title {
+                    margin: auto;
+                    width: 60%;
+                    padding: 10px;
+                    text-align: center;
+                }
+                .des-accounting {
+                    margin-left: 8px;
+                    display: flex;
+                    flex-direction: column;
+                    padding: 4px;
+                    width: 100%;
+                    .barcode-accounting {}
+                    .cost-accounting {
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+    }
+}

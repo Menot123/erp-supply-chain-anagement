@@ -2,6 +2,7 @@ import React from 'react'
 import './Navigation.scss'
 import './NavigationManageEmployee.scss'
 import './NavigationManageInventory.scss'
+import './NavigationManageAccounting.scss'
 import './NavigationSales.scss'
 import { NavLink, useLocation, useHistory } from 'react-router-dom'
 import { HiSquares2X2 } from "react-icons/hi2";
@@ -9,6 +10,7 @@ import { FaBell } from "react-icons/fa6";
 import logo from '../../assets/img/logo.png'
 import logo_manage_employees from '../../assets/img/employee_app.png'
 import logo_manage_inventory from '../../assets/img/inventory_app.png'
+import logo_manage_accounting from '../../assets/img/accounting_app.png'
 import logo_sales from '../../assets/img/logo_sales.png'
 import { FormattedMessage } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
@@ -157,6 +159,23 @@ const Navigation = (props) => {
                                 :
                                 ''
                             }
+                            {url.includes(path.MANAGE_ACCOUNTING) ?
+                                <>
+                                    <div className='logo-accounting-page ms-4'>
+                                        <img className='img-logo-accounting-app' src={logo_manage_accounting} alt='img-logo-page' />
+                                    </div>
+                                    <NavLink className="navbar-brand ms-1 current-app" to='/accounting'>Kế toán</NavLink>
+                                    <div className='nav-manage-accounting'>
+                                        <NavLink className='nav-link-me-accounting' to='/accounting'>Trang chủ</NavLink>
+                                        <NavLink className='nav-link-me-sub-accounting' to='/accounting/customer'>Khách hàng</NavLink>
+                                        <NavLink className='nav-link-me-sub-accounting' to='/accounting/provider'>Nhà cung cấp</NavLink>
+                                        <NavLink className='nav-link-me-sub-accounting' to='/accounting/accounting'>Kế toán</NavLink>
+                                        <NavLink className='nav-link-me-sub-accounting' to='/accounting/report'>Báo cáo</NavLink>
+                                    </div>
+                                </>
+                                :
+                                ''
+                            }
                             {url === path.HOME || url === path.HOME2 ?
                                 <>
                                     <div className='logo-page ms-2'>
@@ -201,6 +220,7 @@ const Navigation = (props) => {
                 </nav >
                 <div className={isShowMenuApp === false ? 'drop-down-menu-apps d-none' : 'drop-down-menu-apps'}>
                     <span onClick={() => redirectDropdownApp('/manage-inventory')} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-inventory' /></span>
+                    <span onClick={() => redirectDropdownApp('/accounting')} className='item-app-menu'>Kế toán</span>
                     <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-purchase' /></span>
                     <span onClick={() => redirectDropdownApp('/sale-order')} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-sales' /></span>
                     <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-accounting' /></span>

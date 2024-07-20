@@ -12,7 +12,10 @@ const handleGetStockEntryItemsService = async() => {
                 status: {
                     [Op.not]: 'deleted'
                 },
-            }
+            },
+            include: [
+                { model: db.Product, as: 'productData' },
+            ]
         });
         if (stockEntryItems) {
             res.EC = 0
@@ -57,6 +60,35 @@ const handleGetStockEntryItemWithIdService = async(id) => {
         return res
     } catch (e) {
         console.log('>>> error from get stockEntryItem with id service: ', e)
+    }
+}
+
+const handleGetStockEntryItemsBaseOnReceiptId = async(id) => {
+    try {
+        let res = {}
+        let stockEntryItemList = await db.StockEntryItem.findAll({
+            where: {
+                status: {
+                    [Op.not]: 'deleted'
+                },
+                stockEntryId: id
+            },
+            include: [
+                { model: db.Product, as: 'productData' },
+            ]
+        });
+        if (stockEntryItemList) {
+            res.EC = 0
+            res.EM = 'Get stockEntryItemList successfully'
+            res.DT = stockEntryItemList
+        } else {
+            res.EM = 'Get stockEntryItemList failed'
+            res.EC = 1
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error from get stockEntryItemList with id receipt service: ', e)
     }
 }
 
@@ -153,6 +185,7 @@ const handleDeleteStockEntryItemService = async(stockEntryItemId) => {
 module.exports = {
     handleGetStockEntryItemsService,
     handleGetStockEntryItemWithIdService,
+    handleGetStockEntryItemsBaseOnReceiptId,
     handleCreateStockEntryItemService,
     handleUpdateStockEntryItemService,
     handleDeleteStockEntryItemService

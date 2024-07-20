@@ -12,6 +12,8 @@ function ManageInventory() {
             <div className='body-manage-products'>
                 <FilterHeader
                     namePage={language === LANGUAGES.EN ? 'Overview' : 'Tổng quan'}
+                    isNoneAction={true}
+                    hiddenBtnImport={true}
                 />
 
                 <div className='manage-products-container container-fluid mt-3 ps-5 pe-5'>

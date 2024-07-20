@@ -1,0 +1,119 @@
+.wrapper-view-input-warehouse {
+    background-color: #fff;
+    height: 100vh;
+    .header-view {
+        padding: 12px !important;
+        height: 84px;
+        border-bottom: 1px solid #eee;
+        .title-view {
+            color: #714b67 !important;
+            font-size: 18px !important;
+            font-weight: normal !important;
+            .bold {
+                font-weight: bolder !important;
+                cursor: pointer;
+            }
+        }
+    }
+    .view-product-container {
+        margin-top: 12px;
+        height: 400px;
+        width: 100%;
+        background-color: #fff;
+        .actions-status {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            .wrap-btn-actions {
+                display: flex;
+                gap: 4px;
+            }
+            .input-warehouse-status {
+                display: flex;
+                align-items: center;
+                width: 38%;
+                .input-warehouse-step {
+                    padding-top: 0;
+                    .ant-steps-item-process {
+                        .ant-steps-item-container {
+                            .ant-steps-item-icon {
+                                background-color: #861e6b !important;
+                                border-color: #861e6b !important;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .body-view-input-warehouse {
+            min-height: 500px;
+            margin-bottom: 24px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 24px;
+            .wrap-info-input-warehouse {
+                display: flex;
+                gap: 28px;
+                // justify-content: space-between;
+                .content-left,
+                .content-right {
+                    width: 50%;
+                    label {
+                        font-weight: 500;
+                    }
+                }
+                .content-left {
+                    .wrap-expiration-date {
+                        display: flex;
+                        label {
+                            width: 32%;
+                        }
+                        .receive-from,
+                        .operation-type {
+                            flex-grow: 1;
+                            height: 28px !important;
+                            border-radius: 0px !important;
+                            border-bottom: 1px solid #fff;
+                            .ant-select-arrow {
+                                display: none;
+                            }
+                            &:hover {
+                                border-bottom: 1px solid #000;
+                                .ant-select-arrow {
+                                    display: block;
+                                }
+                            }
+                        }
+                    }
+                }
+                .content-right {
+                    .wrap-expiration-date {
+                        display: flex;
+                        label {
+                            width: 32%;
+                        }
+                        .select-date-expiration,
+                        .select-currency,
+                        .select-payment-method {
+                            flex-grow: 1;
+                            height: 28px !important;
+                            border-radius: 0px !important;
+                            border-bottom: 1px solid #fff;
+                            .ant-select-arrow {
+                                display: none;
+                            }
+                            &:hover {
+                                border-bottom: 1px solid #000;
+                                .ant-select-arrow {
+                                    display: block;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .wrap-info-products {}
+        }
+    }
+}
