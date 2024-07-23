@@ -1,7 +1,7 @@
 import axios from "../axios/axiosCustom";
 
 const getCustomers = () => {
-    return axios.get(`/sale/api/customers`)
+    return axios.get(`/customer/api/customers`)
 }
 
 const getAllCodes = () => {
@@ -57,7 +57,7 @@ const confirmQuote = (quoteId) => {
 }
 
 const getDataQuotePreview = (quoteId) => {
-    return axios.get(`/sale/api/data-preview-quote/${quoteId}`)
+    return axios.get(`/bff/api/quote-sent/${quoteId}`)
 }
 
 const postDataCancelQuote = (data) => {
@@ -101,9 +101,23 @@ const deleteQuotesSent = (listQuote) => {
     return axios.delete(`/sale/api/delete-quotes-sent`, { data: listQuote })
 }
 
+const getCustomer = (customerId) => {
+    return axios.get(`/customer/api/customer/${customerId}`)
+}
+
+const getQuotesSentAndCustomerInfo = (page, pageSize) => {
+    return axios.get('/bff/api/quotes-sent-customers', {
+        params: {
+            page: page,
+            pageSize: pageSize
+        }
+    });
+}
+
+
 export {
     getCustomers, getAllCodes, getComments, createAComment, editComment, deleteComment, getLatestQuoteCode,
     sendingQuoteToCustomer, postDataQuote, confirmQuote, getDataQuotePreview, postDataCancelQuote, postDataInvoice,
     getDataInvoicePreview, confirmInvoice, sendingInvoiceToCustomer, createPaidInvoice, getAllPaidInvoice, getAllQuotesSent,
-    deleteQuotesSent
+    deleteQuotesSent, getCustomer, getQuotesSentAndCustomerInfo
 }

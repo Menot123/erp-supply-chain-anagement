@@ -11,13 +11,14 @@ import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { LANGUAGES } from '../../../utils/constant'
 import { FormattedMessage, useIntl } from 'react-intl'
-
+import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 
 function CreateNewProduct() {
 
     const history = useHistory()
     const language = useSelector(state => state.language.value)
     const intl = useIntl();
+    const location = useLocation();
 
     const defaultProduct = {
         barCode: '',
@@ -197,7 +198,11 @@ function CreateNewProduct() {
     }
 
     const handleCancelCreateProduct = () => {
-        history.push('/manage-inventory/products')
+        if (location.pathname.includes('sale-order')) {
+            history.push('/sale-order/products')
+        } else {
+            history.push('/manage-inventory/products')
+        }
     }
 
     return (

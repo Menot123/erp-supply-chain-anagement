@@ -5,14 +5,21 @@ import initWebRoutes from './route/web'
 import initApiRoutes from './route/api';
 import setupSwagger from './middleware/swagger';
 import connectDB from './config/connectDB';
+import cacheMiddleware from './middleware/cacheMiddleware';
 require('dotenv').config();
 let app = express();
 let port = process.env.PORT || 8084;
 
 app.use(function (req, res, next) {
 
+
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', process.env.REACT_URL);
+    const allowedOrigins = [process.env.REACT_URL, 'http://localhost:8088'];
+    const origin = req.headers.origin;
+
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');

@@ -18,7 +18,9 @@ export const path = {
     MANAGE_PRODUCTS: '/manage-inventory/products',
     MANAGE_ACCOUNTING: '/accounting',
     IMPORT_PRODUCT: '/manage-inventory/products/import',
+    SALE_IMPORT_PRODUCT: '/sale-order/products/import',
     CREATE_PRODUCT: '/manage-inventory/products/create',
+    SALE_CREATE_PRODUCT: '/sale-order/products/create',
     ID_PRODUCT: '/manage-inventory/products/:id',
     INPUT_WAREHOUSE: '/manage-inventory/input-warehouse',
     VIEW_RECEIPT: '/manage-inventory/input-warehouse/:id',
@@ -28,6 +30,7 @@ export const path = {
     SALE_ORDER: '/sale-order',
     CREATE_QUOTE: '/sale-order/new-quote',
     OPEN_QUOTE: '/sale-order/:id',
+    SALE_PRODUCTS: '/sale-order/products',
     VIEW_QUOTE: '/my/orders',
     VIEW_DRAFT_INVOICE: '/my/invoice',
 };

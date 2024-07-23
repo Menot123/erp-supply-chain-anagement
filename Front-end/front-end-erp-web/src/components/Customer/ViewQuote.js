@@ -15,7 +15,7 @@ import { useReactToPrint } from 'react-to-print';
 import { ModalRejectQuote } from '../Sales/Modal/ModalRejectQuote';
 import { Comments } from '../Comments/Comments';
 import { FormattedMessage, useIntl } from 'react-intl'
-import { getDataQuotePreview, getDataInvoicePreview } from '../../services/saleServices'
+import { getDataQuotePreview, getDataInvoicePreview, getCustomer } from '../../services/saleServices'
 import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux';
 import logo from '../../assets/img/logo.png'
@@ -44,6 +44,7 @@ export const ViewQuote = () => {
     const [nameCustomer, setNameCustomer] = useState('')
     const [isLoadingData, setIsLoadingData] = useState(false)
     const [currentURL, setCurrentURL] = useState("/")
+    const [dataCustomer, setDataCustomer] = useState(null)
 
 
     useEffect(() => {
@@ -72,11 +73,18 @@ export const ViewQuote = () => {
         const fetchDataDraftInvoice = async () => {
             setIsLoadingData(true)
             const res = await getDataInvoicePreview(invoiceId)
+            let resCustomer = {}
             if (res.EC === 0) {
-                let customer = res?.DT?.dataCustomerInvoice?.fullName
-                customer = customer.split(' ')
-                if (customer && customer.length > 0) {
-                    setNameCustomer(customer[customer.length - 1])
+                if (res?.DT?.customerId) {
+                    resCustomer = await getCustomer(res?.DT?.customerId)
+                }
+                if (resCustomer && resCustomer?.DT) {
+                    setDataCustomer(resCustomer?.DT)
+                    let customer = resCustomer?.DT?.fullName
+                    customer = customer.split(' ')
+                    if (customer && customer.length > 0) {
+                        setNameCustomer(customer[customer.length - 1])
+                    }
                 }
                 setDataPreview({ ...res?.DT, tax: JSON.parse(res?.DT?.tax), productList: JSON.parse(res?.DT?.productList) })
                 buildDataTableProduct(JSON.parse(res?.DT?.productList))
@@ -356,8 +364,8 @@ export const ViewQuote = () => {
                                 <div className='address-bill-delivery w-50 '>
                                     <h5><FormattedMessage id="new_quote.preview-shipping-address" /></h5>
                                     <hr className='mt-1 mb-2' />
-                                    <span>{currentURL === "invoice" ? dataPreview?.dataCustomerInvoice?.fullName : dataPreview?.dataCustomer?.fullName}</span> <br />
-                                    <span><IoMdMail /> {currentURL === "invoice" ? dataPreview?.dataCustomerInvoice?.email : dataPreview?.dataCustomer?.email}</span>
+                                    <span>{currentURL === "invoice" ? dataCustomer?.fullName : dataCustomer?.fullName}</span> <br />
+                                    <span><IoMdMail /> {currentURL === "invoice" ? dataCustomer?.email : dataCustomer?.email}</span>
                                 </div>
                             </div>
 
@@ -399,7 +407,7 @@ export const ViewQuote = () => {
                                             <div className='wrap-img-signatured'>
                                                 <img className='signatured' alt='signatured' src={signatureFillInQuote}></img>
                                             </div>
-                                            <span className='signatured-text'>{dataPreview?.dataCustomer?.fullName ? dataPreview?.dataCustomer?.fullName : 'name'}</span>
+                                            <span className='signatured-text'>{dataCustomer?.fullName ? dataCustomer?.fullName : 'name'}</span>
                                         </>
                                     }
                                 </div>

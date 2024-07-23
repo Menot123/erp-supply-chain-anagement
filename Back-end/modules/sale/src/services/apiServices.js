@@ -587,10 +587,6 @@ const getDataPreviewQuoteService = async (quoteId) => {
             },
             include: [
                 {
-                    model: db.Customer,
-                    as: 'dataCustomer',
-                },
-                {
                     model: db.AllCode,
                     as: 'dataCurrency',
                     attributes: ['valueVi', "valueEn"],
@@ -904,12 +900,6 @@ const getQuotesSentService = async (page, pageSize) => {
             },
             order: [
                 ['createdAt', 'DESC']
-            ],
-            include: [
-                {
-                    model: db.Customer,
-                    as: 'dataCustomer',
-                },
             ],
             limit: pageSize,
             offset: (page - 1) * pageSize

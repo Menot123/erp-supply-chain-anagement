@@ -151,7 +151,7 @@ export const NewQuote = () => {
     }
 
     const getCustomerById = (customerId) => {
-        const customer = customerList.find((customer) => customer.customerId === customerId);
+        const customer = customerList.find((customer) => customer?.id === customerId);
         return customer;
     }
 
@@ -159,7 +159,7 @@ export const NewQuote = () => {
         let customersDataBuild = listCustomer.map((item, index) => {
             return (
                 {
-                    value: item.customerId,
+                    value: item.id,
                     label: item.fullName
                 }
             )

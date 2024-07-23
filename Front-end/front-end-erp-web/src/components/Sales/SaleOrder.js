@@ -12,7 +12,7 @@ import { useState } from 'react'
 import { FaCheck } from "react-icons/fa";
 import { ModalConfirmQuote } from './Modal/ModalConfirmQuote';
 import Form from 'react-bootstrap/Form';
-import { getAllPaidInvoice, getAllQuotesSent } from '../../services/saleServices'
+import { getAllPaidInvoice, getAllQuotesSent, getQuotesSentAndCustomerInfo } from '../../services/saleServices'
 import { useHistory } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid';
 import { Pagination } from 'antd';
@@ -42,7 +42,7 @@ function SaleOrder() {
     };
 
     const fetchAllQuotesSent = async (page, pageSize) => {
-        const res = await getAllQuotesSent(page, pageSize)
+        const res = await getQuotesSentAndCustomerInfo(page, pageSize)
         if (res?.EC === 0) {
             setQuotesSent(res?.DT)
             setTotalQuotesSent(res?.total)

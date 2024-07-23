@@ -6,7 +6,6 @@ module.exports = (sequelize, DataTypes) => {
     class Invoice extends Model {
         static associate(models) {
             Invoice.belongsTo(models.AllCode, { foreignKey: 'paymentPolicy', targetKey: 'id', as: 'invoicePaymentPolicy' })
-            Invoice.belongsTo(models.Customer, { foreignKey: 'customerId', targetKey: 'customerId', as: 'dataCustomerInvoice' })
         }
     };
     Invoice.init({

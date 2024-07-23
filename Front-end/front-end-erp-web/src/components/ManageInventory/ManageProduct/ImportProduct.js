@@ -9,6 +9,8 @@ import { FaDownload } from "react-icons/fa";
 import iconCSVFile from '../../../assets/img/smiling_face.svg'
 import { importNewProducts } from '../../../services/inventoryServices'
 import { useState } from 'react'
+import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
+import { path } from '../../../utils/constant';
 
 function ImportProduct() {
 
@@ -73,6 +75,8 @@ function ImportProduct() {
         }, 1000);
     }
 
+    const location = useLocation()
+
     return (
         <>
             {isImportingData
@@ -87,10 +91,23 @@ function ImportProduct() {
                     <div className='btn-actions'>
                         <label htmlFor='file-upload' className='ms-1 btn btn-main'><FormattedMessage id="filter-header-import.file" /></label>
                         <input type='file' id='file-upload' hidden onChange={(e) => handleImportFile(e)} />
-                        <NavLink to='/manage-inventory/products' className='btn btn-outline-secondary btn-cancel-import'><FormattedMessage id="filter-header-import.cancel" /></NavLink>
+                        {
+                            location.pathname === path.SALE_IMPORT_PRODUCT ?
+                                <NavLink to='/sale-order/products' className='btn btn-outline-secondary btn-cancel-import'><FormattedMessage id="filter-header-import.cancel" /></NavLink>
+                                :
+                                <NavLink to='/manage-inventory/products' className='btn btn-outline-secondary btn-cancel-import'><FormattedMessage id="filter-header-import.cancel" /></NavLink>
+                        }
                     </div>
                     <div className='title-heading'>
-                        <NavLink className='title-text1' to='/manage-inventory/products'><FormattedMessage id="nav.manage-inventory-product" /></NavLink> <span className='title-text2'><FormattedMessage id="filter-header-import.sub-title" /></span>
+                        {location.pathname === path.SALE_IMPORT_PRODUCT ?
+                            <>
+                                <NavLink className='title-text1' to='/sale-order/products'><FormattedMessage id="nav.manage-inventory-product" /></NavLink> <span className='title-text2'><FormattedMessage id="filter-header-import.sub-title" /></span>
+                            </>
+                            :
+                            <>
+                                <NavLink className='title-text1' to='/manage-inventory/products'><FormattedMessage id="nav.manage-inventory-product" /></NavLink> <span className='title-text2'><FormattedMessage id="filter-header-import.sub-title" /></span>
+                            </>
+                        }
                     </div>
                 </div>
                 <div className='content-body'>

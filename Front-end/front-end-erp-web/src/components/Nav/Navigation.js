@@ -152,7 +152,7 @@ const Navigation = (props) => {
                                     <div className='nav-sales'>
                                         <div className='nav-link-me-sales' ref={dropdownOrderRef} onClick={() => handleShowMenuOrder(isShowMenuOrder)}><FormattedMessage id='sales-nav-title-orders' /></div>
                                         <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-to-invoices' /></NavLink>
-                                        <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-products' /></NavLink>
+                                        <NavLink className='nav-link-me-sales' to='/sale-order/products'><FormattedMessage id='sales-nav-title-products' /></NavLink>
                                         <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-reporting' /></NavLink>
                                     </div>
                                 </>
@@ -236,7 +236,7 @@ const Navigation = (props) => {
                 </div>
 
                 <div className={isShowMenuOrder === false ? 'drop-down-menu-order d-none' : 'drop-down-menu-order'}>
-                    <span onClick={() => redirectDropdownApp('/manage-inventory')} className='item-order-menu'>Báo giá</span>
+                    <span onClick={() => redirectDropdownApp('/sale-order')} className='item-order-menu'>Báo giá</span>
                     <span onClick={() => redirectDropdownApp()} className='item-order-menu'>Đơn hàng</span>
                     <span onClick={() => redirectDropdownApp('/sale-order')} className='item-order-menu'>Đội ngũ kinh doanh</span>
                     <span onClick={() => redirectDropdownApp()} className='item-order-menu'>Khách hàng</span>

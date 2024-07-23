@@ -11,7 +11,7 @@ import { FormattedMessage } from 'react-intl'
 import { NavLink } from "react-router-dom";
 import { useState } from 'react'
 import ReactPaginate from 'react-paginate';
-
+import { path } from '../../utils/constant'
 
 function FilterHeader(props) {
     const intl = useIntl();
@@ -20,8 +20,13 @@ function FilterHeader(props) {
     const isNoneAction = (location.pathname === '/manage-inventory')
     const [inputSearch, setInputSearch] = useState('')
 
+
     const handleCreateNewItem = () => {
-        history.push(props.urlNewItem ? props.urlNewItem : '/home')
+        if (location?.pathname === path.SALE_PRODUCTS) {
+            history.push(path.SALE_CREATE_PRODUCT)
+        } else {
+            history.push(props.urlNewItem ? props.urlNewItem : '/home')
+        }
     }
 
     const handleChangeFilter = (e) => {
@@ -73,7 +78,13 @@ function FilterHeader(props) {
                             ? ''
                             : <>
                                 <button onClick={() => handleCreateNewItem()} className='btn btn-primary btn-create-item'><FormattedMessage id='filter-header.create' /></button>
-                                <NavLink to={props?.urlImportProduct ? props.urlImportProduct : '/manage-accounts/import'} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='filter-header.import' /></NavLink>
+                                {
+                                    location?.pathname === path.SALE_PRODUCTS
+                                        ?
+                                        <NavLink to={'/sale-order/products/import'} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='filter-header.import' /></NavLink>
+                                        :
+                                        <NavLink to={props?.urlImportProduct ? props.urlImportProduct : '/manage-accounts/import'} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='filter-header.import' /></NavLink>
+                                }
                             </>}
                     </div>
                 </div>
@@ -89,7 +100,6 @@ function FilterHeader(props) {
                                 <CSVLink style={{ textDecoration: 'none', color: 'black' }} data={props.listCheckedItems} filename={"export_data_receipts.csv"}>
                                     <FaUpload size={14} /> Xuất
                                 </CSVLink>
-
                             </div>
                             <div className="col border border-1 text-nowrap pt-1 pb-1">
                                 <IoSettingsSharp /> Hành động
@@ -158,7 +168,6 @@ function FilterHeader(props) {
                             <div onClick={() => handleChangeView('list')} className={props?.currentView === 'list' ? 'view-option-rows active' : 'view-option-rows'}>
                                 <MdViewList />
                             </div>
-
                         </div>
                     }
                 </div>
