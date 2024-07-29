@@ -46,7 +46,7 @@ export const TableOutputWarehouse = (props) => {
         if (props && props?.listProductFromParent) {
             const buildSelectProduct = () => {
                 let productSelect = props?.listProductFromParent.map((item, index) => {
-                    console.log(item)
+                    // console.log(item)
                     return (
                         {
                             value: item.productId,
@@ -60,20 +60,28 @@ export const TableOutputWarehouse = (props) => {
         }
     }, [props])
 
-    useEffect(() => {
+    useEffect(async () => {
         if (props.stockCreateId !== '') {
-            listProduct.forEach(async (product, index) => {
-                await props.createProductListOfDelivery(
-                    {
-                        stockDeliveryId: props.stockCreateId,
-                        productId: product.productId,
-                        description: product.description,
-                        scheduledDate: product.scheduledDate,
-                        deadline: product.deadline,
-                        quantity: product.quantity
-                    }
-                )
+            // console.log(props.stockCreateId)
+            // console.log(listProduct)
+            listProduct.map((item, index) => {
+                item.stockDeliveryId = props.stockCreateId;
             })
+            // console.log('listProduct: ', listProduct)
+            await props.createProductListOfDelivery(listProduct)
+            // listProduct.map(async (item, index) => {
+            //     console.log(item)
+            //     await props.createProductListOfReceipt(
+            //         {
+            //             stockEntryId: props.stockCreateId,
+            //             productId: item.productId,
+            //             description: item.description,
+            //             scheduledDate: item.scheduledDate,
+            //             deadline: item.deadline,
+            //             quantity: item.quantity
+            //         }
+            //     )
+            // })  
         }
     }, [props.stockCreateId])
 
@@ -149,7 +157,7 @@ export const TableOutputWarehouse = (props) => {
         }
         _listProduct[_listProduct.length - 1] = creatingProduct
         // Cập nhật danh sách sản phẩm mới
-        console.log(_listProduct)
+        // console.log(_listProduct)
         setListProduct(_listProduct);
     }
 

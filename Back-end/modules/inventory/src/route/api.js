@@ -1080,6 +1080,8 @@ let initApiRoutes = (app) => {
      */
     router.post('/stockEntryItems', stockEntryItemController.handleCreateStockEntryItem)
 
+    router.post('/stockEntryItemsList', stockEntryItemController.handleCreateStockEntryItemList)
+
     /**
      * @swagger
      * /api/stockEntryItems/{id}:
@@ -1338,6 +1340,30 @@ let initApiRoutes = (app) => {
 
     /**
      * @swagger
+     * /api/stockDeliveryItemsBaseOnDelivery/{id}:
+     *  get:
+     *      tags:
+     *          - StockDeliveryItem
+     *      summary: Get stockDeliveryItemsBaseOnDelivery with id
+     *      description: Get information about stockDeliveryItemsBaseOnDelivery with id
+     *      parameters:
+     *          - in: path
+     *            name: id     
+     *            required: true            
+     *            schema:     
+     *                type: string
+     *            description: ID of stock delivery you want to get information 
+     *      responses:
+     *          200:
+     *              description: Return status and info of stockDeliveryItemsBaseOnDelivery if exist.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/stockDeliveryItemsBaseOnDelivery/:id', stockDeliveryItemController.handleGetStockDeliveryItemsBaseOnDeliveryId)
+
+    /**
+     * @swagger
      * /api/stockDeliveryItems:
      *  post:
      *      tags:
@@ -1372,6 +1398,8 @@ let initApiRoutes = (app) => {
      * 
      */
     router.post('/stockDeliveryItems', stockDeliveryItemController.handleCreateStockDeliveryItem)
+
+    router.post('/stockDeliveryItemsList', stockDeliveryItemController.handleCreateStockDeliveryItemList)
 
     /**
      * @swagger

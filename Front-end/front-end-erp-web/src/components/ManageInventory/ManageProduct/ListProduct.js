@@ -79,7 +79,7 @@ function ListProduct() {
                             {products && products.length > 0 &&
                                 products.map((item, index) => {
                                     return (
-                                        <div key={index} className='product-item d-flex col-4  ' onClick={() => handleNavigateToProductPage(item.productId)}>
+                                        <div key={index} className='product-item d-flex col-4' onClick={() => handleNavigateToProductPage(item.productId)}>
                                             <div className='image-product'>
                                                 <img className='img-product' src={item.image} alt='product img' />
                                             </div>
@@ -101,7 +101,7 @@ function ListProduct() {
                             <table className="table table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th scope="col">#</th>
+                                        <th scope="col">Mã sản phẩm</th>
                                         <th scope="col"> <span className='hover-item'><FormattedMessage id="product-view-name" /></span></th>
                                         <th scope="col"><FormattedMessage id="product-view-barcode" /></th>
                                         <th scope="col"><FormattedMessage id="product-view-type" /></th>
@@ -116,9 +116,9 @@ function ListProduct() {
                                             if (products.length > 0) {
                                                 return products.map((item, index) => (
                                                     <tr onClick={() => handleNavigateToProductPage(item.productId)} key={'product' + index} className='hover-item'>
-                                                        <th scope="row">{index + 1}</th>
+                                                        <th scope="row">{item.productId}</th>
                                                         <td>{language === LANGUAGES.EN ? item.nameEn : item.nameVi}</td>
-                                                        <td>{item.productId}</td>
+                                                        <td>{item.barCode}</td>
                                                         <td>{language === LANGUAGES.EN ? item?.typeData?.valueEn : item?.typeData?.valueVi}</td>
                                                         <td>{language === LANGUAGES.EN ? item?.groupData?.valueEn : item?.groupData?.valueVi}</td>
                                                         <td>{item.cost}</td>

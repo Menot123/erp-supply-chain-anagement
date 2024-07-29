@@ -125,6 +125,87 @@ const handleCreateStockEntryItemService = async(data) => {
     }
 }
 
+const getNextId = async() => {
+    const lastItem = await db.StockEntryItem.findOne({
+        order: [
+            ['stockEntryItemId', 'DESC']
+        ],
+    });
+    if (lastItem) {
+        const lastItemId = lastItem.stockEntryItemId;
+        const numericPart = parseInt(lastItemId.slice(-4));
+        const nextNumericPart = (numericPart + 1).toString().padStart(4, '0');
+        return `STEI${nextNumericPart}`;
+    } else {
+        return `STEI0001`;
+    }
+}
+
+const genNewId = (currentId, index) => {
+    if (typeof currentId !== 'string') {
+        currentId = currentId.toString(); // Chuyển đổi thành chuỗi nếu không phải
+    }
+    return currentId.slice(0, 4) + (parseInt(currentId.slice(4)) + index).toString().padStart(4, '0');
+}
+
+// console.log(getNextId());
+// console.log(genNewId('STEI0006', 0))
+const handleCreateStockEntryItemListService = async(listData) => {
+    try {
+        let res = {}
+        res.EM = 'Invalid stockEntryId or productId'
+        res.EC = 1
+        res.DT = ''
+
+        const nextId = await getNextId();
+
+        listData.map((item, index) => {
+                item.stockEntryItemId = genNewId(nextId, index);
+            })
+            // console.log(listData)
+        await db.StockEntryItem.bulkCreate(listData, {
+            individualHooks: false // Chạy hooks trên mỗi đối tượng riêng lẻ
+        });
+
+        res.EM = 'Create stockEntryItem successfully'
+        res.EC = 0
+        res.DT = ''
+
+        // listData.forEach(async(product, index) => {
+        //     // await db.StockEntryItem.create({
+        //     //     ...product
+        //     // })
+
+        //     res.EM = 'Create stockEntryItem successfully'
+        //     res.EC = 0
+        //     res.DT = ''
+
+        //     console.log(product)
+        // })
+
+        // // Kiểm tra sự tồn tại của stockEntryId và productId
+        // const stockEntryExists = await db.StockEntry.findOne({
+        //     where: { stockEntryId: data.stockEntryId }
+        // })
+
+        // const productExists = await db.Product.findOne({
+        //     where: { productId: data.productId }
+        // })
+
+        // if (!stockEntryExists || !productExists) {
+        //     // Một hoặc nhiều giá trị không tồn tại trong các mô hình liên quan
+        //     res.EM = 'Invalid stockEntryId or productId'
+        //     res.EC = 1
+        //     res.DT = ''
+        //     return res
+        // }
+
+        return res
+    } catch (e) {
+        console.log('>>> error when create new stockEntryItem: ', e)
+    }
+}
+
 const handleUpdateStockEntryItemService = async(stockEntryItemId, data) => {
     try {
         let res = {}
@@ -187,6 +268,7 @@ module.exports = {
     handleGetStockEntryItemWithIdService,
     handleGetStockEntryItemsBaseOnReceiptId,
     handleCreateStockEntryItemService,
+    handleCreateStockEntryItemListService,
     handleUpdateStockEntryItemService,
     handleDeleteStockEntryItemService
 }

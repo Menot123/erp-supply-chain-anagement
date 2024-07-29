@@ -40,6 +40,10 @@ const getCustomers = () => {
     return axios.get(`/inventory/api/customers`)
 }
 
+const getStocks = () => {
+    return axios.get(`/inventory/api/stocks`)
+}
+
 const getStockEntrys = () => {
     return axios.get(`/inventory/api/stockEntrys`)
 }
@@ -54,6 +58,14 @@ const getReceiptListItems = (id) => {
 
 const getStockDeliverys = () => {
     return axios.get(`/inventory/api/stockDeliverys`)
+}
+
+const getStockDeliveryInfo = (id) => {
+    return axios.get(`/inventory/api/stockDeliverys/${id}`)
+}
+
+const getDeliveryListItems = (id) => {
+    return axios.get(`/inventory/api/stockDeliveryItemsBaseOnDelivery/${id}`)
 }
 
 const createNewReceipt = (data) => {
@@ -72,8 +84,16 @@ const createProductListOfReceipt = (data) => {
     return axios.post(`/inventory/api/stockEntryItems`, data)
 }
 
+const createProductListOfReceiptArray = (data) => {
+    return axios.post(`/inventory/api/stockEntryItemsList`, data)
+}
+
 const createProductListOfDelivery = (data) => {
     return axios.post(`/inventory/api/stockDeliveryItems`, data)
+}
+
+const createProductListOfDeliveryArray = (data) => {
+    return axios.post(`/inventory/api/stockDeliveryItemsList`, data)
 }
 
 export {
@@ -87,13 +107,18 @@ export {
     deleteProduct,
     getProviders,
     getCustomers,
+    getStocks,
     getStockEntrys,
     getStockEntryInfo,
     getReceiptListItems,
     getStockDeliverys,
+    getStockDeliveryInfo,
+    getDeliveryListItems,
     createNewReceipt,
     createNewDelivery,
     getProductByProviderId,
     createProductListOfReceipt,
-    createProductListOfDelivery
+    createProductListOfReceiptArray,
+    createProductListOfDelivery,
+    createProductListOfDeliveryArray
 }

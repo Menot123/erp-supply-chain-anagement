@@ -77,14 +77,24 @@ function FilterHeader(props) {
                         {isNoneAction
                             ? ''
                             : <>
-                                <button onClick={() => handleCreateNewItem()} className='btn btn-primary btn-create-item'><FormattedMessage id='filter-header.create' /></button>
-                                {
-                                    location?.pathname === path.SALE_PRODUCTS
-                                        ?
-                                        <NavLink to={'/sale-order/products/import'} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='filter-header.import' /></NavLink>
-                                        :
-                                        <NavLink to={props?.urlImportProduct ? props.urlImportProduct : '/manage-accounts/import'} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='filter-header.import' /></NavLink>
+                                {props.isWarehouse
+                                    ? <>
+                                        <button onClick={() => handleCreateNewItem()} className='btn btn-primary btn-create-item'>Nhập kho</button>
+                                        <NavLink to={props?.urlImportProduct ? props.urlImportProduct : '/manage-accounts/import'} className='ms-1 btn btn-outline-secondary'>Xuất kho</NavLink>
+
+                                    </>
+                                    : <>
+                                        <button onClick={() => handleCreateNewItem()} className='btn btn-primary btn-create-item'><FormattedMessage id='filter-header.create' /></button>
+                                        {
+                                            location?.pathname === path.SALE_PRODUCTS
+                                                ?
+                                                <NavLink to={'/sale-order/products/import'} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='filter-header.import' /></NavLink>
+                                                :
+                                                <NavLink to={props?.urlImportProduct ? props.urlImportProduct : '/manage-accounts/import'} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='filter-header.import' /></NavLink>
+                                        }
+                                    </>
                                 }
+
                             </>}
                     </div>
                 </div>

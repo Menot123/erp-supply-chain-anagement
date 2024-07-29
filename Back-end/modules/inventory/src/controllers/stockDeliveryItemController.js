@@ -37,6 +37,25 @@ const handleGetStockDeliveryItem = async(req, res, next) => {
     }
 }
 
+// Get stockEntryItem base on receipt id
+const handleGetStockDeliveryItemsBaseOnDeliveryId = async(req, res, next) => {
+    try {
+        let deliveryId = req.params.id
+        let data = await stockDeliveryItemService.handleGetStockDeliveryItemsBaseOnDeliveryId(deliveryId)
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in handleGetStockDeliveryItemsBaseOnDeliveryId controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 // Create a new stockDeliveryItem
 const handleCreateStockDeliveryItem = async(req, res, next) => {
     try {
@@ -56,6 +75,24 @@ const handleCreateStockDeliveryItem = async(req, res, next) => {
     }
 }
 
+// Create stockDeliveryItem List
+const handleCreateStockDeliveryItemList = async(req, res, next) => {
+    try {
+        let dataStockDeliveryItemList = req.body;
+        let response = await stockDeliveryItemService.handleCreateStockDeliveryItemListService(dataStockDeliveryItemList);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in createStockDeliveryItem list controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
 
 // Update a stockDeliveryItem with id
 const handleUpdateStockDeliveryItem = async(req, res, next) => {
@@ -99,7 +136,9 @@ const handleDeleteStockDeliveryItem = async(req, res, next) => {
 module.exports = {
     handleGetStockDeliveryItems,
     handleGetStockDeliveryItem,
+    handleGetStockDeliveryItemsBaseOnDeliveryId,
     handleCreateStockDeliveryItem,
+    handleCreateStockDeliveryItemList,
     handleUpdateStockDeliveryItem,
     handleDeleteStockDeliveryItem
 }

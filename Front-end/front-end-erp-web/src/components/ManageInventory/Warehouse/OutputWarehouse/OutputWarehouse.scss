@@ -22,6 +22,33 @@
             }
         }
     }
+    .gray {
+        border: 0;
+        background-color: #d8dadd;
+        font-weight: 500;
+        font-size: 14px;
+        color: #000;
+        padding: 2px 7px 4px 7px;
+        border-radius: 50rem !important;
+    }
+    .blue {
+        border: 0;
+        background-color: #17a2b8;
+        font-weight: 500;
+        font-size: 14px;
+        color: #ffffff;
+        padding: 2px 7px 4px 7px;
+        border-radius: 50rem !important;
+    }
+    .green {
+        border: 0;
+        background-color: #28a745;
+        font-weight: 500;
+        font-size: 14px;
+        color: #ffffff;
+        padding: 2px 7px 4px 7px;
+        border-radius: 50rem !important;
+    }
     .hidden {
         display: none;
     }

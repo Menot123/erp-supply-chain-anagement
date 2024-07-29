@@ -18,20 +18,20 @@ module.exports = (sequelize, DataTypes) => {
         static generateProductId() {
             // Logic to generate productId based on type and group
             // You can modify this logic to suit your requirements
-            return `PO001`;
+            return `PO0001`;
         }
 
         static async getNextProductId() {
             const lastProduct = await this.findOne({
                 order: [
-                    ['createdAt', 'DESC']
+                    ['productId', 'DESC']
                 ],
             });
 
             if (lastProduct) {
                 const lastProductId = lastProduct.productId;
-                const numericPart = parseInt(lastProductId.slice(-3));
-                const nextNumericPart = (numericPart + 1).toString().padStart(3, '0');
+                const numericPart = parseInt(lastProductId.slice(-4));
+                const nextNumericPart = (numericPart + 1).toString().padStart(4, '0');
                 return `PO${nextNumericPart}`;
             }
 

@@ -68,7 +68,7 @@ const handleCreateProduct = async(req, res, next) => {
 // Import new products
 const handleImportProduct = async(req, res, next) => {
     try {
-        console.log(req.body)
+        // console.log(req.body)
         let dataProduct = req.body;
         let response = await productService.handleImportProductService(dataProduct);
         return res.status(200).json({

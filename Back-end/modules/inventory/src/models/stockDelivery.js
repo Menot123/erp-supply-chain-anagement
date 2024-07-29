@@ -9,12 +9,12 @@ module.exports = (sequelize, DataTypes) => {
             StockDelivery.belongsTo(models.Customer, { foreignKey: 'customerId', targetKey: 'customerId', as: 'customerData' })
             StockDelivery.belongsTo(models.Warehouse, { foreignKey: 'warehouseId', targetKey: 'warehouseId', as: 'warehouseData' })
                 // StockDelivery.belongsTo(models.User, { foreignKey: 'warehouseId', targetKey: 'warehouseId', as: 'warehouseData' })
-            StockDelivery.hasMany(models.StockDeliveryItem, { foreignKey: 'stockDeliveryId' })
+            StockDelivery.hasMany(models.StockDeliveryItem, { foreignKey: 'stockDeliveryId', as: 'items' })
         }
         static generateId() {
             // Logic to generate stockDeliveryId based on type and group
             // You can modify this logic to suit your requirements
-            return `WH/OUT/001`;
+            return `WH/OUT/0001`;
         }
 
         static async getNextId() {

@@ -12,7 +12,11 @@ const handleGetStocksService = async() => {
                 status: {
                     [Op.not]: 'deleted'
                 },
-            }
+            },
+            include: [
+                { model: db.Product, as: 'productData' },
+                { model: db.Warehouse, as: 'warehouseData' }
+            ]
         });
         if (stocks) {
             res.EC = 0

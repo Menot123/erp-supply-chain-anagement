@@ -59,27 +59,28 @@ export const TableInputWarehouse = (props) => {
         }
     }, [props])
 
-    useEffect(() => {
+    useEffect(async () => {
         if (props.stockCreateId !== '') {
-            listProduct.forEach(async (product, index) => {
-                await props.createProductListOfReceipt(
-                    {
-                        stockEntryId: props.stockCreateId,
-                        productId: product.productId,
-                        description: product.description,
-                        scheduledDate: product.scheduledDate,
-                        deadline: product.deadline,
-                        quantity: product.quantity
-                    }
-                )
-                // console.log(product)
+            listProduct.map((item, index) => {
+                item.stockEntryId = props.stockCreateId;
             })
+            console.log('listProduct: ', listProduct)
+            await props.createProductListOfReceipt(listProduct)
+            // listProduct.map(async (item, index) => {
+            //     console.log(item)
+            //     await props.createProductListOfReceipt(
+            //         {
+            //             stockEntryId: props.stockCreateId,
+            //             productId: item.productId,
+            //             description: item.description,
+            //             scheduledDate: item.scheduledDate,
+            //             deadline: item.deadline,
+            //             quantity: item.quantity
+            //         }
+            //     )
+            // })  
         }
     }, [props.stockCreateId])
-
-    // useEffect(() => {
-
-    // }, [listProduct]);
 
 
     const updateEmptyFieldProduct = (productCreating, type) => {

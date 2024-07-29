@@ -12,13 +12,13 @@ module.exports = (sequelize, DataTypes) => {
         static generateId() {
             // Logic to generate stockEntryItemId based on type and group
             // You can modify this logic to suit your requirements
-            return `STEI001`;
+            return `STEI0001`;
         }
 
         static async getNextId() {
             const lastItem = await this.findOne({
                 order: [
-                    ['createdAt', 'DESC']
+                    ['stockEntryItemId', 'DESC']
                 ],
             });
 
@@ -43,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
         scheduledDate: DataTypes.DATE,
         deadline: DataTypes.DATE,
         quantity: DataTypes.INTEGER,
+        trueQuantity: DataTypes.INTEGER,
         status: DataTypes.STRING
     }, {
         sequelize,

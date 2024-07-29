@@ -138,6 +138,7 @@ const Navigation = (props) => {
                                         <NavLink className='nav-link-me-products' to='/manage-inventory/products'><FormattedMessage id='nav.manage-inventory-product' /></NavLink>
                                         <NavLink className='nav-link-me-products' to='/manage-inventory/input-warehouse'><FormattedMessage id='nav.manage-inventory-input-warehouse' /></NavLink>
                                         <NavLink className='nav-link-me-products' to='/manage-inventory/output-warehouse'><FormattedMessage id='nav.manage-inventory-output-warehouse' /></NavLink>
+                                        <NavLink className='nav-link-me-products' to='/manage-inventory/warehouse'>Tồn kho</NavLink>
                                     </div>
                                 </>
                                 :

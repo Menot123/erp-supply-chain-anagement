@@ -43,7 +43,11 @@ const handleGetStockDeliveryWithIdService = async(id) => {
                     [Op.not]: 'deleted'
                 },
                 stockDeliveryId: id
-            }
+            },
+            include: [
+                { model: db.StockDeliveryItem, as: 'items' },
+                { model: db.Customer, as: 'customerData' },
+            ]
         });
         if (stockDelivery) {
             res.EC = 0
@@ -85,12 +89,12 @@ const handleCreateStockDeliveryService = async(data) => {
             return res
         }
 
-        await db.StockDelivery.create({
+        let created = await db.StockDelivery.create({
             ...data
         })
         res.EM = 'Create stockDelivery successfully'
         res.EC = 0
-        res.DT = ''
+        res.DT = created.dataValues.stockDeliveryId
         return res
     } catch (e) {
         console.log('>>> error when create new stockDelivery: ', e)

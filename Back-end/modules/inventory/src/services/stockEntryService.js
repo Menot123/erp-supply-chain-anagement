@@ -12,7 +12,10 @@ const handleGetStockEntrysService = async() => {
                 status: {
                     [Op.not]: 'deleted'
                 },
-            }
+            },
+            // include: [
+            //     { model: db.User, as: 'userData' },
+            // ]
         });
         if (stockEntrys) {
             res.EC = 0
@@ -46,6 +49,7 @@ const handleGetStockEntryWithIdService = async(id) => {
             },
             include: [
                 { model: db.StockEntryItem, as: 'items' },
+                { model: db.Provider, as: 'providerData' },
             ]
         });
         if (stockEntry) {

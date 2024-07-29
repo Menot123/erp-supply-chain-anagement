@@ -4,7 +4,7 @@ import { RiImageAddLine } from "react-icons/ri";
 import { useState, useEffect } from 'react'
 import 'react-image-lightbox/style.css';
 import Lightbox from 'react-image-lightbox';
-import { createNewDelivery, getAllCode, getAllProducts, getCustomers, createProductListOfDelivery } from '../../../../services/inventoryServices'
+import { createNewDelivery, getAllCode, getAllProducts, getCustomers, createProductListOfDelivery, createProductListOfDeliveryArray } from '../../../../services/inventoryServices'
 import { useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
@@ -67,8 +67,8 @@ function CreateNewOutputWarehouse() {
     };
 
     const onChangeTab = (key) => {
-        if (dataOutputWarehouse.customerId != '')
-            console.log(dataOutputWarehouse.customerId);
+        // if (dataOutputWarehouse.customerId != '')
+        // console.log(dataOutputWarehouse.customerId);
         // console.log(key);
     };
 
@@ -110,7 +110,7 @@ function CreateNewOutputWarehouse() {
             const res = await getCustomers()
             if (res && res.EC === 0) {
                 setListCustomer(res.DT)
-                console.log(res.DT)
+                // console.log(res.DT)
             } else {
                 toast.error(res.EM)
             }
@@ -123,7 +123,7 @@ function CreateNewOutputWarehouse() {
 
     useEffect(() => {
         const buildSelectCustomer = () => {
-            console.log(listCustomer)
+            // console.log(listCustomer)
             let customerSelect = listCustomer.map((item, index) => {
                 return (
                     {
@@ -138,7 +138,7 @@ function CreateNewOutputWarehouse() {
     }, [listCustomer])
 
 
-    const validateDataReceipt = () => {
+    const validateDataDelivery = () => {
         const fieldCheck = ['customerId', 'operationType', 'scheduledDay'];
         const missingFields = [];
 
@@ -153,7 +153,7 @@ function CreateNewOutputWarehouse() {
 
     const handleSaveOutputWarehouse = async () => {
         // Validate data
-        // let check = validateDataReceipt()
+        // let check = validateDataDelivery()
 
         // if (check.length === 0) {
         //     let res = await createNewDelivery(dataProduct)
@@ -172,13 +172,16 @@ function CreateNewOutputWarehouse() {
         history.push('/manage-inventory/output-warehouse')
     }
 
-    const handleSetReadyReceipt = async () => {
-        console.log(dataOutputWarehouse)
-        let check = validateDataReceipt()
+    const handleSetReadyDelivery = async () => {
+        // console.log(dataOutputWarehouse)
+        let check = validateDataDelivery()
 
         if (check.length === 0) {
+            dataOutputWarehouse.status = 'ready'
             let res = await createNewDelivery(dataOutputWarehouse)
+            console.log(res)
             if (res.EC === 0) {
+                // console.log(res.DT)
                 setStockCreateId(res.DT)
                 toast.success(res.EM)
                 handleCancelCreateOutputWarehouse()
@@ -190,7 +193,7 @@ function CreateNewOutputWarehouse() {
         }
     }
 
-    const handleSetDoneReceipt = () => {
+    const handleSetDoneDelivery = () => {
         console.log('done')
     }
 
@@ -210,8 +213,8 @@ function CreateNewOutputWarehouse() {
             <div className='container-fluid create-product-container'>
                 <div className='actions-status'>
                     <div className='wrap-btn-actions'>
-                        <button onClick={() => handleSetReadyReceipt()} className='btn btn-main'>Đánh dấu việc cần làm</button>
-                        <button onClick={() => handleSetDoneReceipt()} className='btn btn-gray'>Xác nhận</button>
+                        <button onClick={() => handleSetReadyDelivery()} className='btn btn-main'>Đánh dấu việc cần làm</button>
+                        <button onClick={() => handleSetDoneDelivery()} className='btn btn-gray'>Xác nhận</button>
                         <button className='btn btn-gray'>In nhãn</button>
                         <button className='btn btn-gray'>Hủy</button>
                     </div>
@@ -299,7 +302,7 @@ function CreateNewOutputWarehouse() {
                             items={[{
                                 label: `Hoạt động`,
                                 key: 'tab-1',
-                                children: <TableOutputWarehouse createProductListOfDelivery={createProductListOfDelivery} stockCreateId={stockCreateId} listProductFromParent={listProduct} />,
+                                children: <TableOutputWarehouse createProductListOfDelivery={createProductListOfDeliveryArray} stockCreateId={stockCreateId} listProductFromParent={listProduct} />,
                             },
                             {
                                 label: `Thông tin bổ sung`,

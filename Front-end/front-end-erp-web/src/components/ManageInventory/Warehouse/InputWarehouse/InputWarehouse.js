@@ -42,14 +42,7 @@ function InputWarehouse() {
     const [activityTypeChecked, setActivityTypeChecked] = useState(false);
     const [statusChecked, setStatusChecked] = useState(true);
 
-    const status = [
-        { id: 1, status: 'draft' },
-        { id: 2, status: 'ready' },
-        { id: 3, status: 'done' }
-    ];
-
     const renderStatus = (item) => {
-        console.log(1)
         let statusClass = '';
         let statusText = '';
 
@@ -57,7 +50,7 @@ function InputWarehouse() {
             statusClass = 'gray';
             statusText = 'Nháp';
         } else if (item === 'ready') {
-            statusClass = 'yellow';
+            statusClass = 'blue';
             statusText = 'Sẵn sàng';
         } else if (item === 'done') {
             statusClass = 'green';
@@ -65,8 +58,8 @@ function InputWarehouse() {
         }
 
         return (
-            <td key={item.id} className={statusClass}>
-                {statusText}
+            <td key={item.id}>
+                <span className={statusClass}>{statusText}</span>
             </td>
         );
     };
@@ -164,7 +157,7 @@ function InputWarehouse() {
             const response = await getStockEntrys()
             if (response.EC == 0) {
                 Promise.all([setStockEntrys(response?.DT)])
-                console.log(response.DT)
+                // console.log(response.DT)
             } else {
                 toast.error(response?.EM)
             }
@@ -329,100 +322,22 @@ function InputWarehouse() {
                                         (() => {
                                             // if (products.length > 0) {
                                             if (tempProductsLength > 0) {
-                                                // return <>
-                                                //     <tr className='hover-item'>
-                                                //         {allElementsChecked
-                                                //             ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
-                                                //             : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
-                                                //         }
-
-                                                //         <td>ET001</td>
-                                                //         <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
-                                                //         <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
-                                                //         <td className={`${plannedDateChecked ? '' : 'hidden'}`}>08/01/2024</td>
-                                                //         <td className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
-                                                //         <td className={`${deadlineChecked ? '' : 'hidden'}`}></td>
-                                                //         <td className={`${effectiveDateChecked ? '' : 'hidden'}`}>11/04/2024 05:59:32</td>
-                                                //         <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
-                                                //         <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
-                                                //         <td className={`${activityTypeChecked ? '' : 'hidden'}`}>Tôn Đức Thắng erp: Phiếu nhập kho</td>
-                                                //         <td className={`${statusChecked ? '' : 'hidden'}`}>Hoàn tất</td>
-                                                //         <td></td>
-                                                //     </tr>
-                                                //     <tr className='hover-item'>
-                                                //         {allElementsChecked
-                                                //             ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
-                                                //             : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
-                                                //         }
-
-                                                //         <td>ET001</td>
-                                                //         <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
-                                                //         <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
-                                                //         <td className={`${plannedDateChecked ? '' : 'hidden'}`}>08/01/2024</td>
-                                                //         <td className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
-                                                //         <td className={`${deadlineChecked ? '' : 'hidden'}`}></td>
-                                                //         <td className={`${effectiveDateChecked ? '' : 'hidden'}`}>11/04/2024 05:59:32</td>
-                                                //         <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
-                                                //         <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
-                                                //         <td className={`${activityTypeChecked ? '' : 'hidden'}`}>Tôn Đức Thắng erp: Phiếu nhập kho</td>
-                                                //         <td className={`${statusChecked ? '' : 'hidden'}`}>Hoàn tất</td>
-                                                //         <td></td>
-                                                //     </tr>
-                                                //     <tr className='hover-item'>
-                                                //         {allElementsChecked
-                                                //             ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
-                                                //             : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
-                                                //         }
-
-                                                //         <td>ET001</td>
-                                                //         <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
-                                                //         <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
-                                                //         <td className={`${plannedDateChecked ? '' : 'hidden'}`}>08/01/2024</td>
-                                                //         <td className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
-                                                //         <td className={`${deadlineChecked ? '' : 'hidden'}`}></td>
-                                                //         <td className={`${effectiveDateChecked ? '' : 'hidden'}`}>11/04/2024 05:59:32</td>
-                                                //         <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
-                                                //         <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
-                                                //         <td className={`${activityTypeChecked ? '' : 'hidden'}`}>Tôn Đức Thắng erp: Phiếu nhập kho</td>
-                                                //         <td className={`${statusChecked ? '' : 'hidden'}`}>Hoàn tất</td>
-                                                //         <td></td>
-                                                //     </tr>
-                                                //     <tr className='hover-item'>
-                                                //         {allElementsChecked
-                                                //             ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
-                                                //             : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
-                                                //         }
-
-                                                //         <td>ET001</td>
-                                                //         <td className={`${contactChecked ? '' : 'hidden'}`}>0123456789</td>
-                                                //         <td className={`${personInChargeChecked ? '' : 'hidden'}`}>Nguyễn Tiến Đạt</td>
-                                                //         <td className={`${plannedDateChecked ? '' : 'hidden'}`}>08/01/2024</td>
-                                                //         <td className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
-                                                //         <td className={`${deadlineChecked ? '' : 'hidden'}`}></td>
-                                                //         <td className={`${effectiveDateChecked ? '' : 'hidden'}`}>11/04/2024 05:59:32</td>
-                                                //         <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
-                                                //         <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
-                                                //         <td className={`${activityTypeChecked ? '' : 'hidden'}`}>Tôn Đức Thắng erp: Phiếu nhập kho</td>
-                                                //         <td className={`${statusChecked ? '' : 'hidden'}`}>Hoàn tất</td>
-                                                //         <td></td>
-                                                //     </tr>
-                                                // </>
                                                 return stockEntrys.map((item, index) => (
-                                                    <tr onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} key={'receipt' + index} className='hover-item'>
+                                                    <tr key={'receipt' + index} className='hover-item'>
                                                         {allElementsChecked
                                                             ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
                                                             : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
                                                         }
-                                                        <td>{item.stockEntryId}</td>
-                                                        <td className={`${contactChecked ? '' : 'hidden'}`}>{item.providerId}</td>
-                                                        <td className={`${personInChargeChecked ? '' : 'hidden'}`}>{item.userId}</td>
-                                                        <td className={`${plannedDateChecked ? '' : 'hidden'}`}>{item.scheduledDate}</td>
-                                                        <td className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${deadlineChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${effectiveDateChecked ? '' : 'hidden'}`}>{item.createdAt}</td>
-                                                        <td className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
-                                                        <td className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
-                                                        <td className={`${activityTypeChecked ? '' : 'hidden'}`}>{item.warehouseId}: Phiếu nhập kho</td>
+                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)}>{item.stockEntryId}</td>
+                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${contactChecked ? '' : 'hidden'}`}>{item.providerId}</td>
+                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${personInChargeChecked ? '' : 'hidden'}`}>{item.userId}</td>
+                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${plannedDateChecked ? '' : 'hidden'}`}>{item.scheduledDate}</td>
+                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
+                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${deadlineChecked ? '' : 'hidden'}`}></td>
+                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${effectiveDateChecked ? '' : 'hidden'}`}>{item.createdAt}</td>
+                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
+                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
+                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${activityTypeChecked ? '' : 'hidden'}`}>{item.warehouseId}: Phiếu nhập kho</td>
                                                         {renderStatus(item.status)}
                                                         <td></td>
                                                     </tr>

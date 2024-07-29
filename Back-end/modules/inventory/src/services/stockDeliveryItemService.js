@@ -12,7 +12,10 @@ const handleGetStockDeliveryItemsService = async() => {
                 status: {
                     [Op.not]: 'deleted'
                 },
-            }
+            },
+            include: [
+                { model: db.Product, as: 'productData' },
+            ]
         });
         if (stockDeliveryItems) {
             res.EC = 0
@@ -43,7 +46,10 @@ const handleGetStockDeliveryItemWithIdService = async(id) => {
                     [Op.not]: 'deleted'
                 },
                 stockDeliveryItemId: id
-            }
+            },
+            include: [
+                { model: db.Product, as: 'productData' },
+            ]
         });
         if (stockDeliveryItem) {
             res.EC = 0
@@ -57,6 +63,36 @@ const handleGetStockDeliveryItemWithIdService = async(id) => {
         return res
     } catch (e) {
         console.log('>>> error from get stockDeliveryItem with id service: ', e)
+    }
+}
+
+
+const handleGetStockDeliveryItemsBaseOnDeliveryId = async(id) => {
+    try {
+        let res = {}
+        let stockDeliveryItemList = await db.StockDeliveryItem.findAll({
+            where: {
+                status: {
+                    [Op.not]: 'deleted'
+                },
+                stockDeliveryId: id
+            },
+            include: [
+                { model: db.Product, as: 'productData' },
+            ]
+        });
+        if (stockDeliveryItemList) {
+            res.EC = 0
+            res.EM = 'Get stockDeliveryItemList successfully'
+            res.DT = stockDeliveryItemList
+        } else {
+            res.EM = 'Get stockDeliveryItemList failed'
+            res.EC = 1
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error from get stockDeliveryItemList with id receipt service: ', e)
     }
 }
 
@@ -87,6 +123,59 @@ const handleCreateStockDeliveryItemService = async(data) => {
         res.EM = 'Create stockDeliveryItem successfully'
         res.EC = 0
         res.DT = ''
+        return res
+    } catch (e) {
+        console.log('>>> error when create new stockDeliveryItem: ', e)
+    }
+}
+
+const getNextId = async() => {
+    const lastItem = await db.StockDeliveryItem.findOne({
+        order: [
+            ['stockDeliveryItemId', 'DESC']
+        ],
+    });
+    if (lastItem) {
+        const lastItemId = lastItem.stockDeliveryItemId;
+        const numericPart = parseInt(lastItemId.slice(-4));
+        const nextNumericPart = (numericPart + 1).toString().padStart(4, '0');
+        return `STDI${nextNumericPart}`;
+    } else {
+        return `STDI0001`;
+    }
+}
+
+const genNewId = (currentId, index) => {
+    if (typeof currentId !== 'string') {
+        currentId = currentId.toString(); // Chuyển đổi thành chuỗi nếu không phải
+    }
+    return currentId.slice(0, 4) + (parseInt(currentId.slice(4)) + index).toString().padStart(4, '0');
+}
+
+// console.log(getNextId());
+// console.log(genNewId('STDI0006', 0))
+
+const handleCreateStockDeliveryItemListService = async(listData) => {
+    try {
+        let res = {}
+        res.EM = 'Invalid stockDeliveryId or productId'
+        res.EC = 1
+        res.DT = ''
+
+        const nextId = await getNextId();
+
+        listData.map((item, index) => {
+                item.stockDeliveryItemId = genNewId(nextId, index);
+            })
+            // console.log(listData)
+        await db.StockDeliveryItem.bulkCreate(listData, {
+            individualHooks: false // Chạy hooks trên mỗi đối tượng riêng lẻ
+        });
+
+        res.EM = 'Create stockDeliveryItem successfully'
+        res.EC = 0
+        res.DT = ''
+
         return res
     } catch (e) {
         console.log('>>> error when create new stockDeliveryItem: ', e)
@@ -153,7 +242,9 @@ const handleDeleteStockDeliveryItemService = async(stockDeliveryItemId) => {
 module.exports = {
     handleGetStockDeliveryItemsService,
     handleGetStockDeliveryItemWithIdService,
+    handleGetStockDeliveryItemsBaseOnDeliveryId,
     handleCreateStockDeliveryItemService,
+    handleCreateStockDeliveryItemListService,
     handleUpdateStockDeliveryItemService,
     handleDeleteStockDeliveryItemService
 }

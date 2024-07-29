@@ -142,6 +142,29 @@ const handleCreateProductService = async (data) => {
     }
 }
 
+const getNextId = async () => {
+    const lastItem = await db.StockEntryItem.findOne({
+        order: [
+            ['productId', 'DESC']
+        ],
+    });
+    if (lastItem) {
+        const lastProductId = lastItem.productId;
+        const numericPart = parseInt(lastProductId.slice(-4));
+        const nextNumericPart = (numericPart + 1).toString().padStart(4, '0');
+        return `PO${nextNumericPart}`;
+    } else {
+        return `PO0001`;
+    }
+}
+
+const genNewId = (currentId, index) => {
+    if (typeof currentId !== 'string') {
+        currentId = currentId.toString(); // Chuyển đổi thành chuỗi nếu không phải
+    }
+    return currentId.slice(0, 4) + (parseInt(currentId.slice(4)) + index).toString().padStart(4, '0');
+}
+
 const handleImportProductService = async (productsData) => {
     try {
         let res = {}
@@ -187,12 +210,17 @@ const handleImportProductService = async (productsData) => {
                             ...item
                         }
                     })
-                    console.log(dataBulk)
 
                     if (dataBulk && dataBulk.length > 0) {
-                        for (let i = 0; i < dataBulk.length; i++) {
-                            await db.Product.create(dataBulk[i])
-                        }
+                        // console.log(dataBulk)
+                        const nextId = await getNextId();
+
+                        dataBulk.map((item, index) => {
+                            item.productId = genNewId(nextId, index);
+                        })
+                        await db.Product.bulkCreate(dataBulk, {
+                            individualHooks: false // Chạy hooks trên mỗi đối tượng riêng lẻ
+                        });
                         res.EM = 'Import products successfully'
                         res.EC = 0
                         res.DT = ''
@@ -211,7 +239,7 @@ const handleImportProductService = async (productsData) => {
         return res
     } catch (e) {
         // console.log('>>> error when create new product: ', e)
-        console.log('>>> error service: ')
+        console.log('>>> error service: ', e)
     }
 }
 
