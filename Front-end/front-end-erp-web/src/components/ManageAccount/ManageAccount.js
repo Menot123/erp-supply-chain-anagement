@@ -31,7 +31,7 @@ function ManageAccount() {
     const [currentView, setCurrentView] = useState('block')
     const [sortEmployees, setSortEmployees] = useState(true)
     const [totalPage, setTotalPage] = useState(0)
-    const [currentLimit, setCurrentLimit] = useState(12)
+    const [currentLimit, setCurrentLimit] = useState(20)
     const [currentPage, setCurrentPage] = useState(1)
 
     useEffect(() => {
@@ -180,7 +180,7 @@ function ManageAccount() {
                                         <th scope="col"> <span onClick={() => handleSortListEmployees()} className='hover-item'>Tên {sortEmployees ? <GoTriangleDown /> : <GoTriangleUp />}</span></th>
                                         <th scope="col">Điện thoại</th>
                                         <th scope="col">Email công việc</th>
-                                        <th scope="col">Phòng/Ban</th>
+                                        <th scope="col">Bộ phận</th>
                                         <th scope="col">Chức vụ</th>
                                     </tr>
                                 </thead>

@@ -1,7 +1,7 @@
 import db from '../models/index'
 const { Op } = require('sequelize');
 import { sendEmail, sendInvoice } from './mailService';
-
+const axios = require('axios');
 
 const createCompanyDataService = async (dataCompany) => {
     try {
@@ -524,9 +524,13 @@ const postQuoteService = async (dataQuote) => {
                     status: dataQuote?.status ?? 'S0'
                 })
             } else {
-                if (quote.status === 'S0') {
-                    await quote.update({ status: dataQuote?.status })
-                }
+                console.log(">>>>>>>>>>>>>>", JSON.stringify(dataQuote.productList));
+                await quote.update({
+                    ...dataQuote,
+                    tax: JSON.stringify(dataQuote.tax),
+                    productList: JSON.stringify(dataQuote.productList),
+                    status: dataQuote?.status
+                })
             }
             res.EM = 'Create a quote successfully'
             res.EC = 0
@@ -719,10 +723,10 @@ const postInvoiceService = async (dataInvoice) => {
                     tax: JSON.stringify(dataInvoice.tax),
                     productList: JSON.stringify(dataInvoice.productList),
                     createdDate: dataInvoice?.dateCreateInvoice,
-                    status: dataInvoice?.status ?? 'I0',
+                    status: dataInvoice?.status ?? 'S0',
                 })
             } else {
-                if (invoice.status === 'I0') {
+                if (invoice.status === 'S0') {
                     await invoice.update({ status: dataInvoice?.status })
                 }
             }
@@ -750,14 +754,10 @@ const getDataPreviewInvoiceService = async (invoiceId) => {
             where: {
                 invoiceId: invoiceId,
                 status: {
-                    [Op.not]: 'active',
+                    [Op.not]: 'deleted',
                 },
             },
             include: [
-                {
-                    model: db.Customer,
-                    as: 'dataCustomerInvoice',
-                },
                 {
                     model: db.AllCode,
                     as: 'invoicePaymentPolicy',
@@ -807,12 +807,10 @@ const confirmInvoiceService = async (dataInvoice) => {
                     productList: JSON.stringify(dataInvoice.productList),
                     invoiceId: dataInvoice?.quoteId,
                     createdDate: dataInvoice?.dateCreateInvoice,
-                    status: dataInvoice?.status ?? 'S0'
+                    status: dataInvoice?.status ? dataInvoice?.status : 'S0'
                 })
             } else {
-                if (invoice.status === 'S0') {
-                    await invoice.update({ status: "S1" })
-                }
+                await invoice.update({ status: dataInvoice?.status ?? "S1" })
             }
             res.EM = 'Confirm a invoice successfully'
             res.EC = 0
@@ -865,7 +863,7 @@ const paidInvoiceService = async (dataPaidInvoice) => {
     }
 }
 
-const getInvoicesService = async () => {
+const getInvoicesPaidService = async () => {
     try {
         let res = {}
         let invoices = await db.InvoicePaid.findAll({
@@ -891,12 +889,39 @@ const getInvoicesService = async () => {
     }
 }
 
+const getInvoicesService = async (page, pageSize) => {
+    try {
+        let res = {}
+        let invoices = await db.Invoice.findAndCountAll({
+            order: [
+                ['createdAt', 'DESC']
+            ],
+            limit: pageSize,
+            offset: (page - 1) * pageSize
+        });
+
+        if (invoices) {
+            res.EC = 0
+            res.EM = 'Get all invoices successfully'
+            res.DT = invoices.rows
+            res.total = invoices.count;
+        } else {
+            res.EM = 'Get all invoices failed'
+            res.EC = 1
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
 const getQuotesSentService = async (page, pageSize) => {
     try {
         let res = {};
         let quotes = await db.Quote.findAndCountAll({
             where: {
-                [Op.or]: [{ status: 'S1' }, { status: 'S2' }]
+                [Op.or]: [{ status: 'S2' }, { status: 'S1' }, { status: 'S0' }]
             },
             order: [
                 ['createdAt', 'DESC']
@@ -950,12 +975,71 @@ const listQuoteDeleteService = async (listQuote) => {
     }
 }
 
+const getInvoicePaidService = async (invoiceId) => {
+    try {
+        let res = {}
+        let invoice = await db.InvoicePaid.findOne({
+            where: {
+                invoiceId: invoiceId,
+                delete_flag: false
+            }
+        });
+
+        if (invoice) {
+            res.EC = 0
+            res.EM = 'Get  invoice paid successfully'
+            res.DT = invoice
+        } else {
+            res.EM = 'Get invoice paid failed'
+            res.EC = 1
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
+const getStatisticsService = async (startDate, endDate) => {
+    try {
+        let res = {};
+        let invoices = []
+        if (startDate && endDate) {
+            invoices = await db.InvoicePaid.findAll({
+                where: {
+                    delete_flag: false,
+                    createdDate: {
+                        [db.Sequelize.Op.between]: [startDate, endDate]
+                    }
+                }
+            });
+        }
+        if (invoices) {
+            res.EC = 0;
+            res.EM = 'Get statistic invoices paid successfully';
+            res.DT = invoices;
+        } else {
+            res.EM = 'Get statistic invoices paid failed';
+            res.EC = 1;
+            res.DT = '';
+        }
+        return res;
+    } catch (e) {
+        console.log('>>> error: ', e);
+        return {
+            EC: 1,
+            EM: 'An error occurred while fetching statistic the invoices paid',
+            DT: ''
+        };
+    }
+};
+
 module.exports = {
     createCompanyDataService, createBranchCompanyDataService, getBranchesService,
     getBranchService, getDetailCompanyService, handleDeleteCompanyService, updateConfirmQuoteService,
     getCustomersService, getAllCodesService, getCommentsService, postCommentService, updateCommentService,
     deleteCommentService, getLatestQuoteService, sendingQuoteService, postQuoteService, updateStatusQuoteService,
     getDataPreviewQuoteService, postCancelQuoteService, sendEmailCancelQuote, postInvoiceService, getDataPreviewInvoiceService,
-    confirmInvoiceService, sendingInvoiceService, paidInvoiceService, getInvoicesService, getQuotesSentService,
-    listQuoteDeleteService
+    confirmInvoiceService, sendingInvoiceService, paidInvoiceService, getInvoicesPaidService, getInvoicesService,
+    getQuotesSentService, listQuoteDeleteService, getInvoicePaidService, getStatisticsService
 }

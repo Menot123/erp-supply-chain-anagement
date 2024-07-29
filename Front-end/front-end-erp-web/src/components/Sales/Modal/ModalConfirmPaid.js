@@ -124,7 +124,7 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
                                     (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                 }
                                 onChange={(e) => handleChangePaymentMethod(e)}
-                                options={[{ label: "Tiền mặt", value: "cash" }, { label: "Chuyển khoản", value: "banking" }]}
+                                options={[{ label: "Tiền mặt", value: "Tiền mặt" }, { label: "Chuyển khoản", value: "Chuyển khoản" }]}
                             />
                         </div>
 

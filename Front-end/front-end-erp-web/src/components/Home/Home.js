@@ -9,15 +9,24 @@ import tai_khoan from '../../../src/assets/img/account.png'
 import { useIntl, FormattedMessage } from 'react-intl'
 import { useHistory } from 'react-router-dom'
 import back_ground from '../../assets/img/background-light.svg'
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 
 function Home() {
 
     const intl = useIntl();
     const history = useHistory()
+    const department = useSelector(state => state.user?.department)
 
-    const handleRedirectRoute = (url) => {
-        history.push(url)
+    const handleRedirectRoute = (userDepartment, url) => {
+        if (department === 'admin') {
+            history.push(url)
+        } else if (department && department === userDepartment) {
+            history.push(url)
+        } else {
+            toast.info("Bạn không thể truy cập chức năng này, Vui lòng kiểm tra lại!")
+        }
     }
 
     return (
@@ -31,7 +40,7 @@ function Home() {
                 </div>
 
                 <div className='row apps'>
-                    <div onClick={() => handleRedirectRoute('/manage-inventory')} className='col-4 app-item'>
+                    <div onClick={() => handleRedirectRoute('D1', '/manage-inventory')} className='col-4 app-item'>
                         <div className='wrap-img-app'>
                             <img className='img-element-app' src={inventory} alt='img-element-app' />
                         </div>
@@ -45,11 +54,9 @@ function Home() {
                                 <span className='description-app'><FormattedMessage id='homepage.item-inventory-des' /></span>
                             </div>
                         </div>
-
-
                     </div>
 
-                    <div className='col-4 app-item'>
+                    <div onClick={() => handleRedirectRoute('D2', '/purchase')} className='col-4 app-item'>
                         <div className='wrap-img-app'>
                             <img className='img-element-app' src={mua_hang} alt='img-element-app' />
                         </div>
@@ -63,11 +70,9 @@ function Home() {
                                 <span className='description-app'><FormattedMessage id='homepage.item-purchase-des' /></span>
                             </div>
                         </div>
-
-
                     </div>
 
-                    <div onClick={() => handleRedirectRoute('/sale-order')} className='col-4 app-item'>
+                    <div onClick={() => handleRedirectRoute('D3', '/sale-order')} className='col-4 app-item'>
                         <div className='wrap-img-app'>
                             <img className='img-element-app' src={ban_hang} alt='img-element-app' />
                         </div>
@@ -81,11 +86,9 @@ function Home() {
                                 <span className='description-app'><FormattedMessage id='homepage.item-sales-des' /></span>
                             </div>
                         </div>
-
-
                     </div>
 
-                    <div className='col-4 app-item'>
+                    <div onClick={() => handleRedirectRoute('D4', '/accounting')} className='col-4 app-item'>
                         <div className='wrap-img-app'>
                             <img className='img-element-app' src={ke_toan} alt='img-element-app' />
                         </div>
@@ -101,7 +104,7 @@ function Home() {
                         </div>
                     </div>
 
-                    <div onClick={() => handleRedirectRoute('/manage-accounts')} className='col-4 app-item'>
+                    <div onClick={() => handleRedirectRoute('D5', '/manage-accounts')} className='col-4 app-item'>
                         <div className='wrap-img-app'>
                             <img className='img-element-app' src={tai_khoan} alt='img-element-app' />
                         </div>

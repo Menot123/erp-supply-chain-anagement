@@ -205,6 +205,8 @@ export const TableProducts = (props) => {
             return item;
         });
 
+
+
         // Cập nhật danh sách sản phẩm mới
         setListProduct(updatedProducts);
 
@@ -243,7 +245,7 @@ export const TableProducts = (props) => {
                         {
                             listProduct.map((item, index) => {
                                 return (
-                                    <tr key={'product' + index}>
+                                    <tr key={'product' + index} >
                                         <td>
                                             <Select
                                                 className={item?.emptyName
@@ -261,6 +263,7 @@ export const TableProducts = (props) => {
                                                 }
                                                 options={selectProduct}
                                                 value={{ label: item?.name, value: item?.productId }}
+                                                disabled={props?.isDisable}
                                             />
                                         </td>
                                         <td>
@@ -270,19 +273,22 @@ export const TableProducts = (props) => {
                                                 value={item?.description}
                                                 autoSize variant="borderless"
                                                 onChange={(e) => handleChangeInputCreatingProduct(e, 'description', item)}
+                                                disabled={props?.isDisable}
                                             />
                                         </td>
                                         <td>
                                             <Input
                                                 onChange={(e) => handleChangeInputCreatingProduct(e, 'quantity', item)}
                                                 value={item?.quantity && item?.quantity !== '' ? item?.quantity : '0.00'}
-                                                variant="borderless" />
+                                                variant="borderless" disabled={props?.isDisable}
+                                            />
+
                                         </td>
                                         <td>
                                             <Input
                                                 value={item?.price && item?.price !== '' ? item?.price : '0.00'}
                                                 onChange={(e) => handleChangeInputCreatingProduct(e, 'price', item)}
-                                                variant="borderless"
+                                                variant="borderless" disabled={props?.isDisable}
                                             />
                                         </td>
                                         <td>
@@ -299,15 +305,18 @@ export const TableProducts = (props) => {
                                                     (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                                 }
                                                 options={taxOptions}
+                                                disabled={props?.isDisable}
                                             />
                                         </td>
                                         <td>
                                             <span>{item?.priceBeforeTax && item?.priceBeforeTax !== '' ? item?.priceBeforeTax.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '0₫'}</span>
                                         </td>
                                         <td>
-                                            <Tooltip placement="top" title={intl.formatMessage({ id: "new_quote.tool-tip-delete" }) + item.name}>
-                                                <FaRegTrashCan className='hover-item' onClick={() => handleRemoveProduct(item)} />
-                                            </Tooltip>
+                                            {!props?.isDisable &&
+                                                <Tooltip placement="top" title={intl.formatMessage({ id: "new_quote.tool-tip-delete" }) + item.name}>
+                                                    <FaRegTrashCan className='hover-item' onClick={() => handleRemoveProduct(item)} />
+                                                </Tooltip>
+                                            }
                                         </td>
 
                                     </tr>
@@ -315,9 +324,11 @@ export const TableProducts = (props) => {
                             })
                         }
                         <tr>
-                            <td colSpan='7'>
-                                {props?.isSendingQuote ? "" : <span onClick={() => handleAddNewInput()} className='add-sub-company'><FormattedMessage id="new_quote.product-add-new" /></span>}
-                            </td>
+                            {!props?.isDisable &&
+                                <td colSpan='7'>
+                                    {props?.isSendingQuote ? "" : <span onClick={() => handleAddNewInput()} className='add-sub-company'><FormattedMessage id="new_quote.product-add-new" /></span>}
+                                </td>
+                            }
                         </tr>
                     </tbody>
                 </table>
@@ -327,6 +338,7 @@ export const TableProducts = (props) => {
                             placeholder={intl.formatMessage({ id: "new_quote.condition-policy" })}
                             onChange={(e) => props?.handleChangeDataQuote(e, 'policyAndCondition')}
                             value={props?.policyAndCondition && props?.policyAndCondition}
+                            disabled={props?.isDisable}
                         />
                     </div>
                     <div className='wrap-tax-price'>

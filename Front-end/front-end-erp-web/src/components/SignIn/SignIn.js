@@ -92,6 +92,7 @@ const SignIn = (props) => {
                     firstName: res.DT?.firstName,
                     lastName: res.DT?.lastName,
                     id: res.DT?.id,
+                    department: res?.DT?.department,
                     avatar: res.DT?.avatar
                 }))
                 history.push('/home')

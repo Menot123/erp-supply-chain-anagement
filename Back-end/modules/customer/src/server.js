@@ -47,5 +47,5 @@ let port = process.env.PORT || 8086;
 
 app.listen(port, () => {
     //callback
-    console.log("Backend Node ERP Accounting running on the port:", +port);
+    console.log("Backend Node ERP Customer running on the port:", +port);
 });

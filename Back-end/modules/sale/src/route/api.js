@@ -479,7 +479,7 @@ const initApiRoutes = (app) => {
 
     /**
     * @swagger
-    * /api/invoices:
+    * /api/invoices-paid:
     *  get:
     *      tags:
     *          - Sales
@@ -491,6 +491,22 @@ const initApiRoutes = (app) => {
     *              description: Error from server.
     * 
     */
+    router.get('/invoices-paid', apiController.getInvoicesPaid);
+
+    /**
+* @swagger
+* /api/invoices:
+*  get:
+*      tags:
+*          - Sales
+*      summary: Get all paid invoices not paying
+*      responses:
+*          201:
+*              description: Return status get all paid invoices not paying. 
+*          500:
+*              description: Error from server.
+* 
+*/
     router.get('/invoices', apiController.getInvoices);
 
     /**
@@ -524,6 +540,38 @@ const initApiRoutes = (app) => {
     * 
     */
     router.delete('/delete-quotes-sent', apiController.deleteQuotesSent);
+
+    /**
+    * @swagger
+    * /api/invoice-paid:
+    *  get:
+    *      tags:
+    *          - Sales
+    *      summary: Get info of invoice paid
+    *      responses:
+    *          201:
+    *              description: Return status info of invoice paid. 
+    *          500:
+    *              description: Error from server.
+    * 
+    */
+    router.get('/invoice-paid/:invoiceId', apiController.getInvoicePaid);
+
+    /**
+   * @swagger
+   * /api/statistic/invoices-paid:
+   *  get:
+   *      tags:
+   *          - Sales
+   *      summary: Get info of invoice paid
+   *      responses:
+   *          201:
+   *              description: Return status info of invoice paid. 
+   *          500:
+   *              description: Error from server.
+   * 
+   */
+    router.get('/statistic/invoices-paid', apiController.getStatistics);
 
     return app.use("/api/", router)
 }

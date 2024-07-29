@@ -176,9 +176,30 @@
         padding         : 0.25em 0.82em;
     }
 
-    .status-wait-invoice {
+    .status-quote-draft {
         border-radius   : 50rem;
         color           : #FFF;
+        background-color: rgb(23 162 184);
+        font-size       : 12px;
+        line-height     : 1.1;
+        padding         : 0.25em 0.82em;
+    }
+
+    .status-quote-s2 {
+        border-radius   : 50rem;
+        color           : #FFF;
+        background-color: #28A745;
+        font-size       : 12px;
+        line-height     : 1.1;
+        padding         : 0.25em 0.82em;
+    }
+}
+
+.wrap-line-invoice {
+    .status-paid {
+        margin-left     : 4px;
+        border-radius   : 50rem;
+        color           : #fff;
         background-color: #28A745;
         font-size       : 12px;
         line-height     : 1.1;

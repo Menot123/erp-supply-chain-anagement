@@ -60,6 +60,7 @@ export const ViewQuote = () => {
             const res = await getDataQuotePreview(orderId)
             if (res.EC === 0) {
                 let customer = res?.DT?.dataCustomer?.fullName
+                setDataCustomer(res?.DT?.dataCustomer)
                 customer = customer.split(' ')
                 if (customer && customer.length > 0) {
                     setNameCustomer(customer[customer.length - 1])
@@ -383,6 +384,9 @@ export const ViewQuote = () => {
                                         <span className='title-price-before-tax'><FormattedMessage id="new_quote.preview-table-amount-before-tax" /></span>
                                         <span>{(+dataPreview?.priceBeforeTax).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
                                     </div>
+
+
+                                    {console.log(">>>> dataPreview?.tax: ", dataPreview?.tax)}
 
                                     {
                                         dataPreview && dataPreview?.tax && Object.keys(dataPreview?.tax).map((taxValue, index) => (

@@ -39,6 +39,70 @@ const initApiRoutes = (app) => {
      */
     router.get('/customer/:id', apiController.getCustomerById);
 
+    /**
+ * @swagger
+ * /api/customers:
+ *  get:
+ *      tags:
+ *          - Customer
+ *      summary: Get all customer
+ *      responses:
+ *          200:
+ *              description: Return customer pagination.
+ *          500:
+ *              description: Error from server.
+ * 
+ */
+    router.get('/customers-pagination', apiController.getCustomersPagination);
+
+    /**
+    * @swagger
+    * /api/customer:
+    *  post:
+    *      tags:
+    *          - Customer
+    *      summary: Create a new customer
+    *      responses:
+    *          200:
+    *              description: Return status create a new customer.
+    *          500:
+    *              description: Error from server.
+    * 
+    */
+    router.post('/customer', apiController.createNewCustomer);
+
+    /**
+    * @swagger
+    * /api/customer:
+    *  delete:
+    *      tags:
+    *          - Customer
+    *      summary: Delete a customer
+    *      responses:
+    *          200:
+    *              description: Return status delete a customer.
+    *          500:
+    *              description: Error from server.
+    * 
+    */
+    router.delete('/customer', apiController.deleteCustomer);
+
+    /**
+    * @swagger
+    * /api/customer:
+    *  put:
+    *      tags:
+    *          - Customer
+    *      summary: Update a customer
+    *      responses:
+    *          200:
+    *              description: Return status update a customer.
+    *          500:
+    *              description: Error from server.
+    * 
+    */
+    router.put('/customer/:id', apiController.updateCustomer);
+
     return app.use("/api/", router)
 }
 

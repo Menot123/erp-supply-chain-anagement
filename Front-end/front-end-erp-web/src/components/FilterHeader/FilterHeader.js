@@ -12,6 +12,7 @@ import { NavLink } from "react-router-dom";
 import { useState } from 'react'
 import ReactPaginate from 'react-paginate';
 import { path } from '../../utils/constant'
+import { Pagination } from 'antd'
 
 function FilterHeader(props) {
     const intl = useIntl();
@@ -116,6 +117,7 @@ function FilterHeader(props) {
                     <span className="icon-search"><FaSearch /></span>
                 </div>
                 <div className={props?.totalPageEmployee ? 'advance-filter d-flex justify-content-between mt-1' : 'advance-filter d-flex justify-content-between mt-1'}>
+                    {/* Pagination of account service */}
                     {props?.totalPageEmployee > 0 &&
                         <ReactPaginate
                             nextLabel=">"

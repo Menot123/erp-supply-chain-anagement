@@ -458,6 +458,23 @@ let initApiRoutes = (app) => {
      */
     router.get('/departments', apiController.handleGetAllDepartments);
 
+    // /**
+    //  * @swagger
+    //  * /api/authenticated:
+    //  *  get:
+    //  *      tags:
+    //  *          - Account
+    //  *      summary: Check user authenticated
+    //  *      description: Check user authenticated before using system      
+    //  *      responses:
+    //  *          200:
+    //  *              description: Return user authenticated or not.
+    //  *          404:
+    //  *              description: Error from server.
+    //  * 
+    //  */
+    // router.get('/authenticated', apiController.handleCheckIsAuthenticated);
+
 
     return app.use("/api/", router)
 }

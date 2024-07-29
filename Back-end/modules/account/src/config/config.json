@@ -1,9 +1,9 @@
 {
     "development": {
         "username": "root",
-        "password": "123456",
+        "password": "",
         "database": "erp_account",
-        "host": "db-account",
+        "host": "127.0.0.1",
         "dialect": "mysql",
         "logging": false
     },

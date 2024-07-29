@@ -106,18 +106,72 @@ const getCustomer = (customerId) => {
 }
 
 const getQuotesSentAndCustomerInfo = (page, pageSize) => {
-    return axios.get('/bff/api/quotes-sent-customers', {
+    return axios.get('/bff/api/quotes-sent-customers',
+        {
+            params: {
+                page: page,
+                pageSize: pageSize
+            }
+        });
+}
+
+const getAllInvoice = (page, pageSize) => {
+    return axios.get('/bff/api/invoices',
+        {
+            params: {
+                page: page,
+                pageSize: pageSize
+            }
+        });
+}
+
+const getInvoice = (invoiceId) => {
+    return axios.get(`/bff/api/invoice/${invoiceId}`)
+}
+
+const getCustomerPagination = (page, pageSize) => {
+    return axios.get('/customer/api/customers-pagination',
+        {
+            params: {
+                page: page,
+                pageSize: pageSize
+            }
+        });
+}
+
+const postDataCustomer = (dataCustomer) => {
+    return axios.post('/customer/api/customer', dataCustomer);
+}
+
+const deleteCustomer = (listIdCustomer) => {
+    return axios.delete(`/customer/api/customer`, { data: listIdCustomer })
+}
+
+const updateCustomer = (customerId, dataCustomer) => {
+    return axios.put(`/customer/api/customer/${customerId}`, dataCustomer);
+}
+
+const getInvoicePaid = (invoiceId) => {
+    return axios.get(`/sale/api/invoice-paid/${invoiceId}`)
+}
+
+const getStatistic = (startDate, endDate) => {
+    return axios.get(`/sale/api/statistic/invoices-paid`, {
         params: {
-            page: page,
-            pageSize: pageSize
+            startDate: startDate,
+            endDate: endDate
         }
     });
 }
 
+const getEmployeeById = (employeeId) => {
+    return axios.get(`/account/api/get-employee?id=${employeeId}`)
+}
 
 export {
     getCustomers, getAllCodes, getComments, createAComment, editComment, deleteComment, getLatestQuoteCode,
     sendingQuoteToCustomer, postDataQuote, confirmQuote, getDataQuotePreview, postDataCancelQuote, postDataInvoice,
     getDataInvoicePreview, confirmInvoice, sendingInvoiceToCustomer, createPaidInvoice, getAllPaidInvoice, getAllQuotesSent,
-    deleteQuotesSent, getCustomer, getQuotesSentAndCustomerInfo
+    deleteQuotesSent, getCustomer, getQuotesSentAndCustomerInfo, getAllInvoice, getInvoice, getCustomerPagination,
+    postDataCustomer, deleteCustomer, updateCustomer, getInvoicePaid, getStatistic, getEmployeeById
 }
