@@ -274,7 +274,7 @@
     "new_quote.other-info-seller-title": "BÁN HÀNG",
     "new_quote.other-info-seller": "Nhân viên kinh doanh",
     "new_quote.other-info-transportation": "VẬN CHUYỂN",
-    "new_quote.other-info.date-transportation": "Ngày giao hàng",
+    "new_quote.other-info.date-transportation": "Ngày chuyển hàng (dự kiến)",
     "new_quote.tool-tip-delete": "Xóa sản phẩm ",
     "new_quote.toast-empty-field": "Vui lòng điền đủ thông tin báo giá trước khi gửi.",
     "new_quote.preview-toast-empty-field": "Vui lòng điền đủ thông tin trước khi xem.",
@@ -324,5 +324,9 @@
     "new_quote.create-invoice-title": "Hóa đơn bán hàng",
     "new_quote.create-invoice-draft": "Nháp",
     "table-preview-tax": "Thuế GTGT phải nộp",
-    "sub_title_new_inv": "Hóa đơn"
+    "sub_title_new_inv": "Hóa đơn",
+    "sale-order_new_customer": "Thêm khách hàng mới",
+    "sale-order_update_customer": "Cập nhật thông tin khách hàng",
+    "sale-order_new_customer_fullName": "Tên khách hàng",
+    "sale-order_new_customer_password": "Mật khẩu"
 }

@@ -1,5 +1,4 @@
 import apiService from '../services/apiService';
-
 const getAllTypeByType = async (req, res) => {
     try {
         let data = await apiService.getAllTypeService(req.query?.type)
@@ -89,6 +88,25 @@ const handleGetAllDepartments = async (req, res, next) => {
         })
     }
 }
+
+// const handleCheckIsAuthenticated = async (req, res, next) => {
+//     try {
+//         let response = await checkUserAuthenticated()
+//         console.log(">>>> check response from account service: ", response);
+//         return res.status(200).json({
+//             EM: response.EM,
+//             EC: response.EC,
+//             DT: response.DT
+//         })
+
+//     } catch (e) {
+//         return res.status(500).json({
+//             EM: 'error from server in check user is authenticated',
+//             EC: -1,
+//             DT: ''
+//         })
+//     }
+// }
 
 module.exports = {
     getAllTypeByType, getEmployeesByDepartment, handleCreateUsers, handleCreateDepartment,

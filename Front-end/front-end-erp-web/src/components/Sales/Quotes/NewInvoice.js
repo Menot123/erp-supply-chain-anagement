@@ -41,7 +41,7 @@ export const NewQuote = () => {
         priceBeforeTax: '',
         tax: '',
         totalPrice: '',
-        status: ''
+        status: '',
     }
 
     const defaultDataOtherInfoQuote = {

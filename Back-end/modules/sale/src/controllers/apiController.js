@@ -429,9 +429,9 @@ const paidInvoice = async (req, res, next) => {
     }
 }
 
-const getInvoices = async (req, res, next) => {
+const getInvoicesPaid = async (req, res, next) => {
     try {
-        let response = await apiService.getInvoicesService();
+        let response = await apiService.getInvoicesPaidService();
         return res.status(201).json({
             EM: response.EM,
             EC: response.EC,
@@ -440,6 +440,26 @@ const getInvoices = async (req, res, next) => {
     } catch (e) {
         return res.status(500).json({
             EM: 'error from server in get all paid invoice controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const getInvoices = async (req, res, next) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 40;
+        let response = await apiService.getInvoicesService(page, pageSize);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT,
+            total: response?.total
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in get all invoices controller',
             EC: -1,
             DT: ''
         })
@@ -485,10 +505,49 @@ const deleteQuotesSent = async (req, res, next) => {
     }
 }
 
+const getInvoicePaid = async (req, res, next) => {
+    try {
+        const invoiceId = req.params.invoiceId
+        let response = await apiService.getInvoicePaidService(invoiceId);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT,
+            total: response?.total
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in get info invoice paid controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const getStatistics = async (req, res, next) => {
+    try {
+        const startDate = req.query?.startDate
+        const endDate = req.query?.endDate
+        let response = await apiService.getStatisticsService(startDate, endDate);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT,
+            total: response?.total
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in get info invoice paid controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 module.exports = {
     createCompanyData, createBranchCompanyData, getBranches, getBranch, getDetailCompany,
     handleDeleteCompany, updateConfirmQuote, getCustomers, getAllCodes, getComments, postComment,
     updateComment, deleteComment, getLatestQuote, sendingQuote, postQuote, updateStatusQuote, getDataPreviewQuote,
-    postCancelQuote, postInvoice, getDataPreviewInvoice, confirmInvoice, sendingInvoice, paidInvoice, getInvoices,
-    getQuotesSent, deleteQuotesSent
+    postCancelQuote, postInvoice, getDataPreviewInvoice, confirmInvoice, sendingInvoice, paidInvoice, getInvoicesPaid,
+    getInvoices, getQuotesSent, deleteQuotesSent, getInvoicePaid, getStatistics
 }

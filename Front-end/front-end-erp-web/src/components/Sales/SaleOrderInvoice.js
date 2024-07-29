@@ -12,13 +12,12 @@ import { useState } from 'react'
 import { FaCheck } from "react-icons/fa";
 import { ModalConfirmQuote } from './Modal/ModalConfirmQuote';
 import Form from 'react-bootstrap/Form';
-import { getQuotesSentAndCustomerInfo } from '../../services/saleServices'
+import { getAllInvoice, getInvoicePaid } from '../../services/saleServices'
 import { useHistory } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid';
-import { Pagination, Empty, Skeleton } from 'antd';
+import { Pagination, Empty, Skeleton, Modal, Button } from 'antd';
 
-
-function SaleOrder() {
+function SaleOrderInvoice() {
 
     const history = useHistory()
 
@@ -37,6 +36,15 @@ function SaleOrder() {
     const [searchQuotesSent, setSearchQuotesSent] = useState("")
     const [isCheckAll, setIsCheckAll] = useState(false)
     const [isFetchingData, setIsFetchingData] = useState(false)
+    const [isShowModalInvoicePaid, setIsShowModalInvoicePaid] = useState(false)
+    const [titleNameModalInvoicePaid, setTitleNameModalInvoicePaid] = useState("Hóa đơn đã thanh toán")
+
+    const defaultDataInvoicePaid = {
+        customer: '',
+        byEmployee: '',
+    }
+
+    const [dataInvoicePaid, setDataInvoicePaid] = useState(defaultDataInvoicePaid)
 
     const onChangePagination = (page, pageSize) => {
         setPage(page);
@@ -44,12 +52,13 @@ function SaleOrder() {
     };
 
     const fetchAllQuotesSent = async (page, pageSize) => {
-        const res = await getQuotesSentAndCustomerInfo(page, pageSize)
+        const res = await getAllInvoice(page, pageSize)
         if (res?.EC === 0) {
             setQuotesSent(res?.DT)
             setTotalQuotesSent(res?.total)
         }
         setIsFetchingData(false)
+
     }
 
     useEffect(() => {
@@ -106,7 +115,7 @@ function SaleOrder() {
         if (currentStatus) {
             setSelectedItems([])
         } else {
-            setSelectedItems(quotesSent.map(item => item?.quoteId?.toString()))
+            setSelectedItems(quotesSent.map(item => item?.invoiceId?.toString()))
         }
     }
 
@@ -126,8 +135,33 @@ function SaleOrder() {
         return output;
     }
 
-    const handleViewQuoteFromSaleOrder = (invoiceId) => {
-        history.push(`/sale-order/${invoiceId}`)
+    const fetchDataInvoicePaid = async (invoiceId) => {
+        let res = await getInvoicePaid(invoiceId)
+        if (res && res?.EC === 0 && res?.DT) {
+            setDataInvoicePaid((prevState) => ({
+                ...prevState,
+                ...res?.DT
+            }))
+        }
+    }
+
+    const handleViewInvoiceFromSaleOrder = (invoiceId, status, customer, employee) => {
+        if (status && status === 'S2') {
+            fetchDataInvoicePaid(invoiceId)
+            setDataInvoicePaid((prevState) => ({
+                ...prevState,
+                customer: customer,
+                byEmployee: employee,
+            }))
+            setTitleNameModalInvoicePaid(`Hóa đơn ${invoiceId}`)
+            setIsShowModalInvoicePaid(true)
+        } else {
+            history.push(`/sale-order/invoices/${invoiceId}`)
+        }
+    }
+
+    const handleViewDetailInvoicePaid = invoiceId => {
+        history.push(`/sale-order/invoices/${invoiceId}`)
     }
 
     return (
@@ -241,12 +275,16 @@ function SaleOrder() {
                     </div>
                 </div>
             }
+
             {
                 isFetchingData
                     ?
-                    <div>
-                        <Skeleton active />
-                    </div>
+                    <>
+
+                        <div>
+                            <Skeleton active />
+                        </div>
+                    </>
                     :
                     <div className='pb-3'>
                         <table className="table table-striped table-hover table-quotes">
@@ -268,33 +306,7 @@ function SaleOrder() {
                                     <th scope="col">Trạng thái</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {invoices && invoices.length > 0 &&
-                                    invoices.map((item, index) => {
-                                        return (
-                                            <tr className='hover-item' key={uuidv4()} >
-                                                <th scope="row">
-                                                    <Form.Check // prettier-ignore
-                                                        type={'checkbox'}
-                                                        id={item?.invoiceId}
-                                                        value={item?.invoiceId}
-                                                        label={`INV${item?.invoiceId}`}
-                                                        onChange={(e) => handleChangeCheckBox(e)}
-                                                        checked={selectedItems.includes(item?.invoiceId)}
-                                                    />
-                                                </th>
-                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}>{convertDateTime(item?.createdAt)}</td>
-                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}>Huỳnh Khánh Duy</td>
-                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}>Nguyễn Bá Thành</td>
-                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}><span className='cost'>
-                                                    {Number(item?.total).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                                                </span></td>
-                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}> <span className='status-quote'>Báo giá đã gửi</span> </td>
-                                            </tr>
-
-                                        )
-                                    })
-                                }
+                            <tbody >
 
                                 {
                                     quotesSent && quotesSent.length > 0 ?
@@ -303,37 +315,38 @@ function SaleOrder() {
                                                 const filteredQuotes = quotesSent.filter((item) => {
                                                     return searchQuotesSent.toLowerCase() === '' ||
                                                         (item?.dataCustomer?.fullName.toLowerCase().includes(searchQuotesSent.toLowerCase()) ||
-                                                            ("QUO" + item?.quoteId.toString()).toLowerCase().includes(searchQuotesSent.toLowerCase()));
+                                                            ("QUO" + item?.invoiceId.toString()).toLowerCase().includes(searchQuotesSent.toLowerCase()));
                                                 })
 
                                                 if (filteredQuotes.length > 0) {
                                                     return filteredQuotes.map((item, index) => (
-                                                        <tr className='hover-item' key={uuidv4()}>
+                                                        <tr className='hover-item' key={uuidv4()} >
                                                             <th scope="row">
                                                                 <Form.Check // prettier-ignore
                                                                     type={'checkbox'}
-                                                                    id={item?.quoteId}
-                                                                    value={item?.quoteId}
-                                                                    label={`QUO${item?.quoteId}`}
+                                                                    id={item?.invoiceId}
+                                                                    value={item?.invoiceId}
+                                                                    label={`INV${item?.invoiceId}`}
                                                                     onChange={(e) => handleChangeCheckBox(e)}
-                                                                    checked={selectedItems.includes(item?.quoteId.toString())}
+                                                                    checked={selectedItems.includes(item?.invoiceId.toString())}
                                                                 />
                                                             </th>
-                                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>{convertDateTime(item?.createdAt)}</td>
-                                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>{item?.dataCustomer?.fullName}</td>
-                                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>Nguyễn Bá Thành</td>
-                                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}><span className='cost'>
+                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, "Example")}>{convertDateTime(item?.createdAt)}</td>
+                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, "Example")}>{item?.dataCustomer?.fullName}</td>
+                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, "Example")}>Nguyễn Bá Thành</td>
+                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, "Example")}><span className='cost'>
                                                                 {Number(item?.totalPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                                                             </span></td>
-                                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>
-                                                                {item?.status === 'S1' &&
-                                                                    <span className='status-quote'>Báo giá đã gửi</span>
-                                                                }
+                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, "Example")}>
                                                                 {item?.status === 'S0' &&
-                                                                    <span className='status-quote-draft'>Báo giá</span>
+                                                                    <span className='status-quote'>Chờ xác nhận</span>
                                                                 }
-                                                                {item?.status === 'S2' &&
-                                                                    <span className='status-quote-s2'>Chờ xác nhận</span>
+                                                                {item?.status === 'S1' &&
+                                                                    <span span className='status-quote-draft'>Chờ thanh toán</span>
+                                                                }
+                                                                {
+                                                                    item?.status === 'S2' &&
+                                                                    <span className='status-quote-s2' > Đã thanh toán</span>
                                                                 }
                                                             </td>
                                                         </tr>
@@ -361,7 +374,7 @@ function SaleOrder() {
                                         </tr>
 
                                 }
-                            </tbody>
+                            </tbody >
                             {quotesSent && quotesSent.length > 0 &&
                                 <tfoot>
                                     <tr >
@@ -381,6 +394,7 @@ function SaleOrder() {
                                     </tr>
                                 </tfoot>
                             }
+
                         </table >
                         {quotesSent && quotesSent.length > 0 &&
                             <div className='d-flex justify-content-end pe-4'>
@@ -389,8 +403,51 @@ function SaleOrder() {
                         }
                     </div >
             }
+
+            <Modal title={titleNameModalInvoicePaid}
+                open={isShowModalInvoicePaid}
+                width={1000}
+                onCancel={() => setIsShowModalInvoicePaid(false)}
+                footer={[
+                    <Button key="back" onClick={() => setIsShowModalInvoicePaid(false)}>
+                        Hủy bỏ
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={() => handleViewDetailInvoicePaid(dataInvoicePaid?.invoiceId)}>
+                        Chi tiết
+                    </Button>,
+                ]}
+            >
+                <div className='row'>
+                    <div className='wrap-line-invoice mt-2 col-4'>
+                        <label> <strong>Khách hàng: </strong> </label>
+                        <span className='ms-1'>{dataInvoicePaid?.customer ?? ''}</span>
+                    </div>
+                    <div className='wrap-line-invoice mt-2 col-4'>
+                        <label> <strong>Thời gian thanh toán: </strong></label>
+                        <span className='ms-1'>{dataInvoicePaid?.datePaid ?? ''}</span>
+                    </div>
+                    <div className='wrap-line-invoice mt-2 col-4'>
+                        <label> <strong>Hình thức thanh toán:  </strong></label>
+                        <span className='ms-1'>{dataInvoicePaid?.paymentMethod ?? ''}</span>
+                    </div>
+                    <div className='wrap-line-invoice mt-2 col-4'>
+                        <label> <strong>Nhân viên phụ trách:</strong> </label>
+                        <span className='ms-1'>{dataInvoicePaid?.byEmployee ?? ''}</span>
+                    </div>
+                    <div className='wrap-line-invoice mt-2 col-4'>
+                        <label> <strong>Số tiền: </strong></label>
+                        <span className='ms-1'>{Number(dataInvoicePaid?.total).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) ?? ''}</span>
+                    </div>
+                    <div className='wrap-line-invoice mt-2 col-4'>
+                        <label> <strong>Trạng thái: </strong></label>
+                        <span className='status-paid'>Đã thanh toán</span>
+                    </div>
+                </div>
+
+            </Modal>
+
         </>
     )
 }
 
-export default SaleOrder
+export default SaleOrderInvoice

@@ -7,6 +7,7 @@ const initialState = {
     lastName: '',
     email: '',
     id: '',
+    department: '',
     avatar: '',
     isShowModalInfo: false,
 }
@@ -21,6 +22,7 @@ export const userSlice = createSlice({
             state.firstName = action.payload?.firstName
             state.lastName = action.payload?.lastName
             state.id = action.payload?.id
+            state.department = action.payload?.department
             state.avatar = action.payload?.avatar
             state.currentLang = 'vi'
         },
@@ -30,6 +32,7 @@ export const userSlice = createSlice({
             state.firstName = ''
             state.lastName = ''
             state.id = ''
+            state.department = ''
             state.avatar = ''
         },
         changeLanguage: (state, action) => {

@@ -152,9 +152,8 @@ const Navigation = (props) => {
                                     <NavLink className="navbar-brand ms-1 current-app" to='/sale-order'><FormattedMessage id='sales-nav-name-app' /></NavLink>
                                     <div className='nav-sales'>
                                         <div className='nav-link-me-sales' ref={dropdownOrderRef} onClick={() => handleShowMenuOrder(isShowMenuOrder)}><FormattedMessage id='sales-nav-title-orders' /></div>
-                                        <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-to-invoices' /></NavLink>
                                         <NavLink className='nav-link-me-sales' to='/sale-order/products'><FormattedMessage id='sales-nav-title-products' /></NavLink>
-                                        <NavLink className='nav-link-me-sales' to='/manage-inventory'><FormattedMessage id='sales-nav-title-reporting' /></NavLink>
+                                        <NavLink className='nav-link-me-sales' to='/sale-order/statistics'><FormattedMessage id='sales-nav-title-reporting' /></NavLink>
                                     </div>
                                 </>
                                 :
@@ -171,7 +170,7 @@ const Navigation = (props) => {
                                         <NavLink className='nav-link-me-sub-accounting' to='/accounting/customer'>Khách hàng</NavLink>
                                         <NavLink className='nav-link-me-sub-accounting' to='/accounting/provider'>Nhà cung cấp</NavLink>
                                         <NavLink className='nav-link-me-sub-accounting' to='/accounting/accounting'>Kế toán</NavLink>
-                                        <NavLink className='nav-link-me-sub-accounting' to='/accounting/report'>Báo cáo</NavLink>
+                                        <NavLink className='nav-link-me-sub-accounting' to='/accounting/report'>Thống kê</NavLink>
                                     </div>
                                 </>
                                 :
@@ -238,9 +237,8 @@ const Navigation = (props) => {
 
                 <div className={isShowMenuOrder === false ? 'drop-down-menu-order d-none' : 'drop-down-menu-order'}>
                     <span onClick={() => redirectDropdownApp('/sale-order')} className='item-order-menu'>Báo giá</span>
-                    <span onClick={() => redirectDropdownApp()} className='item-order-menu'>Đơn hàng</span>
-                    <span onClick={() => redirectDropdownApp('/sale-order')} className='item-order-menu'>Đội ngũ kinh doanh</span>
-                    <span onClick={() => redirectDropdownApp()} className='item-order-menu'>Khách hàng</span>
+                    <span onClick={() => redirectDropdownApp('/sale-order/invoices')} className='item-order-menu'>Đơn hàng</span>
+                    <span onClick={() => redirectDropdownApp('/sale-order/customers')} className='item-order-menu'>Khách hàng</span>
                 </div>
 
             </div>

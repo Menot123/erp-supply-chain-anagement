@@ -25,7 +25,8 @@
         "redis": "^4.6.15",
         "sequelize": "^6.6.2",
         "swagger-jsdoc": "^6.2.8",
-        "swagger-ui-express": "^5.0.0"
+        "swagger-ui-express": "^5.0.0",
+        "axios": "^1.6.7"
     },
     "devDependencies": {
         "@babel/core": "^7.12.10",

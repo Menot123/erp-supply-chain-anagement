@@ -48,7 +48,7 @@ export const OpenQuoteCreated = () => {
         priceBeforeTax: '',
         tax: '',
         totalPrice: '',
-        status: ''
+        status: '',
     }
 
     const defaultDataOtherInfoQuote = {
@@ -134,7 +134,8 @@ export const OpenQuoteCreated = () => {
                     setCurrentStepQuote(2)
                     changeStep(2)
                 }
-                setDataQuote({ ...res?.DT, productList: JSON.parse(res?.DT?.productList), fullDataCustomer: res?.DT?.dataCustomer })
+                setDataQuote({ ...res?.DT, total: res?.DT?.totalPrice, productList: JSON.parse(res?.DT?.productList), fullDataCustomer: res?.DT?.dataCustomer })
+                setOtherInfoQuote({ employeeId: res?.DT?.employeeId, deliveryDate: res?.DT?.deliveryDate })
                 setDataCustomerSelect({ label: res?.DT?.dataCustomer?.fullName, value: res?.DT?.dataCustomer?.customerId })
                 setExpirationDay(res?.DT?.expirationDay)
                 setCurrency({ value: res?.DT?.currency, label: res?.DT?.dataCurrency?.valueVi })
@@ -372,7 +373,8 @@ export const OpenQuoteCreated = () => {
     };
 
     const handleChangeInputQuote = (e, type, label) => {
-        if (!isMounted) return;
+        // if (!isMounted) return;
+
         switch (type) {
             case 'customer':
             case 'currency':
@@ -403,6 +405,7 @@ export const OpenQuoteCreated = () => {
                 break;
         }
     }
+
 
 
     const handleGeneratePdf = async (type) => {
@@ -464,7 +467,7 @@ export const OpenQuoteCreated = () => {
             // Create an voice
             if (type === "invoice") {
                 if (dateCreateInvoice) {
-                    let res = await postDataInvoice({ ...dataQuote, status: 'S0', dateCreateInvoice: dateCreateInvoice, invoiceId: dataQuote?.quoteId })
+                    let res = await postDataInvoice({ ...dataQuote, totalPrice: dataQuote?.total, status: 'S0', dateCreateInvoice: dateCreateInvoice, invoiceId: dataQuote?.quoteId })
                     if (res?.EC === 0) {
                         const newTabUrl = `/my/invoice/${dataQuote?.quoteId}`;
                         window.open(newTabUrl, '_blank');
@@ -493,12 +496,13 @@ export const OpenQuoteCreated = () => {
     }
 
     const handleConfirmQuote = async () => {
-
         if (dataQuote && dataQuote?.quoteId) {
+            console.log(">>>> check data quote", dataQuote);
             const arrValidateFieldsQuote = ['customerId', 'expirationDay', 'currency', 'paymentPolicy']
             let check = validateData(arrValidateFieldsQuote, dataQuote)
             if (check && check.length === 0) {
                 let res = await postDataQuote({ ...dataQuote, status: 'S2' })
+
                 if (res?.EC === 0) {
                     changeStep(2)
                 } else {
@@ -767,7 +771,7 @@ export const OpenQuoteCreated = () => {
                                     {
                                         label: <FormattedMessage id="new_quote.other-info" />,
                                         key: 'tab-2',
-                                        children: <OtherInfo />,
+                                        children: <OtherInfo otherInfoQuote={otherInfoQuote} />,
                                     }
                                     :
                                     ""

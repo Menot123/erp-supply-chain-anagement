@@ -29,9 +29,17 @@ export const path = {
     CREATE_INPUT_WAREHOUSE: '/manage-inventory/input-warehouse/create',
     CREATE_OUTPUT_WAREHOUSE: '/manage-inventory/output-warehouse/create',
     SALE_ORDER: '/sale-order',
+    SALE_INVOICES_DETAIL: '/sale-order/invoices/:id',
+    SALE_INVOICES: '/sale-order/invoices',
+    SALE_INVOICES_STATISTIC: '/sale-order/statistics',
+    SALE_INVOICES_PAID: '/sale-order/invoices-paid',
     CREATE_QUOTE: '/sale-order/new-quote',
     OPEN_QUOTE: '/sale-order/:id',
     SALE_PRODUCTS: '/sale-order/products',
     VIEW_QUOTE: '/my/orders',
     VIEW_DRAFT_INVOICE: '/my/invoice',
+    SALE_ORDER_CUSTOMERS: '/sale-order/customers',
+    SALE_ORDER_CUSTOMERS_CREATE: '/sale-order/customers/create',
+    SALE_ORDER_CUSTOMERS_DETAIL: '/sale-order/customers/:id',
+
 };

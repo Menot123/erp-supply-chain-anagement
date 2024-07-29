@@ -274,7 +274,7 @@
     "new_quote.other-info-seller-title": "SALES",
     "new_quote.other-info-seller": "Salesperson",
     "new_quote.other-info-transportation": "SHIPPING",
-    "new_quote.other-info.date-transportation": "Delivery Date",
+    "new_quote.other-info.date-transportation": "Delivery Date (expected)",
     "new_quote.tool-tip-delete": "Delete product ",
     "new_quote.toast-empty-field": "Please fill in complete quote information before submitting.",
     "new_quote.confirm-toast-empty-field": "Please fill in complete information before confirm.",
@@ -324,5 +324,9 @@
     "new_quote.create-invoice-title": "Customer Invoice",
     "new_quote.create-invoice-draft": "Draft",
     "table-preview-tax": "Value Added Tax (VAT)",
-    "sub_title_new_inv": "Invoice"
+    "sub_title_new_inv": "Invoice",
+    "sale-order_new_customer": "Add a new customer",
+    "sale-order_new_customer_fullName": "Full name customer",
+    "sale-order_update_customer": "Update customer information",
+    "sale-order_new_customer_password": "Password"
 }

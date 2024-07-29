@@ -28,6 +28,7 @@ const handleUserLogin = async (email, pwd) => {
                     email: user.email,
                     firstName: user.email === 'admin@gmail.com' ? 'Admin' : user.firstName,
                     lastName: user.email === 'admin@gmail.com' ? ' ' : user.lastName,
+                    department: user?.department
                 }
                 let token = createJWT(payload)
                 return {
@@ -39,7 +40,8 @@ const handleUserLogin = async (email, pwd) => {
                         firstName: user?.firstName,
                         lastName: user?.lastName,
                         id: user?.id,
-                        avatar: user.avatar
+                        avatar: user?.avatar,
+                        department: user?.department
                     }
                 }
             }

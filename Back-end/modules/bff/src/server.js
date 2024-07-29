@@ -5,6 +5,7 @@ import initWebRoutes from './route/web'
 import connectDB from './config/connectDB';
 import initApiRoutes from './route/api'
 import setupSwagger from './middlewares/swagger';
+const cookieParser = require('cookie-parser');
 
 require('dotenv').config();
 
@@ -32,6 +33,9 @@ app.use(function (req, res, next) {
     // Pass to next layer of middleware
     next();
 });
+
+
+app.use(cookieParser());
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
