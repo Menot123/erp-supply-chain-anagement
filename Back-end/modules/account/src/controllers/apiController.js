@@ -89,6 +89,24 @@ const handleGetAllDepartments = async (req, res, next) => {
     }
 }
 
+const getSaleEmployees = async (req, res, next) => {
+    try {
+        let response = await apiService.getSaleEmployeesService()
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in sale employees controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 // const handleCheckIsAuthenticated = async (req, res, next) => {
 //     try {
 //         let response = await checkUserAuthenticated()
@@ -110,5 +128,5 @@ const handleGetAllDepartments = async (req, res, next) => {
 
 module.exports = {
     getAllTypeByType, getEmployeesByDepartment, handleCreateUsers, handleCreateDepartment,
-    handleGetAllDepartments
+    handleGetAllDepartments, getSaleEmployees
 };

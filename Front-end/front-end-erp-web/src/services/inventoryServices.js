@@ -37,7 +37,7 @@ const getProviders = () => {
 }
 
 const getCustomers = () => {
-    return axios.get(`/inventory/api/customers`)
+    return axios.get(`/customer/api/customers`)
 }
 
 const getStocks = () => {
@@ -96,6 +96,10 @@ const createProductListOfDeliveryArray = (data) => {
     return axios.post(`/inventory/api/stockDeliveryItemsList`, data)
 }
 
+const getStockDeliveryInfoBFF = (id) => {
+    return axios.get(`/bff/api/stockDeliveryById/${id}`)
+}
+
 export {
     createNewProduct,
     importNewProducts,
@@ -120,5 +124,5 @@ export {
     createProductListOfReceipt,
     createProductListOfReceiptArray,
     createProductListOfDelivery,
-    createProductListOfDeliveryArray
+    createProductListOfDeliveryArray, getStockDeliveryInfoBFF
 }

@@ -116,12 +116,6 @@ export const OpenQuoteCreated = () => {
     const [arrCurrentInvoiceStep, setArrInvoiceCurrentStep] = useState(defaultCreateInvoiceStep1)
 
     useEffect(() => {
-        // const path = location.pathname
-        // const orderId = path.split("/").pop();
-        // const invoiceId = path.split("/").pop();
-        // let currentURL = path.split("/")
-        // currentURL = currentURL[currentURL.length - 2]
-        // setCurrentURL(currentURL)
 
         const fetchDataQuotePreview = async () => {
             setIsLoadingData(true)
@@ -145,28 +139,11 @@ export const OpenQuoteCreated = () => {
                 let customer = res?.DT?.dataCustomer?.fullName
                 customer = customer.split(' ')
                 if (customer && customer.length > 0) {
-                    // setNameCustomer(customer[customer.length - 1])
                 }
-                // setDataPreview({ ...res?.DT, tax: JSON.parse(res?.DT?.tax), productList: JSON.parse(res?.DT?.productList) })
                 buildDataTableProduct(JSON.parse(res?.DT?.productList))
             }
             setIsLoadingData(false)
         }
-
-        // const fetchDataDraftInvoice = async () => {
-        //     setIsLoadingData(true)
-        //     const res = await getDataInvoicePreview(invoiceId)
-        //     if (res.EC === 0) {
-        //         let customer = res?.DT?.dataCustomerInvoice?.fullName
-        //         customer = customer.split(' ')
-        //         if (customer && customer.length > 0) {
-        //             setNameCustomer(customer[customer.length - 1])
-        //         }
-        //         setDataPreview({ ...res?.DT, tax: JSON.parse(res?.DT?.tax), productList: JSON.parse(res?.DT?.productList) })
-        //         buildDataTableProduct(JSON.parse(res?.DT?.productList))
-        //     }
-        //     setIsLoadingData(false)
-        // }
 
         const buildDataTableProduct = (listProduct) => {
             let dataProducts = []
@@ -182,14 +159,8 @@ export const OpenQuoteCreated = () => {
                     })
                 })
             }
-            // setDataProducts(dataProducts)
         }
 
-        // if (currentURL === 'invoice') {
-        //     fetchDataDraftInvoice()
-        // } else {
-        //     fetchDataQuotePreview()
-        // }
         fetchDataQuotePreview()
     }, [id, intl])
 

@@ -73,6 +73,30 @@ const initApiRoutes = (app) => {
      */
     router.get('/invoice/:invoiceId', apiController.getInvoice);
 
+    /**
+    * @swagger
+    * /api/stockDeliverys/{id}:
+    *  get:
+    *      tags:
+    *          - StockDelivery
+    *      summary: Get stockDelivery with id
+    *      description: Get information about stockDelivery with id
+    *      parameters:
+    *          - in: path
+    *            name: id     
+    *            required: true            
+    *            schema:     
+    *                type: string
+    *            description: ID of stockDelivery you want to get information 
+    *      responses:
+    *          200:
+    *              description: Return status and info of stockDelivery if exist.
+    *          404:
+    *              description: Error from server.
+    * 
+    */
+    router.get('/stockDeliveryById/:id', apiController.getStockDeliveryById);
+
     return app.use("/api/", router)
 }
 

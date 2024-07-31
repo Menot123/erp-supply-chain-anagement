@@ -10,6 +10,9 @@ module.exports = {
       customerId: {
         type: Sequelize.STRING
       },
+      employeeId: {
+        type: Sequelize.INTEGER
+      },
       createdDate: {
         type: Sequelize.STRING
       },
@@ -29,6 +32,9 @@ module.exports = {
         type: Sequelize.STRING
       },
       totalPrice: {
+        type: Sequelize.STRING
+      },
+      deliveryDate: {
         type: Sequelize.STRING
       },
       status: {

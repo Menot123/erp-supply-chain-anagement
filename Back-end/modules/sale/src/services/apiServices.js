@@ -727,7 +727,14 @@ const postInvoiceService = async (dataInvoice) => {
                 })
             } else {
                 if (invoice.status === 'S0') {
-                    await invoice.update({ status: dataInvoice?.status })
+                    await invoice.update({
+                        ...dataInvoice,
+                        customerId: dataInvoice?.customerId ? dataInvoice?.customerId : dataInvoice?.customer,
+                        tax: JSON.stringify(dataInvoice.tax),
+                        productList: JSON.stringify(dataInvoice.productList),
+                        createdDate: dataInvoice?.dateCreateInvoice,
+                        status: dataInvoice?.status
+                    })
                 }
             }
             res.EM = 'Create a invoice successfully'
@@ -893,6 +900,9 @@ const getInvoicesService = async (page, pageSize) => {
     try {
         let res = {}
         let invoices = await db.Invoice.findAndCountAll({
+            where: {
+                [Op.not]: { status: 'deleted' }
+            },
             order: [
                 ['createdAt', 'DESC']
             ],
@@ -975,6 +985,30 @@ const listQuoteDeleteService = async (listQuote) => {
     }
 }
 
+const deleteInvoicesService = async (listInvoices) => {
+    try {
+        let res = {}
+        if (!listInvoices || listInvoices.length === 0) {
+            res.EM = 'error from server in delete invoices: empty list invoices'
+            res.EC = 1
+            res.DT = ''
+        } else {
+            await db.Invoice.update({ status: 'deleted' }, {
+                where: {
+                    invoiceId: listInvoices
+                }
+            });
+            res.EC = 0
+            res.EM = 'delete invoices successfully'
+            res.DT = ''
+        }
+        return res
+
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
 const getInvoicePaidService = async (invoiceId) => {
     try {
         let res = {}
@@ -1041,5 +1075,5 @@ module.exports = {
     deleteCommentService, getLatestQuoteService, sendingQuoteService, postQuoteService, updateStatusQuoteService,
     getDataPreviewQuoteService, postCancelQuoteService, sendEmailCancelQuote, postInvoiceService, getDataPreviewInvoiceService,
     confirmInvoiceService, sendingInvoiceService, paidInvoiceService, getInvoicesPaidService, getInvoicesService,
-    getQuotesSentService, listQuoteDeleteService, getInvoicePaidService, getStatisticsService
+    getQuotesSentService, listQuoteDeleteService, getInvoicePaidService, getStatisticsService, deleteInvoicesService
 }

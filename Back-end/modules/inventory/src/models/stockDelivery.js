@@ -5,10 +5,8 @@ const {
 module.exports = (sequelize, DataTypes) => {
     class StockDelivery extends Model {
         static associate(models) {
-            ////
-            StockDelivery.belongsTo(models.Customer, { foreignKey: 'customerId', targetKey: 'customerId', as: 'customerData' })
             StockDelivery.belongsTo(models.Warehouse, { foreignKey: 'warehouseId', targetKey: 'warehouseId', as: 'warehouseData' })
-                // StockDelivery.belongsTo(models.User, { foreignKey: 'warehouseId', targetKey: 'warehouseId', as: 'warehouseData' })
+            // StockDelivery.belongsTo(models.User, { foreignKey: 'warehouseId', targetKey: 'warehouseId', as: 'warehouseData' })
             StockDelivery.hasMany(models.StockDeliveryItem, { foreignKey: 'stockDeliveryId', as: 'items' })
         }
         static generateId() {
@@ -50,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
         modelName: 'StockDelivery',
         freezeTableName: true,
         hooks: {
-            beforeCreate: async(instance) => {
+            beforeCreate: async (instance) => {
                 instance.stockDeliveryId = await StockDelivery.getNextId();
             },
         }

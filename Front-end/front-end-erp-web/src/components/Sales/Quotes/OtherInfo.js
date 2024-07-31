@@ -29,8 +29,6 @@ export const OtherInfo = (props) => {
                 const res = await getEmployeeById(props?.otherInfoQuote?.employeeId)
                 if (res?.EC === 0) {
                     setSelectCustomer(buildSelectCustomer(res?.DT))
-                    console.log(">>>> selectCustomer: ", buildSelectCustomer(res?.DT));
-
                 }
             }
         }
@@ -58,10 +56,7 @@ export const OtherInfo = (props) => {
                         filterSort={(optionA, optionB) =>
                             (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                         }
-                        options={[
-                            { value: 1, label: 'Nguyễn Văn Khánh' },
-                            { value: 2, label: 'Nguyễn Tiến Đạt' },
-                        ]}
+                        options={props?.listSaleEmployeesSelect ?? []}
                         value={selectCustomer ? selectCustomer : null}
                         onChange={(e) => props?.handleChangeEmployeeId(e)}
                     />

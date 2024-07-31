@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux';
-import { getStockDeliveryInfo, getDeliveryListItems } from '../../../../services/inventoryServices'
+import { getStockDeliveryInfoBFF, getDeliveryListItems } from '../../../../services/inventoryServices'
 import { LANGUAGES } from '../../../../utils/constant'
 import { toast } from 'react-toastify';
 import { TableProductView } from './TableProductView';
@@ -44,7 +44,7 @@ function ViewDelivery() {
 
     useEffect(() => {
         const deliveryInfo = async () => {
-            const res = await getStockDeliveryInfo(idDelivery)
+            const res = await getStockDeliveryInfoBFF(idDelivery)
             if (res && res.EC === 0) {
                 setDeliveryInfo(res.DT)
                 // console.log('Receipt Info:')
@@ -157,7 +157,7 @@ function ViewDelivery() {
                                             filterSort={(optionA, optionB) =>
                                                 (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                             }
-                                            options={[{ value: deliveryInfo.customerId, label: deliveryInfo.customerData.nameVi }]}
+                                            options={[{ value: deliveryInfo.customerId, label: deliveryInfo.customerData.fullName }]}
                                             defaultValue={deliveryInfo.customerId}
                                         // onChange={(e) => handleChangeInputWarehouse(e, 'receiveFrom')}
                                         />

@@ -127,7 +127,7 @@ function CreateNewOutputWarehouse() {
             let customerSelect = listCustomer.map((item, index) => {
                 return (
                     {
-                        value: item.customerId,
+                        value: item.id,
                         label: item.nameVi
                     }
                 )

@@ -542,6 +542,22 @@ const initApiRoutes = (app) => {
     router.delete('/delete-quotes-sent', apiController.deleteQuotesSent);
 
     /**
+* @swagger
+* /api/delete-invoices:
+*  get:
+*      tags:
+*          - Sales
+*      summary: delete invoices in sale order list
+*      responses:
+*          201:
+*              description: Return status delete invoices in sale order list. 
+*          500:
+*              description: Error from server.
+* 
+*/
+    router.delete('/delete-invoices', apiController.deleteInvoices);
+
+    /**
     * @swagger
     * /api/invoice-paid:
     *  get:

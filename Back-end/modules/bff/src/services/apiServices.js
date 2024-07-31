@@ -159,6 +159,43 @@ const getInvoiceService = async (invoiceId, jwtToken) => {
     }
 }
 
+const getStockDeliveryByIdService = async (stockDeliveryId, jwtToken) => {
+    try {
+        let res = {}
+        stockDeliveryId = encodeURIComponent(stockDeliveryId)
+        console.log(">>>> : ", stockDeliveryId);
+        const response = await axios.get(`http://localhost:8000/inventory/api/stockDeliverys/${stockDeliveryId}`, {
+            headers: {
+                'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
+            }
+        });
+        console.log(">>>> check response: ", response);
+
+        if (response && response?.data?.DT && response?.data?.DT?.customerId) {
+            const dataCustomer = await axios.get(`http://localhost:8000/customer/api/customer/${response?.data?.DT?.customerId}`, {
+                headers: {
+                    'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
+                }
+            })
+            const responseData = {
+                ...response?.data?.DT,
+                customerData: dataCustomer?.data?.DT
+            }
+            res.EC = 0
+            res.EM = 'Get stockDelivery successfully'
+            res.DT = responseData
+        } else {
+            res.EC = -1
+            res.EM = 'Get stockDelivery failed'
+            res.DT = {}
+        }
+        return res;
+    } catch (e) {
+        console.log('>>> error when get stockDelivery: ', e)
+    }
+}
+
 module.exports = {
-    getQuoteCustomersService, getQuoteSentService, getAllInvoicesService, getInvoiceService
+    getQuoteCustomersService, getQuoteSentService, getAllInvoicesService, getInvoiceService,
+    getStockDeliveryByIdService
 }

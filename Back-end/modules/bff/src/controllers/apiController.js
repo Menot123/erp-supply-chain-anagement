@@ -79,6 +79,26 @@ const getInvoice = async (req, res, next) => {
     }
 }
 
+const getStockDeliveryById = async (req, res, next) => {
+    try {
+        let stockDeliveryId = req.params.id
+        let jwtToken = req.cookies ?? ''
+        let data = await apiService.getStockDeliveryByIdService(stockDeliveryId, jwtToken)
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in getStockDelivery controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+
 module.exports = {
-    getQuoteCustomers, getQuoteSent, getAllInvoices, getInvoice
+    getQuoteCustomers, getQuoteSent, getAllInvoices, getInvoice, getStockDeliveryById
 }

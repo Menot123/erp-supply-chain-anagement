@@ -88,7 +88,7 @@ function Home() {
                         </div>
                     </div>
 
-                    <div onClick={() => handleRedirectRoute('D4', '/accounting')} className='col-4 app-item'>
+                    {/* <div onClick={() => handleRedirectRoute('D4', '/accounting')} className='col-4 app-item'>
                         <div className='wrap-img-app'>
                             <img className='img-element-app' src={ke_toan} alt='img-element-app' />
                         </div>
@@ -102,7 +102,7 @@ function Home() {
                                 <span className='description-app'><FormattedMessage id='homepage.item-accounting-des' /></span>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                     <div onClick={() => handleRedirectRoute('D5', '/manage-accounts')} className='col-4 app-item'>
                         <div className='wrap-img-app'>

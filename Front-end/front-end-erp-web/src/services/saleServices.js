@@ -101,6 +101,10 @@ const deleteQuotesSent = (listQuote) => {
     return axios.delete(`/sale/api/delete-quotes-sent`, { data: listQuote })
 }
 
+const deleteInvoices = (listInvoices) => {
+    return axios.delete(`/sale/api/delete-invoices`, { data: listInvoices })
+}
+
 const getCustomer = (customerId) => {
     return axios.get(`/customer/api/customer/${customerId}`)
 }
@@ -168,10 +172,19 @@ const getEmployeeById = (employeeId) => {
     return axios.get(`/account/api/get-employee?id=${employeeId}`)
 }
 
+const getSaleEmployees = (employeeId) => {
+    return axios.get(`/account/api/sale-employees`)
+}
+
+const createStockDelivery = (dataStockDelivery) => {
+    return axios.post(`/inventory/api/stockDeliverys`, dataStockDelivery)
+}
+
 export {
     getCustomers, getAllCodes, getComments, createAComment, editComment, deleteComment, getLatestQuoteCode,
     sendingQuoteToCustomer, postDataQuote, confirmQuote, getDataQuotePreview, postDataCancelQuote, postDataInvoice,
     getDataInvoicePreview, confirmInvoice, sendingInvoiceToCustomer, createPaidInvoice, getAllPaidInvoice, getAllQuotesSent,
     deleteQuotesSent, getCustomer, getQuotesSentAndCustomerInfo, getAllInvoice, getInvoice, getCustomerPagination,
-    postDataCustomer, deleteCustomer, updateCustomer, getInvoicePaid, getStatistic, getEmployeeById
+    postDataCustomer, deleteCustomer, updateCustomer, getInvoicePaid, getStatistic, getEmployeeById, getSaleEmployees,
+    createStockDelivery, deleteInvoices
 }

@@ -142,6 +142,7 @@ export const OpenInvoiceCreated = () => {
                 }
                 setIsCreateInvoice(true)
                 setDataQuote({ ...res?.DT, quoteId: res?.DT?.invoiceId, productList: JSON.parse(res?.DT?.productList), fullDataCustomer: res?.DT?.dataCustomer })
+                setOtherInfoQuote({ employeeId: res?.DT?.employeeId, deliveryDate: res?.DT?.deliveryDate })
                 setDateCreateInvoice(res?.DT?.createdDate)
                 setDataCustomerSelect({ label: res?.DT?.dataCustomer?.fullName, value: res?.DT?.dataCustomer?.customerId })
                 setExpirationDay(res?.DT?.expirationDay)
@@ -347,16 +348,12 @@ export const OpenInvoiceCreated = () => {
         }))
     };
 
-    const onChangeTab = (key) => {
-        console.log(key);
-    };
-
-
     const handleChangeInputQuote = (e, type, label) => {
         switch (type) {
             case 'customer':
             case 'currency':
             case 'paymentPolicy':
+            case 'policyAndCondition':
             case 'totalPrice':
             case 'productList':
                 if (type === 'customer') {
@@ -369,6 +366,15 @@ export const OpenInvoiceCreated = () => {
                 }
                 if (type === 'currency') {
                     setCurrency({ value: e, label: label })
+                }
+
+                if (type === 'policyAndCondition') {
+                    setPolicyAndCondition(e.target.value)
+                    setDataQuote((prevState) => ({
+                        ...prevState,
+                        [type]: e.target.value
+                    }))
+                    break;
                 }
 
                 setDataQuote((prevState) => ({
@@ -446,6 +452,7 @@ export const OpenInvoiceCreated = () => {
             // Create an voice
             if (type === "invoice") {
                 if (dateCreateInvoice) {
+                    console.log(">>> check data invoice before send: ", dataQuote);
                     let res = await postDataInvoice({ ...dataQuote, status: 'S0', dateCreateInvoice: dateCreateInvoice, invoiceId: dataQuote?.invoiceId })
                     if (res?.EC === 0) {
                         const newTabUrl = `/my/invoice/${dataQuote?.invoiceId}`;
@@ -726,7 +733,6 @@ export const OpenInvoiceCreated = () => {
                     </div>
                     <div className='wrap-info-products' >
                         <Tabs
-                            onChange={onChangeTab}
                             type="card"
                             items={
                                 [{
@@ -741,7 +747,7 @@ export const OpenInvoiceCreated = () => {
                                     {
                                         label: <FormattedMessage id="new_quote.other-info" />,
                                         key: 'tab-2',
-                                        children: <OtherInfo />,
+                                        children: <OtherInfo otherInfoQuote={otherInfoQuote} />,
                                     }
                                     :
                                     ""

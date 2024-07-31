@@ -13,7 +13,7 @@ import { validateData } from '../../../utils/functions'
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { QuotePDF } from './QuotePDF';
-import { getLatestQuoteCode, postDataQuote, postDataInvoice, confirmInvoice } from '../../../services/saleServices'
+import { getLatestQuoteCode, postDataQuote, postDataInvoice, confirmInvoice, getSaleEmployees, createStockDelivery } from '../../../services/saleServices'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { ModalCancelQuote } from '../Modal/ModalCancelQuote';
@@ -29,6 +29,7 @@ export const NewQuote = () => {
     const componentPDF = useRef(null)
     const intl = useIntl();
     const language = useSelector(state => state.language.value)
+    const userId = useSelector(state => state.user?.id)
     const email = useSelector(state => state.user.email)
 
     const defaultDataQuote = {
@@ -77,6 +78,8 @@ export const NewQuote = () => {
     const [isShowModalConfirmPaid, setIsShowModalConfirmPaid] = useState(false)
     const [isShowBannerPaid, setIsShowBannerPaid] = useState(false)
     const [isPaid, setIsPaid] = useState(false)
+    const [listSaleEmployeesSelect, setListSaleEmployeesSelect] = useState([])
+
 
     let defaultStep = {
         status1: 'process',
@@ -119,7 +122,28 @@ export const NewQuote = () => {
     }
 
     useEffect(() => {
+
+        const buildSelectSaleEmployee = (employeesList) => {
+            let res = []
+            if (employeesList && employeesList.length > 0) {
+                res = employeesList.map((item, index) => {
+                    return {
+                        label: item?.lastName + " " + item?.firstName,
+                        value: item?.id
+                    }
+                })
+            }
+            return res
+        }
+
+        const fetchDataSaleEmployees = async () => {
+            const res = await getSaleEmployees()
+            if (res?.EC === 0) {
+                setListSaleEmployeesSelect(buildSelectSaleEmployee(res?.DT))
+            }
+        }
         fetchLatestQuoteCode()
+        fetchDataSaleEmployees()
     }, [])
 
     const changeStep = (step) => {
@@ -407,7 +431,7 @@ export const NewQuote = () => {
             const arrValidateFieldsQuote = ['customer', 'expirationDay', 'currency', 'paymentPolicy']
             let check = validateData(arrValidateFieldsQuote, dataQuote)
             if (check && check.length === 0) {
-                let res = await postDataQuote({ ...dataQuote, status: 'S2' })
+                let res = await postDataQuote({ ...dataQuote, ...otherInfoQuote, status: 'S2' })
                 if (res?.EC === 0) {
                     changeStep(2)
                 } else {
@@ -419,12 +443,38 @@ export const NewQuote = () => {
         }
     }
 
+    const addDays = (dateString, daysToAdd) => {
+        // Chuyển đổi chuỗi ngày tháng thành đối tượng Date
+        const date = new Date(dateString);
+
+        // Thêm số ngày cần thêm
+        date.setDate(date.getDate() + daysToAdd);
+
+        // Định dạng lại ngày theo định dạng "YYYY-MM-DD"
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0, nên cần +1
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
+
     const handleConfirmInvoice = async () => {
         const arrValidateFieldsQuote = ['customer', 'paymentPolicy']
         let check = validateData(arrValidateFieldsQuote, dataQuote)
         if (check && check.length === 0 && dateCreateInvoice) {
             let res = await confirmInvoice({ ...dataQuote, dateCreateInvoice: dateCreateInvoice })
-            if (res.EC !== 0) {
+            let resStockDelivery = await createStockDelivery(
+                {
+                    customerId: dataQuote?.customer,
+                    warehouseId: "WH001",
+                    userId: otherInfoQuote?.employeeId ?? userId,
+                    scheduledDate: otherInfoQuote?.deliveryDate ?? addDays(dateCreateInvoice),
+                    note: dataQuote?.policyAndCondition,
+                    status: 'ready'
+                }
+            )
+            if (res.EC !== 0 || resStockDelivery?.EC !== 0) {
                 toast.error("Something wrong when confirm invoice, please try again later")
             } else {
                 setArrInvoiceCurrentStep(defaultCreateInvoiceStep2)
@@ -669,6 +719,8 @@ export const NewQuote = () => {
                                     children: <OtherInfo
                                         handleChangeEmployeeId={handleChangeEmployeeId}
                                         handleDateDelivery={handleDateDelivery}
+                                        listSaleEmployeesSelect={listSaleEmployeesSelect}
+                                        otherInfoQuote={otherInfoQuote}
                                     />,
                                 }]
                                     :

@@ -155,7 +155,26 @@ const updateCustomerService = async (customerId, dataUpdate) => {
     }
 }
 
+const createListCustomerService = async (customerList) => {
+    try {
+        let res = {}
+        if (customerList && customerList.length > 0) {
+            await db.Customer.bulkCreate(customerList)
+            res.EC = 0
+            res.EM = 'Create customers successfully'
+            res.DT = {}
+        } else {
+            res.EC = -1
+            res.EM = 'Create customers failed'
+            res.DT = {}
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
 module.exports = {
     getCustomerService, getCustomerByIdService, getCustomersPaginationService, createNewCustomerService,
-    deleteCustomerService, updateCustomerService
+    deleteCustomerService, updateCustomerService, createListCustomerService
 }

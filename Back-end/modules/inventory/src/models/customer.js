@@ -6,7 +6,6 @@ module.exports = (sequelize, DataTypes) => {
     class Customer extends Model {
         static associate(models) {
             ////
-            Customer.hasMany(models.StockDelivery, { foreignKey: 'customerId' })
         }
         static generateId() {
             // Logic to generate customerId based on type and group
@@ -49,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
         modelName: 'Customer',
         freezeTableName: true,
         hooks: {
-            beforeCreate: async(instance) => {
+            beforeCreate: async (instance) => {
                 instance.customerId = await Customer.getNextId();
             },
         }

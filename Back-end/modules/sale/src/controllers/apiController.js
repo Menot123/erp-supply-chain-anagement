@@ -505,6 +505,26 @@ const deleteQuotesSent = async (req, res, next) => {
     }
 }
 
+const deleteInvoices = async (req, res, next) => {
+    try {
+        const listInvoicesDelete = req?.body
+        const response = await apiService.deleteInvoicesService(listInvoicesDelete);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT,
+            total: response?.total
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in delete quotes sent controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+
 const getInvoicePaid = async (req, res, next) => {
     try {
         const invoiceId = req.params.invoiceId
@@ -549,5 +569,5 @@ module.exports = {
     handleDeleteCompany, updateConfirmQuote, getCustomers, getAllCodes, getComments, postComment,
     updateComment, deleteComment, getLatestQuote, sendingQuote, postQuote, updateStatusQuote, getDataPreviewQuote,
     postCancelQuote, postInvoice, getDataPreviewInvoice, confirmInvoice, sendingInvoice, paidInvoice, getInvoicesPaid,
-    getInvoices, getQuotesSent, deleteQuotesSent, getInvoicePaid, getStatistics
+    getInvoices, getQuotesSent, deleteQuotesSent, getInvoicePaid, getStatistics, deleteInvoices
 }

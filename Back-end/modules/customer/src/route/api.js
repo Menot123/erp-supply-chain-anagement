@@ -103,6 +103,9 @@ const initApiRoutes = (app) => {
     */
     router.put('/customer/:id', apiController.updateCustomer);
 
+    router.post('/customers', apiController.createListCustomer);
+
+
     return app.use("/api/", router)
 }
 
