@@ -10,13 +10,13 @@ import { translate } from '../../redux-toolkit/slices/langSlice'
 import { loginSuccess, changeLanguage } from '../../redux-toolkit/slices/userSlice'
 import { LANGUAGES } from '../../utils/constant'
 import { useEffect } from 'react'
-import { loginService } from '../../services/userServices'
+import { loginCustomer } from '../../services/customerService'
 import { useHistory } from 'react-router-dom'
 import img_right from '../../assets/img/background_login.png'
 import back_ground from '../../assets/img/background-light.svg'
 
 
-const SignIn = (props) => {
+const CustomerSignIn = (props) => {
 
     const intl = useIntl();
     const language = useSelector(state => state.language.value)
@@ -30,7 +30,7 @@ const SignIn = (props) => {
     }
 
     if (isLogin) {
-        history.push('/home')
+        history.push('/customer')
     }
 
     useEffect(() => {
@@ -90,17 +90,14 @@ const SignIn = (props) => {
                 return
             }
 
-            let res = await loginService({ email: username, password: password })
+            let res = await loginCustomer({ email: username, password: password })
             if (res.EC === 0) {
                 dispatch(loginSuccess({
                     email: username,
-                    firstName: res.DT?.firstName,
-                    lastName: res.DT?.lastName,
+                    lastName: res.DT?.fullName,
                     id: res.DT?.id,
-                    department: res?.DT?.department,
-                    avatar: res.DT?.avatar
                 }))
-                history.push('/home')
+                history.push('/customer')
             } else {
                 toast.error(<FormattedMessage id='login-form.toast-login-failed' />)
             }
@@ -134,7 +131,7 @@ const SignIn = (props) => {
                     </div>
 
                     {/* Login text */}
-                    <div className="login-text text-center"><FormattedMessage id="login-form.title" /></div>
+                    <div className="login-text text-center"><FormattedMessage id="customer-login-form.title" /></div>
 
                     {/* Username */}
                     <div className="form-group pe-5 ps-5">
@@ -205,4 +202,4 @@ const SignIn = (props) => {
     )
 }
 
-export default SignIn
+export default CustomerSignIn

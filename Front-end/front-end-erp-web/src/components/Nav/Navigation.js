@@ -27,13 +27,18 @@ import { openModalProfile } from '../../redux-toolkit/slices/userSlice'
 const Navigation = (props) => {
 
     const language = useSelector(state => state.language.value)
-    const userLogin = useSelector(state => state.user.isLogin)
-    const firstName = useSelector(state => state.user.firstName)
-    const lastName = useSelector(state => state.user.lastName)
-    const avatar = useSelector(state => state.user.avatar)
+    const userLogin = useSelector(state => state.user?.isLogin)
+    const firstName = useSelector(state => state.user?.firstName)
+    const lastName = useSelector(state => state.user?.lastName)
+    const avatar = useSelector(state => state.user?.avatar)
     const location = useLocation();
     const history = useHistory()
     const url = location.pathname;
+    let fullName = ""
+    const nameUser = useSelector(state => state.user.lastName)
+    if (url.startsWith(path.URL_CUSTOMER)) {
+        fullName = nameUser
+    }
     const dispatch = useDispatch()
     const [isShowMenuApp, setIsShowMenuApp] = useState(false)
     const [isShowMenuUser, setIsShowMenuUser] = useState(false)
@@ -58,6 +63,16 @@ const Navigation = (props) => {
         }
     }
 
+    const handleCustomerLogout = async () => {
+        let res = await logoutService()
+        if (res.EC !== 0) {
+            toast.error(res.EM)
+        } else {
+            dispatch(logOut())
+            localStorage.removeItem('persist:root')
+            history.push('/customer/login')
+        }
+    }
 
     useEffect(() => {
         dispatch(translate(language))
@@ -109,9 +124,11 @@ const Navigation = (props) => {
                 <nav className="navbar navbar-expand-lg navbar-light navigation-home">
                     <div className="container-fluid">
                         <div className="content-left d-flex align-items-center">
-                            <div ref={dropdownMenuRef} onClick={() => handleShowMenuApp(isShowMenuApp)} className='icon-header'>
-                                <HiSquares2X2 />
-                            </div>
+                            {!url.startsWith(path.URL_CUSTOMER) &&
+                                <div ref={dropdownMenuRef} onClick={() => handleShowMenuApp(isShowMenuApp)} className='icon-header'>
+                                    <HiSquares2X2 />
+                                </div>
+                            }
 
                             {url.includes(path.MANAGE_EMPLOYEES) ?
                                 <>
@@ -127,6 +144,18 @@ const Navigation = (props) => {
                                 :
                                 ''
                             }
+
+                            {url.startsWith(path.URL_CUSTOMER) ?
+                                <>
+                                    <div className='logo-sales-page'>
+                                        <img className='img-logo-sales-app' src={logo_sales} alt='img-logo-sale' />
+                                    </div>
+                                    <NavLink className="navbar-brand ms-1 current-app" to='/customer'><FormattedMessage id='new_quote.customer' /></NavLink>
+                                </>
+                                :
+                                ''
+                            }
+
                             {url.includes(path.MANAGE_INVENTORY) ?
                                 <>
                                     <div className='logo-inventory-page ms-4'>
@@ -192,28 +221,43 @@ const Navigation = (props) => {
                         <div className="content-right d-flex align-items-center">
                             {userLogin ?
                                 <>
-                                    <div className='icon-notifications'>
-                                        <FaBell />
-                                    </div>
-                                    <div ref={dropdownUserRef} onClick={() => handleShowMenuUser(isShowMenuUser)} className='d-flex user-profile align-items-center'>
-                                        <div className='avatar-user '>
-                                            <img className='img-avatar' src={avatar ? avatar : ''} alt='avatar User' />
-                                        </div>
-                                        <span className='name-user'>{language === LANGUAGES.VI ? (lastName === 'NULL' ? '' : lastName) + ' ' + firstName
-                                            :
-                                            firstName + ' ' + (lastName === 'NULL' ? '' : lastName)
-                                        }</span>
+                                    {url.includes(path.URL_CUSTOMER) ?
+                                        <>
+                                            <span>Xin chào,</span>
+                                            <div ref={dropdownUserRef} onClick={() => handleShowMenuUser(isShowMenuUser)} className='d-flex customer-profile align-items-center'>
+                                                <span className='name-user'>{fullName}</span>
 
-                                    </div>
+                                            </div>
+                                        </>
+                                        :
+                                        <>
+                                            <div className='icon-notifications'>
+                                                <FaBell />
+                                            </div>
+                                            <div ref={dropdownUserRef} onClick={() => handleShowMenuUser(isShowMenuUser)} className='d-flex user-profile align-items-center'>
+                                                <div className='avatar-user '>
+                                                    <img className='img-avatar' src={avatar ? avatar : ''} alt='avatar User' />
+                                                </div>
+                                                <span className='name-user'>{language === LANGUAGES.VI ? (lastName === 'NULL' ? '' : lastName) + ' ' + firstName
+                                                    :
+                                                    firstName + ' ' + (lastName === 'NULL' ? '' : lastName)
+                                                }</span>
+
+                                            </div>
+                                        </>
+                                    }
                                 </>
                                 :
                                 <NavLink className="navbar-brand ms-3 current-app text-login" to='/login'><FormattedMessage id='navigation.button-login' /></NavLink>
                             }
 
-                            <div className='languages'>
-                                <span onClick={() => handleChangeLanguage('vi')} className={language === LANGUAGES.VI ? 'language-vi active' : 'language-vi'}>VN</span>
-                                <span onClick={() => handleChangeLanguage('en')} className={language === LANGUAGES.EN ? 'language-en active' : 'language-en'}>EN</span>
-                            </div>
+                            {!url.includes(path.URL_CUSTOMER) &&
+                                <div className='languages'>
+                                    <span onClick={() => handleChangeLanguage('vi')} className={language === LANGUAGES.VI ? 'language-vi active' : 'language-vi'}>VN</span>
+                                    <span onClick={() => handleChangeLanguage('en')} className={language === LANGUAGES.EN ? 'language-en active' : 'language-en'}>EN</span>
+                                </div>
+
+                            }
                         </div>
 
                     </div>
@@ -229,10 +273,19 @@ const Navigation = (props) => {
                 </div>
 
                 <div className={isShowMenuUser === false ? 'drop-down-user-apps d-none' : 'drop-down-user-apps'}>
-                    <span onClick={() => handleShowModalProfile()} className='item-app-user'><FormattedMessage id='navigation.dropdown-user-personal' /></span>
-                    {/* <span onClick={() => handleShowResetPasswordModal()} className='item-app-user'>Đổi mật khẩu</span> */}
-                    <ResetPassword />
-                    <span onClick={() => handleLogout()} className='item-app-user'><FormattedMessage id='navigation.dropdown-user-logout' /></span>
+                    {!url.includes(path.URL_CUSTOMER) ?
+                        <>
+                            <span onClick={() => handleShowModalProfile()} className='item-app-user'><FormattedMessage id='navigation.dropdown-user-personal' /></span>
+                            {/* <span onClick={() => handleShowResetPasswordModal()} className='item-app-user'>Đổi mật khẩu</span> */}
+                            <ResetPassword />
+                            <span onClick={() => handleLogout()} className='item-app-user'><FormattedMessage id='navigation.dropdown-user-logout' /></span>
+                        </>
+                        :
+                        <span onClick={() => handleCustomerLogout()} className='item-app-user'><FormattedMessage id='navigation.dropdown-user-logout' /></span>
+
+
+                    }
+
                 </div>
 
                 <div className={isShowMenuOrder === false ? 'drop-down-menu-order d-none' : 'drop-down-menu-order'}>

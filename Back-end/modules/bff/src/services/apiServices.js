@@ -141,9 +141,16 @@ const getInvoiceService = async (invoiceId, jwtToken) => {
                     'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
                 }
             })
+            const dataEmployee = await axios.get(`http://localhost:8000/account/api/get-employee?id=${response?.data?.DT?.employeeId}`, {
+                headers: {
+                    'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
+                }
+            })
+
             const responseData = {
                 ...response?.data?.DT,
-                dataCustomer: dataCustomer?.data?.DT
+                dataCustomer: dataCustomer?.data?.DT,
+                dataEmployee: dataEmployee?.data?.DT?.lastName + " " + dataEmployee?.data?.DT?.firstName
             }
             res.EC = 0
             res.EM = 'Get quote sent and info customer successfully'
@@ -195,7 +202,55 @@ const getStockDeliveryByIdService = async (stockDeliveryId, jwtToken) => {
     }
 }
 
+const getAllInvoicesByCustomerService = async (jwtToken, page, pageSize, customerId) => {
+    try {
+        let res = {}
+        // let updatedArray = []
+        const responseInvoices = await axios.get(`http://localhost:8000/sale/api/invoices`, {
+            headers: {
+                'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
+            },
+            params: {
+                page: page,
+                pageSize: pageSize,
+                customerId: customerId
+            }
+
+        });
+
+        // const responseInvoicesPaid = await axios.get(`http://localhost:8000/sale/api/invoices-paid`);
+        if (responseInvoices && responseInvoices?.data?.DT) {
+            const detailCustomerInvoice = await getInfoCustomerById(customerId);
+
+            // const detailCustomerInvoicePaid = responseInvoicesPaid?.data?.DT.map(item => getInfoCustomerById(item?.customerId));
+
+            let updatedArrayInvoice = responseInvoices?.data?.DT.map((item, index) => ({
+                ...item,
+                dataCustomer: detailCustomerInvoice?.DT,
+            }));
+
+            // let updatedArrayInvoicePaid = responseInvoicesPaid?.data?.DT.map((item, index) => ({
+            //     ...item,
+            //     dataCustomer: details[index]?.DT,
+            // }));
+
+            // updatedArray = [...updatedArrayInvoice, ...updatedArrayInvoicePaid]
+            res.EC = 0
+            res.EM = 'Get all invoices of the customer successfully'
+            res.DT = updatedArrayInvoice
+            res.total = responseInvoices?.data?.total
+        } else {
+            res.EC = -1
+            res.EM = 'Get all invoices of the customer failed'
+            res.DT = {}
+        }
+        return res;
+    } catch (e) {
+        console.log('>>> error when get all invoices and customer info: ', e)
+    }
+}
+
 module.exports = {
     getQuoteCustomersService, getQuoteSentService, getAllInvoicesService, getInvoiceService,
-    getStockDeliveryByIdService
+    getStockDeliveryByIdService, getAllInvoicesByCustomerService
 }

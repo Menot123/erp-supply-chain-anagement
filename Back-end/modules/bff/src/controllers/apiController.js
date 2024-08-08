@@ -98,7 +98,31 @@ const getStockDeliveryById = async (req, res, next) => {
     }
 }
 
+const getAllInvoicesByCustomer = async (req, res, next) => {
+    try {
+        const customerId = req.params?.id
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 10;
+        let jwtToken = req.cookies ?? ''
+
+        const response = await apiService.getAllInvoicesByCustomerService(jwtToken, page, pageSize, customerId)
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT,
+            total: response?.total
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in get all invoices of customer by bff',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 
 module.exports = {
-    getQuoteCustomers, getQuoteSent, getAllInvoices, getInvoice, getStockDeliveryById
+    getQuoteCustomers, getQuoteSent, getAllInvoices, getInvoice, getStockDeliveryById,
+    getAllInvoicesByCustomer
 }

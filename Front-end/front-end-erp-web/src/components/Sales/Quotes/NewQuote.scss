@@ -196,9 +196,23 @@
     .ant-select-disabled {
         .ant-select-selection-item {
             color: #000 !important;
-            /* Màu đỏ cho các mục bị vô hiệu hóa */
         }
 
+    }
+
+    .ant-picker-disabled {
+        .ant-picker-input {
+            color: #000 !important;
+
+            #select-date-createInvoice,
+            #select-date-delivery {
+                color: #000 !important;
+            }
+        }
+    }
+
+    .ant-input-disabled {
+        color: #000 !important;
     }
 
 }

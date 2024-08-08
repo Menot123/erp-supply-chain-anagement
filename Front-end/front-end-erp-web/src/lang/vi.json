@@ -25,6 +25,7 @@
     "navigation.dropdown-user-logout": "Đăng xuất",
     "navigation.button-login": "Đăng nhập",
     "login-form.title": "Đăng nhập vào tài khoản của bạn",
+    "customer-login-form.title": "Đăng nhập dành cho khách hàng",
     "login-form.email-field": "Địa chỉ email",
     "login-form.email-field-placeholder": "Nhập vào email của bạn",
     "login-form.password-field": "Mật khẩu",

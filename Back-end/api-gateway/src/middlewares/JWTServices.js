@@ -13,7 +13,7 @@ const verifyToken = (token) => {
     return dataDecoded;
 }
 
-const urlSalePermission = ['/sale', '/inventory', '/customer']
+const urlSalePermission = ['/sale', '/inventory', '/customer', "/account"]
 
 const checkPermissionAccess = (department, currentUrl, urlPermissions) => {
     switch (department) {

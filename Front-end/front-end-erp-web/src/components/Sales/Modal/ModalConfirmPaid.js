@@ -3,7 +3,7 @@ import './ModalConfirmPaidInvoice.scss'
 import Modal from 'react-bootstrap/Modal';
 import { Select, Input, DatePicker, Popconfirm } from "antd";
 import { toast } from 'react-toastify';
-import { createPaidInvoice, confirmInvoice } from '../../../services/saleServices'
+import { createPaidInvoice, confirmInvoice, createVNPayPayment } from '../../../services/saleServices'
 
 
 export const ModalConfirmPaid = (props) => {
@@ -22,12 +22,15 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
     const [paymentMethod, setPaymentMethod] = useState('')
     const [contentTransfer, setContentTransfer] = useState('')
     const [isCreatingPaidInvoice, setIsCreatingPaidInvoice] = useState(false)
+
+
+
     useEffect(() => {
         if (props?.dataQuote) {
             Promise.all([
                 setTotal(props?.dataQuote?.totalPrice),
                 // setTitleSendQuote(props?.fullDataCustomer?.fullName + ' - Hóa đơn (Mã INV' + props?.dataQuote?.quoteId + ')'),
-                setContentTransfer(`INV${props?.dataQuote?.quoteId}`)
+                setContentTransfer(`INV${props?.dataQuote?.quoteId}`),
             ])
         }
     }, [props?.dataQuote])
@@ -42,29 +45,10 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
 
     const handleConfirmPaid = async () => {
         if (datePaid && total && paymentMethod && contentTransfer) {
-            if (props?.close && props?.showBannerPaid) {
-                setIsCreatingPaidInvoice(true)
-                let resCreatePaid = await createPaidInvoice({
-                    invoiceId: props?.dataQuote?.quoteId,
-                    datePaid,
-                    total,
-                    paymentMethod,
-                    contentTransfer
-                })
-                let resUpdateStatus = await confirmInvoice({ ...props?.dataQuote, status: 'S2' })
+            let resCreatePayment = await createVNPayPayment(props?.dataQuote?.quoteId, total)
 
-                if (resCreatePaid?.EC === 0 && resUpdateStatus?.EC === 0) {
-                    setTimeout(() => {
-                        props?.close()
-                        props?.hiddenBtnConfirmPayment()
-                        setIsCreatingPaidInvoice(false)
-                        toast.success("Thanh toán hóa đơn " + props?.dataQuote?.quoteId + " thành công!")
-                        props?.showBannerPaid(true)
-                    }, 2000);
-                } else {
-                    setIsCreatingPaidInvoice(false)
-                    toast.error("Có lỗi xảy ra khi thanh toán hóa đơn, vui lòng thử lại sau!")
-                }
+            if (resCreatePayment && resCreatePayment?.paymentUrl) {
+                window.location.href = resCreatePayment.paymentUrl;
             }
         } else {
             toast.warning("Vui lòng điền đầy đủ thông tin trước khi ghi nhận thanh toán")

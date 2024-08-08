@@ -2,6 +2,7 @@ import db from '../models/index'
 const { Op } = require('sequelize');
 import { sendEmail, sendInvoice } from './mailService';
 const axios = require('axios');
+import { checkProductInventory } from './checkProductInventory'
 
 const createCompanyDataService = async (dataCompany) => {
     try {
@@ -801,6 +802,14 @@ const confirmInvoiceService = async (dataInvoice) => {
                     return res
                 }
             });
+            const result = await checkProductInventory(dataInvoice)
+            if (result && result.length > 0) {
+                const productNames = result.map(item => item.productName).join(', ');
+                res.EC = -3
+                res.EM = `Các sản phẩm không còn đủ trong kho: ${productNames}`
+                res.DT = ''
+                return res
+            }
             let invoice = await db.Invoice.findOne({
                 where: {
                     invoiceId: dataInvoice?.quoteId
@@ -896,19 +905,35 @@ const getInvoicesPaidService = async () => {
     }
 }
 
-const getInvoicesService = async (page, pageSize) => {
+const getInvoicesService = async (page, pageSize, customerId) => {
     try {
         let res = {}
-        let invoices = await db.Invoice.findAndCountAll({
-            where: {
-                [Op.not]: { status: 'deleted' }
-            },
-            order: [
-                ['createdAt', 'DESC']
-            ],
-            limit: pageSize,
-            offset: (page - 1) * pageSize
-        });
+        let invoices = []
+        if (customerId) {
+            invoices = await db.Invoice.findAndCountAll({
+                where: {
+                    [Op.not]: { status: 'deleted' },
+                    customerId: customerId
+                },
+                order: [
+                    ['createdAt', 'DESC']
+                ],
+                limit: pageSize,
+                offset: (page - 1) * pageSize
+            });
+        } else {
+            invoices = await db.Invoice.findAndCountAll({
+                where: {
+                    [Op.not]: { status: 'deleted' }
+                },
+                order: [
+                    ['createdAt', 'DESC']
+                ],
+                limit: pageSize,
+                offset: (page - 1) * pageSize
+            });
+
+        }
 
         if (invoices) {
             res.EC = 0
@@ -998,6 +1023,7 @@ const deleteInvoicesService = async (listInvoices) => {
                     invoiceId: listInvoices
                 }
             });
+
             res.EC = 0
             res.EM = 'delete invoices successfully'
             res.DT = ''
@@ -1068,6 +1094,43 @@ const getStatisticsService = async (startDate, endDate) => {
     }
 };
 
+const updateStatusInvoiceService = async (invoiceId, status) => {
+    try {
+        let res = {};
+        if (!invoiceId || !status) {
+            res.EM = 'Missing parameters for update invoice status';
+            res.EC = 1;
+            res.DT = '';
+
+        } else {
+            let invoice = await db.Invoice.findOne({
+                where: {
+                    invoiceId: invoiceId,
+                }
+            });
+            if (invoice) {
+                invoice.update({ status: status })
+                res.EC = 0;
+                res.EM = 'Update status of invoice successfully';
+                res.DT = invoice;
+            } else {
+                res.EM = 'Update status of invoice failed';
+                res.EC = 2;
+                res.DT = '';
+            }
+        }
+
+        return res;
+    } catch (e) {
+        console.log('>>> error: ', e);
+        return {
+            EC: 1,
+            EM: 'An error update status of invoice',
+            DT: ''
+        };
+    }
+};
+
 module.exports = {
     createCompanyDataService, createBranchCompanyDataService, getBranchesService,
     getBranchService, getDetailCompanyService, handleDeleteCompanyService, updateConfirmQuoteService,
@@ -1075,5 +1138,6 @@ module.exports = {
     deleteCommentService, getLatestQuoteService, sendingQuoteService, postQuoteService, updateStatusQuoteService,
     getDataPreviewQuoteService, postCancelQuoteService, sendEmailCancelQuote, postInvoiceService, getDataPreviewInvoiceService,
     confirmInvoiceService, sendingInvoiceService, paidInvoiceService, getInvoicesPaidService, getInvoicesService,
-    getQuotesSentService, listQuoteDeleteService, getInvoicePaidService, getStatisticsService, deleteInvoicesService
+    getQuotesSentService, listQuoteDeleteService, getInvoicePaidService, getStatisticsService, deleteInvoicesService,
+    updateStatusInvoiceService
 }

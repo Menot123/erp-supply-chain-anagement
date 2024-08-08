@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import './NewQuote.scss'
 import { useHistory } from 'react-router-dom'
-import { Steps, Select, Tooltip, DatePicker, Tabs, Descriptions } from "antd";
+import { Steps, Select, Tooltip, DatePicker, Tabs } from "antd";
 import { useState } from 'react'
 import { TableProducts } from './TableProducts';
 import { getAllProducts } from '../../../services/inventoryServices'
@@ -14,8 +14,8 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { QuotePDF } from './QuotePDF';
 import {
-    getLatestQuoteCode, postDataQuote, postDataInvoice, confirmInvoice, getSaleEmployees, createStockDelivery,
-    createStockDeliveryItems
+    getLatestQuoteCode, postDataQuote, postDataInvoice, confirmInvoice, createStockDelivery,
+    createStockDeliveryItems, createPaidInvoice
 } from '../../../services/saleServices'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
@@ -24,15 +24,23 @@ import { ModalSendInvoiceToEmail } from '../Modal/ModalSendInvoiceToEmail';
 import { InvoicePDF } from './InvoicePDF';
 import { ModalConfirmPaid } from '../Modal/ModalConfirmPaid';
 import { useMemo, useCallback } from 'react';
+import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
+import { getInvoice } from '../../../services/saleServices'
+import dayjs from 'dayjs';
+import eventEmitter from '../../../services/emitter'
 
-export const NewQuote = () => {
 
+export const CustomerOpenInvoiceCreated = () => {
+
+    const dispatch = useDispatch()
     const history = useHistory()
+    const { id } = useParams()
+
     const componentPDF = useRef(null)
     const intl = useIntl();
     const language = useSelector(state => state.language.value)
-    const userId = useSelector(state => state.user?.id)
     const email = useSelector(state => state.user.email)
+    const userId = useSelector(state => state.user?.id)
 
     const defaultDataQuote = {
         quoteId: '',
@@ -80,8 +88,37 @@ export const NewQuote = () => {
     const [isShowModalConfirmPaid, setIsShowModalConfirmPaid] = useState(false)
     const [isShowBannerPaid, setIsShowBannerPaid] = useState(false)
     const [isPaid, setIsPaid] = useState(false)
-    const [listSaleEmployeesSelect, setListSaleEmployeesSelect] = useState([])
 
+    const [dataCustomerSelect, setDataCustomerSelect] = useState(null)
+    const [expirationDay, setExpirationDay] = useState(null)
+    const [currency, setCurrency] = useState(null)
+    const [paymentPolicy, setPaymentPolicy] = useState(null)
+    const [policyAndCondition, setPolicyAndCondition] = useState(null)
+    const [productAdded, setProductAdded] = useState(null)
+    const [isLoadingData, setIsLoadingData] = useState(false)
+    let isMounted = false;
+
+
+
+    useEffect(() => {
+        isMounted = true;
+        return () => {
+            isMounted = false;  // Clean up function sets isMounted to false
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleCustomEvent = (message) => {
+            console.log("handleCustomEvent: ", message);
+        };
+
+        eventEmitter.on('customEvent', handleCustomEvent);
+
+        // Cleanup function để tránh lắng nghe sự kiện nhiều lần
+        return () => {
+            eventEmitter.off('customEvent', handleCustomEvent);
+        };
+    }, []);
 
     let defaultStep = {
         status1: 'process',
@@ -107,6 +144,65 @@ export const NewQuote = () => {
     const [arrCurrentStep, setArrCurrentStep] = useState(defaultStep)
     const [arrCurrentInvoiceStep, setArrInvoiceCurrentStep] = useState(defaultCreateInvoiceStep1)
 
+    useEffect(() => {
+
+        const fetchDataQuotePreview = async () => {
+            setIsLoadingData(true)
+            const res = await getInvoice(id)
+            if (res.EC === 0) {
+                setIsCreateInvoice(true)
+                if (res?.DT && res?.DT?.status === 'S0') {
+                    setCurrentStepInvoice(0)
+                    changeStep(1)
+                } else if (res?.DT && res?.DT?.status === 'S1') {
+                    setArrInvoiceCurrentStep(defaultCreateInvoiceStep2)
+                    setCurrentStepInvoice(1)
+                } else {
+                    setCurrentStepInvoice(1)
+                    setArrInvoiceCurrentStep(defaultCreateInvoiceStep2)
+                    setIsShowBannerPaid(true)
+                    setIsPaid(true)
+                }
+                setIsCreateInvoice(true)
+                setDataQuote({ ...res?.DT, quoteId: res?.DT?.invoiceId, productList: JSON.parse(res?.DT?.productList), fullDataCustomer: res?.DT?.dataCustomer })
+                setOtherInfoQuote({ employeeId: res?.DT?.employeeId, deliveryDate: res?.DT?.deliveryDate })
+                setDateCreateInvoice(res?.DT?.createdDate)
+                setDataCustomerSelect({ label: res?.DT?.dataCustomer?.fullName, value: res?.DT?.dataCustomer?.customerId })
+                setExpirationDay(res?.DT?.expirationDay)
+                setCurrency({ value: res?.DT?.currency, label: res?.DT?.dataCurrency?.valueVi })
+                setPaymentPolicy({ label: res?.DT?.invoicePaymentPolicy?.valueVi, value: res?.DT?.paymentPolicy })
+                setPolicyAndCondition(res?.DT?.policyAndCondition)
+                setProductAdded(JSON.parse(res?.DT?.productList))
+                // let customer = res?.DT?.dataCustomer?.fullName
+                // customer = customer.split(' ')
+                // if (customer && customer.length > 0) {
+                //     setNameCustomer(customer[customer.length - 1])
+                // }
+                // setDataPreview({ ...res?.DT, tax: JSON.parse(res?.DT?.tax), productList: JSON.parse(res?.DT?.productList) })
+                buildDataTableProduct(JSON.parse(res?.DT?.productList))
+            }
+            setIsLoadingData(false)
+        }
+
+        const buildDataTableProduct = (listProduct) => {
+            let dataProducts = []
+            if (listProduct.length > 0) {
+                listProduct.map((product, index) => {
+                    return dataProducts.push({
+                        key: index,
+                        product: product?.name,
+                        quantity: product?.quantity,
+                        price: Number(product?.price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
+                        tax: intl.formatMessage({ id: "table-preview-tax" }) + " " + product?.tax?.label,
+                        total: product?.priceBeforeTax.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
+                    })
+                })
+            }
+        }
+
+        fetchDataQuotePreview()
+    }, [id, intl])
+
     const fetchLatestQuoteCode = async () => {
         let res = await getLatestQuoteCode()
         if (res?.EC === 0) {
@@ -120,34 +216,9 @@ export const NewQuote = () => {
                 ...prevState,
                 quoteId: currentId
             }))
-            return currentId
         }
     }
 
-    useEffect(() => {
-
-        const buildSelectSaleEmployee = (employeesList) => {
-            let res = []
-            if (employeesList && employeesList.length > 0) {
-                res = employeesList.map((item, index) => {
-                    return {
-                        label: item?.lastName + " " + item?.firstName,
-                        value: item?.id
-                    }
-                })
-            }
-            return res
-        }
-
-        const fetchDataSaleEmployees = async () => {
-            const res = await getSaleEmployees()
-            if (res?.EC === 0) {
-                setListSaleEmployeesSelect(buildSelectSaleEmployee(res?.DT))
-            }
-        }
-        fetchLatestQuoteCode()
-        fetchDataSaleEmployees()
-    }, [])
 
     const changeStep = (step) => {
         if (step === 1) {
@@ -157,6 +228,7 @@ export const NewQuote = () => {
                 status2: 'process',
                 status3: 'wait',
                 status4: 'wait',
+
             })
         } else if (step === 2) {
             setCurrentStepQuote(step)
@@ -178,7 +250,7 @@ export const NewQuote = () => {
     }
 
     const getCustomerById = (customerId) => {
-        const customer = customerList.find((customer) => customer?.id === customerId);
+        const customer = customerList.find((customer) => customer.customerId === customerId);
         return customer;
     }
 
@@ -186,7 +258,7 @@ export const NewQuote = () => {
         let customersDataBuild = listCustomer.map((item, index) => {
             return (
                 {
-                    value: item.id,
+                    value: item.customerId,
                     label: item.fullName
                 }
             )
@@ -292,18 +364,19 @@ export const NewQuote = () => {
     }
 
     const onChangeDatePicker = (date, dateString) => {
+        setExpirationDay(dateString)
         setDataQuote((prevState) => ({
             ...prevState,
             expirationDay: dateString
         }))
     };
 
-
     const handleChangeInputQuote = (e, type, label) => {
         switch (type) {
             case 'customer':
             case 'currency':
             case 'paymentPolicy':
+            case 'policyAndCondition':
             case 'totalPrice':
             case 'productList':
                 if (type === 'customer') {
@@ -312,13 +385,28 @@ export const NewQuote = () => {
                 }
                 if (type === 'paymentPolicy') {
                     setPaymentPolicyToQuote(label.label)
+                    setPaymentPolicy({ value: e, label: label.label })
                 }
+                if (type === 'currency') {
+                    setCurrency({ value: e, label: label })
+                }
+
+                if (type === 'policyAndCondition') {
+                    setPolicyAndCondition(e.target.value)
+                    setDataQuote((prevState) => ({
+                        ...prevState,
+                        [type]: e.target.value
+                    }))
+                    break;
+                }
+
                 setDataQuote((prevState) => ({
                     ...prevState,
                     [type]: e
                 }))
                 break;
             default:
+
                 setDataQuote((prevState) => ({
                     ...prevState,
                     [type]: e.target.value
@@ -327,19 +415,6 @@ export const NewQuote = () => {
         }
     }
 
-    const handleChangeEmployeeId = (e) => {
-        setOtherInfoQuote((prevState) => ({
-            ...prevState,
-            employeeId: e
-        }))
-    }
-
-    const handleDateDelivery = (date, dateString) => {
-        setOtherInfoQuote((prevState) => ({
-            ...prevState,
-            deliveryDate: dateString
-        }))
-    }
 
     const handleGeneratePdf = async (type) => {
         const quote = componentPDF.current
@@ -383,7 +458,7 @@ export const NewQuote = () => {
     }
 
     const handleSendQuoteToEmail = () => {
-        const arrValidateFieldsQuote = ['customer', 'expirationDay', 'currency', 'paymentPolicy']
+        const arrValidateFieldsQuote = ['customerId', 'expirationDay', 'currency', 'paymentPolicy']
         let check = validateData(arrValidateFieldsQuote, dataQuote)
         if (check && check.length === 0) {
             setDataSendQuotePDF(dataQuote)
@@ -394,15 +469,15 @@ export const NewQuote = () => {
     }
 
     const handlePushDataQuotePreview = async (type) => {
-        const arrValidateFieldsQuote = isCreateInvoice ? ['customer', 'currency', 'paymentPolicy'] : ['customer', 'expirationDay', 'currency', 'paymentPolicy']
+        const arrValidateFieldsQuote = ['customerId', 'createdDate', 'paymentPolicy']
         let check = validateData(arrValidateFieldsQuote, dataQuote)
         if (check && check.length === 0) {
             // Create an voice
             if (type === "invoice") {
                 if (dateCreateInvoice) {
-                    let res = await postDataInvoice({ ...dataQuote, status: 'S0', dateCreateInvoice: dateCreateInvoice, invoiceId: dataQuote?.quoteId, ...otherInfoQuote })
+                    let res = await postDataInvoice({ ...dataQuote, status: 'S0', dateCreateInvoice: dateCreateInvoice, invoiceId: dataQuote?.invoiceId })
                     if (res?.EC === 0) {
-                        const newTabUrl = `/my/invoice/${dataQuote?.quoteId}`;
+                        const newTabUrl = `/my/invoice/${dataQuote?.invoiceId}`;
                         window.open(newTabUrl, '_blank');
                     } else {
                         toast.error(<FormattedMessage id='new_quote.preview-toast-error' />)
@@ -411,14 +486,9 @@ export const NewQuote = () => {
                     toast.warning(<FormattedMessage id="new_quote.preview-toast-empty-field" />)
                 }
             } else {
-                let checkNewCurrentId = await fetchLatestQuoteCode()
-                let newQuoteIdRealTime = dataQuote?.quoteId
-                if (checkNewCurrentId !== dataQuote?.quoteId) {
-                    newQuoteIdRealTime = checkNewCurrentId
-                }
-                let res = await postDataQuote({ ...dataQuote, quoteId: newQuoteIdRealTime, status: 'S0', dateCreateInvoice: dateCreateInvoice, ...otherInfoQuote })
+                let res = await postDataQuote({ ...dataQuote, status: 'S0', dateCreateInvoice: dateCreateInvoice })
                 if (res?.EC === 0) {
-                    const newTabUrl = `/my/orders/${checkNewCurrentId}`;
+                    const newTabUrl = `/my/orders/${dataQuote?.quoteId}`;
                     window.open(newTabUrl, '_blank');
                 } else {
                     toast.error(<FormattedMessage id='new_quote.preview-toast-error' />)
@@ -431,24 +501,6 @@ export const NewQuote = () => {
 
     const handleClearDataQuote = () => {
         setDataSendQuotePDF([])
-    }
-
-    const handleConfirmQuote = async () => {
-
-        if (dataQuote && dataQuote?.quoteId) {
-            const arrValidateFieldsQuote = ['customer', 'expirationDay', 'currency', 'paymentPolicy']
-            let check = validateData(arrValidateFieldsQuote, dataQuote)
-            if (check && check.length === 0) {
-                let res = await postDataQuote({ ...dataQuote, ...otherInfoQuote, status: 'S2' })
-                if (res?.EC === 0) {
-                    changeStep(2)
-                } else {
-                    toast.error(<FormattedMessage id='new_quote.preview-toast-error' />)
-                }
-            } else {
-                toast.warning(<FormattedMessage id="new_quote.confirm-toast-empty-field" />)
-            }
-        }
     }
 
     const addDays = (dateString, daysToAdd) => {
@@ -506,7 +558,6 @@ export const NewQuote = () => {
         } else {
             toast.warning(<FormattedMessage id="new_quote.confirm-toast-empty-field" />)
         }
-
     }
 
     const setTaxAndPriceBeforeTax = useCallback((type, value) => {
@@ -535,45 +586,13 @@ export const NewQuote = () => {
         setDateCreateInvoice(dateString)
     };
 
-    const handleSendInvoice = () => {
-        const arrValidateFieldsInvoice = ['customer', 'expirationDay', 'paymentPolicy']
-        let check = validateData(arrValidateFieldsInvoice, dataQuote)
-        if (check && check.length === 0) {
-            setDataSendQuotePDF(dataQuote)
-            setIsShowModalSendInvoice(true)
-        } else {
-            toast.warning(<FormattedMessage id="new_quote.toast-empty-field" />)
-        }
-    }
 
     return (
         <div className='wrapper-create-quote'>
-            <div className='header-create-quote'>
-                <div className='btn-actions'>
-                    <button onClick={() => handleCreateNewDepartment()} className='ms-1 btn btn-outline-secondary btn-create-quote'><FormattedMessage id="btn-new-quote" /></button>
-                </div>
-                <div className='wrapper-text-header'>
-                    <Tooltip placement="top" title='Back to "Báo giá"'>
-                        <span onClick={backToQuote} className='title-quote' ><FormattedMessage id="title-new-quote" /></span>
-                    </Tooltip>
-                    {/* <span onClick={backToQuote} className='title-quote' data-tooltip='Back to "Báo giá"'>Báo giá</span> */}
-                    <span className='title-create'>{currentStepInvoice === 1 ? "INV" + dataQuote?.quoteId : <FormattedMessage id="btn-new-quote" />}</span>
-                </div>
-            </div>
+
             <div className='wrapper-body-create-quote'>
                 <div className='actions-status'>
                     <div className='wrap-btn-actions'>
-                        {
-                            currentStepQuote === 3 || isCreateInvoice ? "" :
-                                <>
-                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCreateInvoice}><FormattedMessage id="btn-create-bill" /></button>}
-                                    {currentStepQuote !== 2 && <button className='btn btn-main' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
-                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
-                                    {currentStepQuote !== 2 && <button className='btn btn-gray' onClick={handleConfirmQuote}><FormattedMessage id="btn-confirm-quote" /></button>}
-                                    <button className='btn btn-gray' onClick={handlePushDataQuotePreview}><FormattedMessage id="btn-preview-quote" /></button>
-                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCancelQuote}><FormattedMessage id="btn-cancel-quote" /></button>}
-                                </>
-                        }
 
                         {
                             isCreateInvoice && currentStepInvoice === 0 ?
@@ -584,13 +603,15 @@ export const NewQuote = () => {
                                 </>
                                 :
                                 ""
-
                         }
                         {isCreateInvoice && currentStepInvoice === 1 ?
                             <>
-                                <button className='btn btn-main' onClick={handleSendInvoice}><FormattedMessage id="btn-send-invoice" /></button>
-                                {!isPaid && <button className='btn btn-main' onClick={() => setIsShowModalConfirmPaid(true)}><FormattedMessage id="btn-confirmed-payment" /></button>}
-                                <button className='btn btn-gray' onClick={() => handlePushDataQuotePreview("invoice")}><FormattedMessage id="btn-preview-quote" /></button>
+                                {!isPaid &&
+                                    <>
+                                        <button className='btn btn-main' onClick={() => setIsShowModalConfirmPaid(true)}><FormattedMessage id="btn-confirmed-payment" /></button>
+                                        <button className='btn btn-gray' onClick={() => handlePushDataQuotePreview("invoice")}><FormattedMessage id="btn-preview-quote" /></button>
+                                    </>
+                                }
                             </>
                             :
                             ""
@@ -632,9 +653,9 @@ export const NewQuote = () => {
                     }
                     {isCreateInvoice ? <span style={{ fontWeight: "500" }}><FormattedMessage id="new_quote.create-invoice-title" /></span> : ""}
                     <h3>{isCreateInvoice ?
-                        (currentStepInvoice === 1 ? "INV" + dataQuote?.quoteId : <FormattedMessage id="new_quote.create-invoice-draft" />)
+                        (currentStepInvoice === 1 ? "INV" + id : <FormattedMessage id="new_quote.create-invoice-draft" />)
                         :
-                        (dataQuote?.quoteId ? `Báo giá - S${dataQuote?.quoteId}` : <FormattedMessage id="btn-new-quote" />)}</h3>
+                        (id ? `Báo giá - S${id}` : <FormattedMessage id="btn-new-quote" />)}</h3>
                     <div className='wrap-info-quote'>
                         <div className='content-left'>
                             <label htmlFor='select-customer'><FormattedMessage id="new_quote.customer" /></label>
@@ -649,7 +670,9 @@ export const NewQuote = () => {
                                 filterSort={(optionA, optionB) =>
                                     (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                 }
-                                options={customersSelect}
+                                options={dataCustomerSelect ? [dataCustomerSelect] : []}
+                                value={dataCustomerSelect}
+                                disabled
                                 onChange={(e, label) => handleChangeInputQuote(e, 'customer', label)}
                             />
 
@@ -668,6 +691,8 @@ export const NewQuote = () => {
                                         size='middle'
                                         id='select-date-createInvoice'
                                         key="create-invoice"
+                                        value={dateCreateInvoice ? dayjs(dateCreateInvoice) : null}
+                                        disabled
                                     />
                                 </div>
                                 :
@@ -676,12 +701,14 @@ export const NewQuote = () => {
                                     <DatePicker
                                         key="expiration-date"
                                         className='select-date-expiration'
+                                        format='YYYY-MM-DD'
                                         onChange={onChangeDatePicker}
                                         suffixIcon={false}
                                         variant="borderless"
                                         placeholder=''
                                         size='middle'
                                         id='select-date-expiration'
+                                        value={expirationDay ? dayjs(expirationDay) : null}
                                     />
                                 </div>
                             }
@@ -700,7 +727,8 @@ export const NewQuote = () => {
                                             (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                         }
                                         onChange={(e) => handleChangeInputQuote(e, 'currency')}
-                                        options={currencySelect}
+                                        options={currency ? [currency] : []}
+                                        value={currency && currency}
                                     />
                                 </div>
                             }
@@ -719,7 +747,9 @@ export const NewQuote = () => {
                                         (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                     }
                                     onChange={(e, label) => handleChangeInputQuote(e, 'paymentPolicy', label)}
-                                    options={timePayment}
+                                    options={paymentPolicy ? [paymentPolicy] : []}
+                                    value={paymentPolicy && paymentPolicy}
+                                    disabled
                                 />
                             </div>
                         </div>
@@ -729,31 +759,24 @@ export const NewQuote = () => {
                         <Tabs
                             type="card"
                             items={
-                                !isSendingQuote ? [{
+                                [{
                                     label: isCreateInvoice ? <FormattedMessage id="new_quote.detail-invoice" /> : <FormattedMessage id="new_quote.detail-order" />,
                                     key: 'tab-1',
                                     children: <TableProducts listProductFromParent={memoizedListProduct} handleChangeDataQuote={handleChangeInputQuote} isSendingQuote={isSendingQuote}
-                                        setTaxAndPriceBeforeTax={setTaxAndPriceBeforeTax}
+                                        setTaxAndPriceBeforeTax={setTaxAndPriceBeforeTax} productAdded={productAdded && productAdded}
+                                        policyAndCondition={policyAndCondition} isDisable={true}
                                     />,
                                 },
-                                {
-                                    label: <FormattedMessage id="new_quote.other-info" />,
-                                    key: 'tab-2',
-                                    children: <OtherInfo
-                                        handleChangeEmployeeId={handleChangeEmployeeId}
-                                        handleDateDelivery={handleDateDelivery}
-                                        listSaleEmployeesSelect={listSaleEmployeesSelect}
-                                        otherInfoQuote={otherInfoQuote}
-                                    />,
-                                }]
+                                !isSendingQuote ?
+                                    {
+                                        label: <FormattedMessage id="new_quote.other-info" />,
+                                        key: 'tab-2',
+                                        children: <OtherInfo otherInfoQuote={otherInfoQuote} isDisable={true} />,
+                                    }
                                     :
-                                    [{
-                                        label: <FormattedMessage id="new_quote.detail-order" />,
-                                        key: 'tab-1',
-                                        children: <TableProducts listProductFromParent={memoizedListProduct} handleChangeDataQuote={handleChangeInputQuote} isSendingQuote={isSendingQuote}
-                                            setTaxAndPriceBeforeTax={setTaxAndPriceBeforeTax}
-                                        />,
-                                    }]
+                                    ""
+                                ]
+
                             }
                         />
 
@@ -762,7 +785,7 @@ export const NewQuote = () => {
                         show={isShowModalSendQuote}
                         close={() => setIsShowModalSendQuote(false)}
                         dataQuote={dataQuote}
-                        fullDataCustomer={fullDataCustomer}
+                        fullDataCustomer={dataQuote?.fullDataCustomer}
                         downloadQuote={handleGeneratePdf}
                         handleClearDataQuote={handleClearDataQuote}
                         changeStep={changeStep}
@@ -772,7 +795,7 @@ export const NewQuote = () => {
                         show={isShowModalSendInvoice}
                         close={() => setIsShowModalSendInvoice(false)}
                         dataQuote={dataQuote}
-                        fullDataCustomer={fullDataCustomer}
+                        fullDataCustomer={dataQuote?.fullDataCustomer}
                         downloadQuote={handleGeneratePdf}
                         handleClearDataQuote={handleClearDataQuote}
                     // changeStep={changeStep}
@@ -782,7 +805,7 @@ export const NewQuote = () => {
                         show={isShowModalCancelQuote}
                         close={() => setIsShowModalCancelQuote(false)}
                         dataQuote={dataQuote}
-                        fullDataCustomer={fullDataCustomer}
+                        fullDataCustomer={dataQuote?.fullDataCustomer}
                         changeStep={changeStep}
                     />
 
@@ -814,6 +837,14 @@ export const NewQuote = () => {
                     dataInvoice={dataQuote} />
                 :
                 ""
+            }
+
+            {isLoadingData
+                ?
+                <div className="loading-overlay">
+                    <div className="loading-spinner"></div>
+                </div>
+                : ''
             }
 
         </div>

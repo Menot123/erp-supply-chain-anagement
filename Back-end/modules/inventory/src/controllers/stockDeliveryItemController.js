@@ -1,5 +1,5 @@
 import stockDeliveryItemService from '../services/stockDeliveryItemService';
-let handleGetStockDeliveryItems = async(req, res) => {
+let handleGetStockDeliveryItems = async (req, res) => {
     try {
 
         let data = await stockDeliveryItemService.handleGetStockDeliveryItemsService()
@@ -19,7 +19,7 @@ let handleGetStockDeliveryItems = async(req, res) => {
 }
 
 // Get stockDeliveryItem with id
-const handleGetStockDeliveryItem = async(req, res, next) => {
+const handleGetStockDeliveryItem = async (req, res, next) => {
     try {
         let stockDeliveryItemId = req.params.id
         let data = await stockDeliveryItemService.handleGetStockDeliveryItemWithIdService(stockDeliveryItemId)
@@ -38,7 +38,7 @@ const handleGetStockDeliveryItem = async(req, res, next) => {
 }
 
 // Get stockEntryItem base on receipt id
-const handleGetStockDeliveryItemsBaseOnDeliveryId = async(req, res, next) => {
+const handleGetStockDeliveryItemsBaseOnDeliveryId = async (req, res, next) => {
     try {
         let deliveryId = req.params.id
         let data = await stockDeliveryItemService.handleGetStockDeliveryItemsBaseOnDeliveryId(deliveryId)
@@ -57,7 +57,7 @@ const handleGetStockDeliveryItemsBaseOnDeliveryId = async(req, res, next) => {
 }
 
 // Create a new stockDeliveryItem
-const handleCreateStockDeliveryItem = async(req, res, next) => {
+const handleCreateStockDeliveryItem = async (req, res, next) => {
     try {
         let dataStockDeliveryItem = req.body;
         let response = await stockDeliveryItemService.handleCreateStockDeliveryItemService(dataStockDeliveryItem);
@@ -76,7 +76,7 @@ const handleCreateStockDeliveryItem = async(req, res, next) => {
 }
 
 // Create stockDeliveryItem List
-const handleCreateStockDeliveryItemList = async(req, res, next) => {
+const handleCreateStockDeliveryItemList = async (req, res, next) => {
     try {
         let dataStockDeliveryItemList = req.body;
         let response = await stockDeliveryItemService.handleCreateStockDeliveryItemListService(dataStockDeliveryItemList);
@@ -95,7 +95,7 @@ const handleCreateStockDeliveryItemList = async(req, res, next) => {
 }
 
 // Update a stockDeliveryItem with id
-const handleUpdateStockDeliveryItem = async(req, res, next) => {
+const handleUpdateStockDeliveryItem = async (req, res, next) => {
     try {
         let stockDeliveryItemId = req.params.id;
         let dataStockDeliveryItem = req.body;
@@ -115,7 +115,7 @@ const handleUpdateStockDeliveryItem = async(req, res, next) => {
 }
 
 // Delete a stockDeliveryItem with id
-const handleDeleteStockDeliveryItem = async(req, res, next) => {
+const handleDeleteStockDeliveryItem = async (req, res, next) => {
     try {
         let stockDeliveryItemId = req.params.id;
         let response = await stockDeliveryItemService.handleDeleteStockDeliveryItemService(stockDeliveryItemId);

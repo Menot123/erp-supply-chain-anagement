@@ -1,5 +1,6 @@
 import db from '../models/index'
 const { Op } = require('sequelize');
+import { createJWT } from './JWTServices'
 
 const getCustomerService = async () => {
     try {
@@ -174,7 +175,53 @@ const createListCustomerService = async (customerList) => {
     }
 }
 
+const loginCustomerService = async (dataLogin) => {
+    try {
+        let res = {}
+        if (!dataLogin?.email || !dataLogin?.password) {
+            res.EM = 'Thiếu thông tin email hoặc mật khẩu'
+            res.EC = -1
+            res.DT = ''
+        } else {
+            let customer = await db.Customer.findOne({
+                where: {
+                    email: dataLogin?.email,
+                    phone: dataLogin?.password
+                }
+            });
+
+            if (customer) {
+                let payload = {
+                    email: customer?.email,
+                    fullName: customer?.fullName
+                }
+                let token = createJWT(payload)
+                res.EM = 'Đăng nhập thành công'
+                res.EC = 0
+                res.DT = {
+                    access_token: token,
+                    ...customer?.dataValues
+                }
+            } else {
+                return {
+                    EM: 'Sai email hoặc mật khẩu, vui lòng kiểm tra lại!',
+                    EC: -2,
+                    DT: ''
+                }
+            }
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+        return {
+            EM: 'Something wrong in handle login customer',
+            EC: -3,
+            DT: ''
+        }
+    }
+}
+
 module.exports = {
     getCustomerService, getCustomerByIdService, getCustomersPaginationService, createNewCustomerService,
-    deleteCustomerService, updateCustomerService, createListCustomerService
+    deleteCustomerService, updateCustomerService, createListCustomerService, loginCustomerService
 }

@@ -90,7 +90,7 @@ let initApiRoutes = (app) => {
     router.get('/get-allType', apiController.getAllTypeByType)
 
     // Authenticated
-    router.all('*', jwt.checkUserJWT);
+    // router.all('*', jwt.checkUserJWT);
 
     // Forgot password
     /**

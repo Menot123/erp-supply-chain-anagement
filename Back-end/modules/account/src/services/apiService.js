@@ -229,7 +229,7 @@ const getSaleEmployeesService = async () => {
         const employees = await db.User.findAll({
             where: {
                 status: 'active',
-                department: 'D2'
+                department: 'D3'
             },
             attributes: { exclude: ['avatar'] }
         })

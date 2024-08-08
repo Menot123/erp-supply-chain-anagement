@@ -90,6 +90,11 @@ const handleGetEmployeeService = async (idEmployee) => {
     try {
         let res = {}
 
+        // In case id customer
+        if (idEmployee && idEmployee.includes("CU")) {
+            idEmployee = 1
+        }
+
         let employee = await db.User.findOne({
             where: {
                 // email: {

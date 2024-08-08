@@ -1,25 +1,21 @@
 import React, { useEffect } from 'react'
-import './SaleOrder.scss'
-import SalesHeader from './SalesHeader/SalesHeader'
-import { FaTimes } from "react-icons/fa";
-import first_step from '../../assets/img/step1.png'
-import third_step from '../../assets/img/step3.png'
-import four_step from '../../assets/img/step4.png'
-import img_file from '../../assets/img/smiling_face.svg'
-import { FormattedMessage } from 'react-intl'
-import DataCompanyModal from './Modal/DataCompanyModal';
+import '../Sales/SaleOrder.scss'
 import { useState } from 'react'
 import { FaCheck } from "react-icons/fa";
-import { ModalConfirmQuote } from './Modal/ModalConfirmQuote';
+// import { ModalConfirmQuote } from './Modal/ModalConfirmQuote';
 import Form from 'react-bootstrap/Form';
 import { getAllInvoice, getInvoicePaid, getInvoice } from '../../services/saleServices'
 import { useHistory } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid';
 import { Pagination, Empty, Skeleton, Modal, Button } from 'antd';
+import { getAllCustomerInvoices } from '../../services/saleServices'
+import { useSelector } from 'react-redux';
+import CustomerHeader from './CustomerHeader';
 
-function SaleOrderInvoice() {
+const HomeCustomer = () => {
 
     const history = useHistory()
+    const customerId = useSelector(state => state?.user?.id)
 
     const [showModalDataCompany, setShowModalDataCompany] = useState(false)
     const [isDoneStep1, setIsDoneStep1] = useState(false)
@@ -52,13 +48,16 @@ function SaleOrderInvoice() {
     };
 
     const fetchAllQuotesSent = async (page, pageSize) => {
-        const res = await getAllInvoice(page, pageSize)
+        const res = await getAllCustomerInvoices(page, pageSize, customerId)
         if (res?.EC === 0) {
             setQuotesSent(res?.DT)
             setTotalQuotesSent(res?.total)
         }
         setIsFetchingData(false)
+    }
 
+    const reloadData = () => {
+        fetchAllQuotesSent(page, pageSize)
     }
 
     useEffect(() => {
@@ -158,131 +157,25 @@ function SaleOrderInvoice() {
             setTitleNameModalInvoicePaid(`Hóa đơn ${invoiceId}`)
             setIsShowModalInvoicePaid(true)
         } else {
-            history.push(`/sale-order/invoices/${invoiceId}`)
+            history.push(`/customer/invoice/${invoiceId}`)
         }
     }
 
     const handleViewDetailInvoicePaid = invoiceId => {
-        history.push(`/sale-order/invoices/${invoiceId}`)
+        history.push(`/customer/invoice/${invoiceId}`)
     }
 
     return (
 
         <>
-            <SalesHeader changeFilter={setSearchQuotesSent} selectedItems={selectedItems} handleUncheckAll={handleUnCheckAll}
-                reloadData={() => fetchAllQuotesSent(page, pageSize)} />
-            {!isHaveQuote &&
-                <div>
-                    <DataCompanyModal
-                        show={showModalDataCompany}
-                        handleClose={handleCloseModalStep1}
-                        isCreated={setIsDoneStep1}
-                    />
-                    <ModalConfirmQuote
-                        show={showModalStep2}
-                        handleClose={handleCloseModalStep2}
-                        isDone={setIsDoneStep2}
-                    />
-
-                    <div className='wrapper-config-data'>
-                        <div className='config-data'>
-                            <div className='icon-close'>
-                                <FaTimes className='hover-item' />
-                            </div>
-                            <div className='steps'>
-                                <div className='data-company-step'>
-                                    <div className='first-line'>
-
-                                    </div>
-                                    <div className='img-first-step'>
-                                        <img className='element-logo-first-step' src={first_step} alt='element-logo-first-step' />
-                                    </div>
-                                    <div className='first-step-content'>
-                                        <span onClick={() => handleShowModalStep1()} className='main-content'>
-                                            <FormattedMessage id="sales-title-step1" />
-                                        </span>
-                                        <span className='sub-content'>
-                                            <FormattedMessage id="sales-sub-title-step1" />
-                                        </span>
-                                        {isDoneStep1
-                                            ?
-                                            <div className='btn-well-done'>
-                                                <FaCheck color="green" />
-                                                <span onClick={() => handleShowModalStep1()} className='text-well-done hover-item'><FormattedMessage id="sales-btn-doneStep" /></span>
-                                            </div>
-                                            :
-                                            <button onClick={() => handleShowModalStep1()} className='btn btn-step1'><FormattedMessage id="sales-btn-step1" /></button>
-                                        }
-
-                                    </div>
-                                </div>
-
-                                <div className='data-document-step'>
-                                    <div className='first-line'>
-
-                                    </div>
-                                    <div className='img-first-step'>
-                                        <img className='element-logo-first-step' src={third_step} alt='element-logo-first-step' />
-                                    </div>
-                                    <div className='first-step-content'>
-                                        <span onClick={handleShowModalStep2} className='main-content'>
-                                            <FormattedMessage id="sales-title-step2" />
-                                        </span>
-                                        <span className='sub-content'>
-                                            <FormattedMessage id="sales-sub-title-step2" />
-                                        </span>
-                                        {isDoneStep2
-                                            ?
-                                            <div className='btn-well-done'>
-                                                <FaCheck color="green" />
-                                                <span onClick={() => handleShowModalStep2()} className='text-well-done hover-item'><FormattedMessage id="sales-btn-doneStep" /></span>
-                                            </div>
-                                            :
-                                            <button onClick={() => handleShowModalStep2()} className='btn btn-step2'><FormattedMessage id="sales-btn-step2" /></button>
-                                        }
-                                    </div>
-                                </div>
-
-                                <div className='data-quote-step'>
-                                    <div className='final-line'>
-
-                                    </div>
-                                    <div className='img-first-step'>
-                                        <img className='element-logo-first-step' src={four_step} alt='element-logo-first-step' />
-                                    </div>
-                                    <div className='first-step-content'>
-                                        <span className='main-content'>
-                                            <FormattedMessage id="sales-title-step3" />
-                                        </span>
-                                        <span className='sub-content'>
-                                            <FormattedMessage id="sales-sub-title-step3" />
-                                        </span>
-                                        <button className='btn btn-step3'><FormattedMessage id="sales-btn-step3" /></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='wrapper-message-first-step'>
-                        <div className='img-file'>
-                            <img className='element-img-file' src={img_file} alt='element-img-file' />
-                        </div>
-                        <div className='main-title'>
-                            <span className='main-text'><FormattedMessage id="sales-main-message" /></span>
-                        </div>
-                        <div className='sub-title'>
-                            <span className='sub-text'><FormattedMessage id="sales-sub-message" /></span>
-                        </div>
-                    </div>
-                </div>
-            }
+            <CustomerHeader changeFilter={setSearchQuotesSent} selectedItems={selectedItems}
+                handleUncheckAll={handleUnCheckAll} reloadData={reloadData}
+            />
 
             {
                 isFetchingData
                     ?
                     <>
-
                         <div>
                             <Skeleton active />
                         </div>
@@ -316,8 +209,8 @@ function SaleOrderInvoice() {
                                             (() => {
                                                 const filteredQuotes = quotesSent.filter((item) => {
                                                     return searchQuotesSent.toLowerCase() === '' ||
-                                                        (item?.dataCustomer?.fullName.toLowerCase().includes(searchQuotesSent.toLowerCase()) ||
-                                                            ("QUO" + item?.invoiceId.toString()).toLowerCase().includes(searchQuotesSent.toLowerCase()));
+                                                        (item?.createdUser.toLowerCase().includes(searchQuotesSent.toLowerCase()) ||
+                                                            ("INV" + item?.invoiceId.toString()).toLowerCase().includes(searchQuotesSent.toLowerCase()));
                                                 })
 
                                                 if (filteredQuotes.length > 0) {
@@ -335,7 +228,7 @@ function SaleOrderInvoice() {
                                                             </th>
                                                             <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}>{convertDateTime(item?.createdAt)}</td>
                                                             <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}>{item?.dataCustomer?.fullName}</td>
-                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}>Nguyễn Bá Thành</td>
+                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}>{item?.createdUser}</td>
                                                             <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}><span className='cost'>
                                                                 {Number(item?.totalPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                                                             </span></td>
@@ -344,7 +237,7 @@ function SaleOrderInvoice() {
                                                                     <span className='status-quote'>Chờ xác nhận</span>
                                                                 }
                                                                 {item?.status === 'S1' &&
-                                                                    <span span className='status-quote-draft'>Chờ thanh toán</span>
+                                                                    <span className='status-quote-draft'>Chờ thanh toán</span>
                                                                 }
                                                                 {
                                                                     item?.status === 'S2' &&
@@ -452,4 +345,4 @@ function SaleOrderInvoice() {
     )
 }
 
-export default SaleOrderInvoice
+export default HomeCustomer

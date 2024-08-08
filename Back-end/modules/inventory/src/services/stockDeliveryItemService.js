@@ -1,7 +1,7 @@
 import db from '../models/index'
 const { Op } = require("sequelize");
 
-const handleGetStockDeliveryItemsService = async() => {
+const handleGetStockDeliveryItemsService = async () => {
     try {
         let res = {}
         let stockDeliveryItems = await db.StockDeliveryItem.findAll({
@@ -37,7 +37,7 @@ const handleGetStockDeliveryItemsService = async() => {
     }
 }
 
-const handleGetStockDeliveryItemWithIdService = async(id) => {
+const handleGetStockDeliveryItemWithIdService = async (id) => {
     try {
         let res = {}
         let stockDeliveryItem = await db.StockDeliveryItem.findOne({
@@ -67,7 +67,7 @@ const handleGetStockDeliveryItemWithIdService = async(id) => {
 }
 
 
-const handleGetStockDeliveryItemsBaseOnDeliveryId = async(id) => {
+const handleGetStockDeliveryItemsBaseOnDeliveryId = async (id) => {
     try {
         let res = {}
         let stockDeliveryItemList = await db.StockDeliveryItem.findAll({
@@ -96,7 +96,7 @@ const handleGetStockDeliveryItemsBaseOnDeliveryId = async(id) => {
     }
 }
 
-const handleCreateStockDeliveryItemService = async(data) => {
+const handleCreateStockDeliveryItemService = async (data) => {
     try {
         let res = {}
 
@@ -129,7 +129,7 @@ const handleCreateStockDeliveryItemService = async(data) => {
     }
 }
 
-const getNextId = async() => {
+const getNextId = async () => {
     const lastItem = await db.StockDeliveryItem.findOne({
         order: [
             ['stockDeliveryItemId', 'DESC']
@@ -155,7 +155,7 @@ const genNewId = (currentId, index) => {
 // console.log(getNextId());
 // console.log(genNewId('STDI0006', 0))
 
-const handleCreateStockDeliveryItemListService = async(listData) => {
+const handleCreateStockDeliveryItemListService = async (listData) => {
     try {
         let res = {}
         res.EM = 'Invalid stockDeliveryId or productId'
@@ -165,9 +165,9 @@ const handleCreateStockDeliveryItemListService = async(listData) => {
         const nextId = await getNextId();
 
         listData.map((item, index) => {
-                item.stockDeliveryItemId = genNewId(nextId, index);
-            })
-            // console.log(listData)
+            item.stockDeliveryItemId = genNewId(nextId, index);
+        })
+        // console.log(listData)
         await db.StockDeliveryItem.bulkCreate(listData, {
             individualHooks: false // Chạy hooks trên mỗi đối tượng riêng lẻ
         });
@@ -182,7 +182,7 @@ const handleCreateStockDeliveryItemListService = async(listData) => {
     }
 }
 
-const handleUpdateStockDeliveryItemService = async(stockDeliveryItemId, data) => {
+const handleUpdateStockDeliveryItemService = async (stockDeliveryItemId, data) => {
     try {
         let res = {}
         console.log(data)
@@ -212,7 +212,7 @@ const handleUpdateStockDeliveryItemService = async(stockDeliveryItemId, data) =>
     }
 }
 
-const handleDeleteStockDeliveryItemService = async(stockDeliveryItemId) => {
+const handleDeleteStockDeliveryItemService = async (stockDeliveryItemId) => {
     try {
         let res = {}
         let stockDeliveryItem = await db.StockDeliveryItem.findOne({

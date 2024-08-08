@@ -39,7 +39,9 @@ axios.interceptors.response.use(
   error => {
     const { status } = error.response;
     if (+status === 401 && window.location.pathname !== '/' && window.location.pathname !== '/login' &&
-      window.location.pathname !== '/forgot-password') {
+      window.location.pathname !== '/forgot-password' && window.location.pathname !== '/customer/login'
+      && window.location.pathname !== '/customer/' && window.location.pathname !== '/customer/home'
+    ) {
       toast.warning(<FormattedMessage id="toast-Unauthorized" />)
       dispatch(logOut());
     }

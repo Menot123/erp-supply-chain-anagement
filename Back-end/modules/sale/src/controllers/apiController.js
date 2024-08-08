@@ -415,6 +415,7 @@ const paidInvoice = async (req, res, next) => {
     try {
         const dataPaymentInvoice = req.body;
         let response = await apiService.paidInvoiceService(dataPaymentInvoice);
+
         return res.status(201).json({
             EM: response.EM,
             EC: response.EC,
@@ -450,7 +451,9 @@ const getInvoices = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const pageSize = parseInt(req.query.pageSize) || 40;
-        let response = await apiService.getInvoicesService(page, pageSize);
+        const customerId = req.query?.customerId
+
+        let response = await apiService.getInvoicesService(page, pageSize, customerId);
         return res.status(201).json({
             EM: response.EM,
             EC: response.EC,
@@ -564,10 +567,30 @@ const getStatistics = async (req, res, next) => {
     }
 }
 
+
+const updateStatusInvoice = async (req, res, next) => {
+    try {
+        const invoiceId = req.params.id
+        const statusUpdate = req.body?.status
+        let response = await apiService.updateStatusInvoiceService(invoiceId, statusUpdate);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT,
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in update status of invoice controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 module.exports = {
     createCompanyData, createBranchCompanyData, getBranches, getBranch, getDetailCompany,
     handleDeleteCompany, updateConfirmQuote, getCustomers, getAllCodes, getComments, postComment,
     updateComment, deleteComment, getLatestQuote, sendingQuote, postQuote, updateStatusQuote, getDataPreviewQuote,
     postCancelQuote, postInvoice, getDataPreviewInvoice, confirmInvoice, sendingInvoice, paidInvoice, getInvoicesPaid,
-    getInvoices, getQuotesSent, deleteQuotesSent, getInvoicePaid, getStatistics, deleteInvoices
+    getInvoices, getQuotesSent, deleteQuotesSent, getInvoicePaid, getStatistics, deleteInvoices, updateStatusInvoice
 }

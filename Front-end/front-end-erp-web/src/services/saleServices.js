@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import axios from "../axios/axiosCustom";
 
 const getCustomers = () => {
@@ -80,6 +81,10 @@ const confirmInvoice = (dataInvoice) => {
     return axios.put(`/sale/api/invoice`, dataInvoice)
 }
 
+const updateStatusInvoice = (invoiceId, status) => {
+    return axios.put(`/sale/api/invoice-status/${invoiceId}`, status)
+}
+
 const createPaidInvoice = (dataPaidInvoice) => {
     return axios.post(`/sale/api/invoice/paid`, dataPaidInvoice)
 }
@@ -119,12 +124,13 @@ const getQuotesSentAndCustomerInfo = (page, pageSize) => {
         });
 }
 
-const getAllInvoice = (page, pageSize) => {
+const getAllInvoice = (page, pageSize, customerId) => {
     return axios.get('/bff/api/invoices',
         {
             params: {
                 page: page,
-                pageSize: pageSize
+                pageSize: pageSize,
+                customerId: customerId
             }
         });
 }
@@ -172,12 +178,37 @@ const getEmployeeById = (employeeId) => {
     return axios.get(`/account/api/get-employee?id=${employeeId}`)
 }
 
-const getSaleEmployees = (employeeId) => {
+const getSaleEmployees = () => {
     return axios.get(`/account/api/sale-employees`)
 }
 
 const createStockDelivery = (dataStockDelivery) => {
     return axios.post(`/inventory/api/stockDeliverys`, dataStockDelivery)
+}
+
+const createStockDeliveryItems = (dataStockDeliveryItems) => {
+    return axios.post(`/inventory/api/stockDeliveryItemsList`, dataStockDeliveryItems)
+}
+
+const getAllCustomerInvoices = (page, pageSize, customerId) => {
+    return axios.get(`/bff/api/customer/invoices/${customerId}`,
+        {
+            params: {
+                page: page,
+                pageSize: pageSize,
+            }
+        });
+}
+
+const createVNPayPayment = (invoiceId, total) => {
+    const paymentData = {
+        orderId: invoiceId,
+        amount: total,
+        orderDescription: `Thanh toán hóa đơn INV${invoiceId}`,
+        bankCode: "NCB",
+        locale: "vn"
+    };
+    return axios.post('/sale/api/create-payment', paymentData)
 }
 
 export {
@@ -186,5 +217,6 @@ export {
     getDataInvoicePreview, confirmInvoice, sendingInvoiceToCustomer, createPaidInvoice, getAllPaidInvoice, getAllQuotesSent,
     deleteQuotesSent, getCustomer, getQuotesSentAndCustomerInfo, getAllInvoice, getInvoice, getCustomerPagination,
     postDataCustomer, deleteCustomer, updateCustomer, getInvoicePaid, getStatistic, getEmployeeById, getSaleEmployees,
-    createStockDelivery, deleteInvoices
+    createStockDelivery, deleteInvoices, createStockDeliveryItems, getAllCustomerInvoices, createVNPayPayment,
+    updateStatusInvoice
 }

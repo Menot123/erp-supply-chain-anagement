@@ -129,7 +129,28 @@ const createListCustomer = async (req, res, next) => {
     }
 }
 
+const loginCustomer = async (req, res, next) => {
+    try {
+        const dataLogin = req.body
+        let response = await apiService.loginCustomerService(dataLogin);
+        if (response && response.DT.access_token) {
+            res.cookie('jwt', response.DT.access_token, { httpOnly: true, maxAge: 86400 * 1000 });
+        }
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in customer login',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 module.exports = {
     getCustomers, getCustomerById, getCustomersPagination, createNewCustomer, deleteCustomer,
-    updateCustomer, createListCustomer
+    updateCustomer, createListCustomer, loginCustomer
 }

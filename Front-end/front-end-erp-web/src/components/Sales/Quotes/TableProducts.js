@@ -30,8 +30,8 @@ export const TableProducts = (props) => {
         productId: '',
         name: '',
         description: '',
-        quantity: '0.0',
-        price: '0.0',
+        quantity: '0',
+        price: '0',
         tax: { value: 0, label: '' },
         priceBeforeTax: '',
         lineId: '',
@@ -279,14 +279,14 @@ export const TableProducts = (props) => {
                                         <td>
                                             <Input
                                                 onChange={(e) => handleChangeInputCreatingProduct(e, 'quantity', item)}
-                                                value={item?.quantity && item?.quantity !== '' ? item?.quantity : '0.00'}
+                                                value={item?.quantity && item?.quantity !== '' ? item?.quantity : '0'}
                                                 variant="borderless" disabled={props?.isDisable}
                                             />
 
                                         </td>
                                         <td>
                                             <Input
-                                                value={item?.price && item?.price !== '' ? item?.price : '0.00'}
+                                                value={item?.price && item?.price !== '' ? item?.price : '0'}
                                                 onChange={(e) => handleChangeInputCreatingProduct(e, 'price', item)}
                                                 variant="borderless" disabled={props?.isDisable}
                                             />

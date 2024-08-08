@@ -25,6 +25,7 @@
     "navigation.dropdown-user-logout": "Log out",
     "navigation.button-login": "Sign In",
     "login-form.title": "Login into your account",
+    "customer-login-form.title": "Login for customers",
     "login-form.email-field": "Email address",
     "login-form.email-field-placeholder": "Enter your email address",
     "login-form.password-field": "Password",

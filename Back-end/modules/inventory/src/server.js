@@ -5,6 +5,7 @@ import initWebRoutes from './route/web'
 import initApiRoutes from './route/api'
 import connectDB from './config/connectDB';
 import setupSwagger from './middleware/swagger'
+import startRabbitMQ from './services/startRabbitMQ'
 require('dotenv').config();
 
 let app = express();
@@ -44,6 +45,7 @@ initApiRoutes(app);
 
 connectDB();
 
+startRabbitMQ()
 
 app.listen(port, () => {
     //callback

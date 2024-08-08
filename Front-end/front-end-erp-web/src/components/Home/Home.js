@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './Home.scss'
 import { FaSearch } from "react-icons/fa";
 import inventory from '../../../src/assets/img/inventory2.png'
@@ -18,6 +18,13 @@ function Home() {
     const intl = useIntl();
     const history = useHistory()
     const department = useSelector(state => state.user?.department)
+    const idUser = useSelector(state => state.user?.id)
+
+    useEffect(() => {
+        if (idUser && idUser.includes("CU")) {
+            history.push('/customer')
+        }
+    }, [idUser])
 
     const handleRedirectRoute = (userDepartment, url) => {
         if (department === 'admin') {

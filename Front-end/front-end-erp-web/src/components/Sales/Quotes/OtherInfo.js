@@ -59,6 +59,7 @@ export const OtherInfo = (props) => {
                         options={props?.listSaleEmployeesSelect ?? []}
                         value={selectCustomer ? selectCustomer : null}
                         onChange={(e) => props?.handleChangeEmployeeId(e)}
+                        disabled={props?.isDisable}
                     />
                 </div>
             </div>
@@ -77,6 +78,7 @@ export const OtherInfo = (props) => {
                         size='middle'
                         id='select-date-delivery'
                         defaultValue={props?.otherInfoQuote?.deliveryDate ? dayjs(props?.otherInfoQuote?.deliveryDate) : null}
+                        disabled={props?.isDisable}
                     />
                 </div>
             </div>
