@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import './ModalSendQuoteToEmail.scss'
 import Modal from 'react-bootstrap/Modal';
-import { Select, Input } from "antd";
+import { Select, Input, Tooltip } from "antd";
 import { FaRegFilePdf } from "react-icons/fa";
-import { sendingQuoteToCustomer, postDataQuote } from '../../../services/saleServices'
+import { sendCustomMail } from '../../../services/saleServices'
 import { toast } from 'react-toastify';
+import { InfoCircleOutlined, MailOutlined } from '@ant-design/icons'
 
-export const ModalSendQuoteToEmail = (props) => {
+export const ModalSendQuoteEx = (props) => {
 
     const defaultValue = `Xin chào,
 
-Đã có quotation S${props?.dataQuote?.quoteId} có giá trị là ${props?.dataQuote?.totalPrice} đã sẵn sàng để bạn kiểm tra.
+Đã có báo giá mẫu có giá trị là 0 VND đã sẵn sàng để bạn kiểm tra.
     
 Đừng ngần ngại liên hệ với chúng tôi nếu bạn có câu hỏi cần được giải đáp.
 
-Để xem chi tiết báo giá vui lòng <a href="http://localhost:3000/my/orders/${props?.dataQuote?.quoteId}">nhấn vào đây.</a> 
 
 Chúc quý khách hàng một ngày tốt lành.
 
@@ -29,44 +29,47 @@ Trân trọng.
 
 
     useEffect(() => {
-        if (props?.dataQuote && props?.fullDataCustomer) {
-            let receiverText = props?.fullDataCustomer?.fullName + ` <${props?.fullDataCustomer?.email}> `
-            Promise.all([
-                setReceiver(receiverText),
-                setTitleSendQuote(props?.fullDataCustomer?.fullName + ' Báo giá (Mã ' + props?.dataQuote?.quoteId + ')'),
-                setBodySendQuote(`Xin chào,
 
-Đã có quotation ${props?.dataQuote?.quoteId} có giá trị là ${props?.dataQuote?.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })} đã sẵn sàng để bạn kiểm tra.
+        Promise.all([
+            setTitleSendQuote("Báo giá mẫu"),
+            setBodySendQuote(`Xin chào,
+
+Đã có báo giá mẫu có giá trị là 0 VND đã sẵn sàng để bạn kiểm tra.
                 
 Đừng ngần ngại liên hệ với chúng tôi nếu bạn có câu hỏi cần được giải đáp.`)])
-        }
-    }, [props])
+    }, [])
 
     const { TextArea } = Input;
+
+    const handleChangeInputEmailReceiver = (e) => {
+        setReceiver(e.target.value)
+
+    }
 
     const handleSendingQuoteToEmail = async () => {
 
         try {
             setIsSendingEmail(true)
-            let response = await postDataQuote({ ...props?.dataQuote, status: "S1" })
             let quoteFile = await props?.downloadQuote('POST_API');
 
             // Tạo FormData và thêm các dữ liệu khác
             const formData = new FormData();
             formData.append('quoteFile', quoteFile, 'quote.pdf'); // Chuyển đổi Blob thành file
-            formData.append('dataQuote', JSON.stringify({ ...props?.dataQuote, status: "S1" }));
-            formData.append('fullDataCustomer', JSON.stringify(props?.fullDataCustomer));
+            // formData.append('dataQuote', JSON.stringify({ ...props?.dataQuote, status: "S1" }));
+            formData.append('receiver', JSON.stringify(receiver));
             formData.append('bodySendQuote', bodySendQuote);
 
             // Gửi request POST sử dụng axios và chờ phản hồi
-            let res = await sendingQuoteToCustomer(formData);
+            let res = await sendCustomMail(formData);
             setTimeout(() => {
                 setIsSendingEmail(false);
                 if (res && res.EC === 0) {
-                    toast.success(`Sending quote to ${props?.fullDataCustomer?.email} successfully!`)
-                    Promise.all([props?.close(),
-                    props?.handleClearDataQuote(),
-                    props?.changeStep(1)])
+                    toast.success(`Gửi báo giá mẫu đến ${receiver} thành công!`)
+                    Promise.all([
+                        props?.isDone(true),
+                        props?.handleClose(),
+                        props?.fetchAllQuotesSent()
+                    ])
                 }
             }, 3000);
         } catch (error) {
@@ -81,19 +84,40 @@ Trân trọng.
                 keyboard={false}
                 size="lg"
                 style={{ zIndex: '900' }}
-                onHide={props?.close}
+                onHide={props?.handleClose}
             >
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        <h4>Gửi báo giá</h4>
+                        <h4>Báo giá mẫu</h4>
                     </Modal.Title>
 
                 </Modal.Header>
                 <Modal.Body>
                     <div className='wrap-body-modal'>
-                        <div className='wrap-select-customer'>
+                        <div className='wrap-select-customer d-flex align-items-center'>
                             <label htmlFor='select-customer'>Người nhận</label>
-                            <Input variant="borderless" value={receiver ?? ''} disabled />
+                            {/* <Input onChange={(e) => handleChangeInputEmailReceiver(e)} variant="borderless" value={receiver} /> */}
+                            <Input
+                                onChange={(e) => handleChangeInputEmailReceiver(e)}
+                                placeholder="Nhập vào email nhận báo giá mẫu"
+                                variant="borderless"
+                                prefix={
+                                    <MailOutlined
+                                        style={{
+                                            color: 'rgba(0,0,0,.25)',
+                                        }}
+                                    />
+                                }
+                                suffix={
+                                    <Tooltip title="Báo giá mẫu sẽ được gửi đến email này">
+                                        <InfoCircleOutlined
+                                            style={{
+                                                color: 'rgba(0,0,0,.45)',
+                                            }}
+                                        />
+                                    </Tooltip>
+                                }
+                            />
                         </div>
                         <div className='wrap-input-title'>
                             <label htmlFor='input-title'>Tiêu đề</label>
@@ -114,7 +138,7 @@ Trân trọng.
                             </div>
 
                             <div className='wrap-name-type-file'>
-                                <span>Báo giá - S{props?.dataQuote?.quoteId}.pdf</span>
+                                <span>Báo giá mẫu.pdf</span>
                                 <strong>PDF</strong>
                             </div>
                         </div>
@@ -123,7 +147,7 @@ Trân trọng.
                 </Modal.Body>
                 <Modal.Footer>
                     <button className='btn btn-main' onClick={handleSendingQuoteToEmail}>Gửi</button>
-                    <button className='btn btn-gray' onClick={props?.close}> Hủy bỏ</button>
+                    <button className='btn btn-gray' onClick={props?.handleClose}> Hủy bỏ</button>
                 </Modal.Footer>
             </Modal >
             {isSendingEmail

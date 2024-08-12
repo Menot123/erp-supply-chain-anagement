@@ -13,7 +13,7 @@ export const OtherInfo = (props) => {
         const buildSelectCustomer = (dataCustomer) => {
             if (dataCustomer && dataCustomer?.lastName && dataCustomer?.firstName) {
                 return {
-                    label: dataCustomer?.lastName + ' ' + dataCustomer?.firstName,
+                    label: dataCustomer?.firstName + ' ' + dataCustomer?.lastName,
                     value: props?.otherInfoQuote?.employeeId
                 }
             } else {

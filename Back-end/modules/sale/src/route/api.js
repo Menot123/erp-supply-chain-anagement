@@ -242,7 +242,7 @@ const initApiRoutes = (app) => {
      *              description: Error from server.
      * 
      */
-    router.get('/comments', apiController.getComments);
+    router.get('/comments/:id', apiController.getComments);
 
     /**
      * @swagger
@@ -545,19 +545,19 @@ const initApiRoutes = (app) => {
     router.delete('/delete-quotes-sent', apiController.deleteQuotesSent);
 
     /**
-* @swagger
-* /api/delete-invoices:
-*  get:
-*      tags:
-*          - Sales
-*      summary: delete invoices in sale order list
-*      responses:
-*          201:
-*              description: Return status delete invoices in sale order list. 
-*          500:
-*              description: Error from server.
-* 
-*/
+    * @swagger
+    * /api/delete-invoices:
+    *  get:
+    *      tags:
+    *          - Sales
+    *      summary: delete invoices in sale order list
+    *      responses:
+    *          201:
+    *              description: Return status delete invoices in sale order list. 
+    *          500:
+    *              description: Error from server.
+    * 
+    */
     router.delete('/delete-invoices', apiController.deleteInvoices);
 
     /**
@@ -577,19 +577,19 @@ const initApiRoutes = (app) => {
     router.get('/invoice-paid/:invoiceId', apiController.getInvoicePaid);
 
     /**
-   * @swagger
-   * /api/statistic/invoices-paid:
-   *  get:
-   *      tags:
-   *          - Sales
-   *      summary: Get info of invoice paid
-   *      responses:
-   *          201:
-   *              description: Return status info of invoice paid. 
-   *          500:
-   *              description: Error from server.
-   * 
-   */
+     * @swagger
+     * /api/statistic/invoices-paid:
+     *  get:
+     *      tags:
+     *          - Sales
+     *      summary: Get info of invoice paid
+     *      responses:
+     *          201:
+     *              description: Return status info of invoice paid. 
+     *          500:
+     *              description: Error from server.
+     * 
+     */
     router.get('/statistic/invoices-paid', apiController.getStatistics);
 
     /**
@@ -686,6 +686,28 @@ const initApiRoutes = (app) => {
      *        description: Payment verification failed.
      */
     router.get('/payment-return', paymentController.paymentReturn);
+
+    /**
+     * @swagger
+     * /api/sending-mail-custom:
+     *  get:
+     *      tags:
+     *          - Sales
+     *      summary: Sending a custom to email
+     *      description: Sending a custom to email and update status of quote.
+     *      responses:
+     *          200:
+     *              description: Return status sending custom email
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/sending-mail-custom', upload.single('quoteFile'), apiController.sendCustomMail);
+
+    router.post('/sendingEmails', apiController.sendEmails);
+
+
+    router.put('/cancel-quote/:quoteId', apiController.cancelQuote);
 
     return app.use("/api/", router)
 }

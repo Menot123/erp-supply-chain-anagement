@@ -335,7 +335,7 @@ function SaleOrderInvoice() {
                                                             </th>
                                                             <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}>{convertDateTime(item?.createdAt)}</td>
                                                             <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}>{item?.dataCustomer?.fullName}</td>
-                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}>Nguyễn Bá Thành</td>
+                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}>{item?.updatedUser}</td>
                                                             <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}><span className='cost'>
                                                                 {Number(item?.totalPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                                                             </span></td>
@@ -344,7 +344,7 @@ function SaleOrderInvoice() {
                                                                     <span className='status-quote'>Chờ xác nhận</span>
                                                                 }
                                                                 {item?.status === 'S1' &&
-                                                                    <span span className='status-quote-draft'>Chờ thanh toán</span>
+                                                                    <span className='status-quote-draft'>Chờ thanh toán</span>
                                                                 }
                                                                 {
                                                                     item?.status === 'S2' &&

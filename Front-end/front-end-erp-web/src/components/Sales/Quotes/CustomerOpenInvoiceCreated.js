@@ -144,6 +144,29 @@ export const CustomerOpenInvoiceCreated = () => {
     const [arrCurrentStep, setArrCurrentStep] = useState(defaultStep)
     const [arrCurrentInvoiceStep, setArrInvoiceCurrentStep] = useState(defaultCreateInvoiceStep1)
 
+    const checkExpiredDate = (startDate, duration) => {
+        // Chuyển đổi startDate từ chuỗi sang đối tượng Date
+        const date = new Date(startDate);
+
+        // Lấy số ngày từ chuỗi duration
+        const days = parseInt(duration.split(' ')[0]);
+
+        // Cộng thêm số ngày vào đối tượng Date
+        date.setDate(date.getDate() + days);
+
+        // Chuyển đổi lại đối tượng Date thành chuỗi theo định dạng YYYY-MM-DD
+        const newDate = date.toISOString().split('T')[0];
+
+        // Lấy ngày hiện tại
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        // So sánh ngày đã cộng với ngày hiện tại
+
+        const isExpired = currentDate > newDate;
+
+        return isExpired;
+    }
+
     useEffect(() => {
 
         const fetchDataQuotePreview = async () => {
@@ -586,6 +609,13 @@ export const CustomerOpenInvoiceCreated = () => {
         setDateCreateInvoice(dateString)
     };
 
+    const handleConfirmPaid = () => {
+        if (!checkExpiredDate(dataQuote?.createdDate, dataQuote?.invoicePaymentPolicy?.valueVi)) {
+            setIsShowModalConfirmPaid(true)
+        } else {
+            toast.warning("Hóa đơn của quý khách đã hết hạn thanh toán, vui lòng liên hệ với chúng tôi để nhận hỗ trợ")
+        }
+    }
 
     return (
         <div className='wrapper-create-quote'>
@@ -608,7 +638,7 @@ export const CustomerOpenInvoiceCreated = () => {
                             <>
                                 {!isPaid &&
                                     <>
-                                        <button className='btn btn-main' onClick={() => setIsShowModalConfirmPaid(true)}><FormattedMessage id="btn-confirmed-payment" /></button>
+                                        <button className='btn btn-main' onClick={() => handleConfirmPaid()}><FormattedMessage id="btn-confirmed-payment" /></button>
                                         <button className='btn btn-gray' onClick={() => handlePushDataQuotePreview("invoice")}><FormattedMessage id="btn-preview-quote" /></button>
                                     </>
                                 }

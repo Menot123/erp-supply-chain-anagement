@@ -1,6 +1,7 @@
 // rabbitmq.js
 const amqp = require('amqplib/callback_api');
 import { handleCheckProductIsEnough } from '../services/productService'
+import { sendNotification } from './inventoryMailService'
 
 const startRabbitMQ = () => {
     amqp.connect('amqp://localhost', (error0, connection) => {
@@ -13,6 +14,7 @@ const startRabbitMQ = () => {
             }
 
             const queue = 'order_queue';
+            const queue2 = 'mailer_queue';
 
             channel.assertQueue(queue, {
                 durable: false,
@@ -45,6 +47,30 @@ const startRabbitMQ = () => {
                         channel.ack(msg);
 
                     }
+                }
+            }, {
+                noAck: false,
+            });
+
+            // Thiết lập hàng đợi 2
+            channel.assertQueue(queue2, {
+                durable: false,
+            });
+
+            channel.consume(queue2, async (msg) => {
+                if (msg !== null) {
+                    const receivers = JSON.parse(msg.content.toString());
+                    let arrReceivers = receivers.split('_')
+                    if (arrReceivers && arrReceivers.length === 3) {
+                        let invoiceId = arrReceivers[arrReceivers.length - 1];
+                        arrReceivers.pop()
+
+                        arrReceivers.forEach(async (receiver) => {
+                            await sendNotification({ receiver: receiver, invoiceId: invoiceId })
+                        });
+                    }
+
+                    channel.ack(msg);
                 }
             }, {
                 noAck: false,

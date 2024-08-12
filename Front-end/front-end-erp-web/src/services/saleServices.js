@@ -9,12 +9,12 @@ const getAllCodes = () => {
     return axios.get('/sale/api/all-codes')
 }
 
-const getComments = () => {
-    return axios.get('/sale/api/comments')
+const getComments = (quoteId) => {
+    return axios.get(`/sale/api/comments/${quoteId}`)
 }
 
 const createAComment = (dataComment) => {
-    return axios.post('/sale/api/comment', dataComment)
+    return axios.post(`/sale/api/comment`, dataComment)
 }
 
 const editComment = (content, commentId) => {
@@ -53,8 +53,8 @@ const postDataQuote = (data) => {
     return axios.post('/sale/api/quote', data)
 }
 
-const confirmQuote = (quoteId) => {
-    return axios.put(`/sale/api/quote/${quoteId}`)
+const confirmQuote = (quoteId, dataSignature) => {
+    return axios.put(`/sale/api/quote/${quoteId}`, dataSignature)
 }
 
 const getDataQuotePreview = (quoteId) => {
@@ -200,15 +200,27 @@ const getAllCustomerInvoices = (page, pageSize, customerId) => {
         });
 }
 
-const createVNPayPayment = (invoiceId, total) => {
+const createVNPayPayment = (invoiceId, total, receivers) => {
     const paymentData = {
         orderId: invoiceId,
         amount: total,
-        orderDescription: `Thanh toán hóa đơn INV${invoiceId}`,
+        orderDescription: receivers,
         bankCode: "NCB",
-        locale: "vn"
+        locale: "vn",
     };
     return axios.post('/sale/api/create-payment', paymentData)
+}
+
+const sendCustomMail = (data) => {
+    return axios.post('/sale/api/sending-mail-custom', data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+};
+
+const cancelQuote = (quoteId) => {
+    return axios.put(`/sale/api/cancel-quote/${quoteId}`);
 }
 
 export {
@@ -218,5 +230,5 @@ export {
     deleteQuotesSent, getCustomer, getQuotesSentAndCustomerInfo, getAllInvoice, getInvoice, getCustomerPagination,
     postDataCustomer, deleteCustomer, updateCustomer, getInvoicePaid, getStatistic, getEmployeeById, getSaleEmployees,
     createStockDelivery, deleteInvoices, createStockDeliveryItems, getAllCustomerInvoices, createVNPayPayment,
-    updateStatusInvoice
+    updateStatusInvoice, sendCustomMail, cancelQuote
 }

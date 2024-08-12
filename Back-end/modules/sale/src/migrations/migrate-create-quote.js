@@ -16,6 +16,9 @@ module.exports = {
       expirationDay: {
         type: Sequelize.STRING
       },
+      signature: {
+        type: Sequelize.TEXT('long')
+      },
       currency: {
         type: Sequelize.STRING
       },

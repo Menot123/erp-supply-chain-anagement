@@ -98,3 +98,28 @@ function generateUuid() {
         Math.random().toString() +
         Math.random().toString();
 }
+
+
+export const sendEmails = (receivers, invoiceId) => {
+    return new Promise((resolve, reject) => {
+        amqp.connect('amqp://localhost', (error0, connection) => {
+            if (error0) {
+                return reject(error0);
+            }
+            connection.createChannel((error1, channel) => {
+                if (error1) {
+                    return reject(error1);
+                }
+
+                const queue = 'mailer_queue';
+                const msg = JSON.stringify(receivers + "_" + invoiceId);
+
+                channel.assertQueue(queue, {
+                    durable: false,
+                });
+
+                channel.sendToQueue(queue, Buffer.from(msg));
+            });
+        });
+    });
+};

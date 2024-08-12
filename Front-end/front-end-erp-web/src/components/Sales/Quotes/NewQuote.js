@@ -131,7 +131,7 @@ export const NewQuote = () => {
             if (employeesList && employeesList.length > 0) {
                 res = employeesList.map((item, index) => {
                     return {
-                        label: item?.lastName + " " + item?.firstName,
+                        label: item?.firstName + " " + item?.lastName,
                         value: item?.id
                     }
                 })
@@ -411,14 +411,17 @@ export const NewQuote = () => {
                     toast.warning(<FormattedMessage id="new_quote.preview-toast-empty-field" />)
                 }
             } else {
-                let checkNewCurrentId = await fetchLatestQuoteCode()
                 let newQuoteIdRealTime = dataQuote?.quoteId
-                if (checkNewCurrentId !== dataQuote?.quoteId) {
-                    newQuoteIdRealTime = checkNewCurrentId
+                let checkNewCurrentId = dataQuote?.quoteId
+                if (currentStepQuote === 0) {
+                    checkNewCurrentId = await fetchLatestQuoteCode()
+                    if (checkNewCurrentId !== newQuoteIdRealTime) {
+                        newQuoteIdRealTime = checkNewCurrentId
+                    }
                 }
                 let res = await postDataQuote({ ...dataQuote, quoteId: newQuoteIdRealTime, status: 'S0', dateCreateInvoice: dateCreateInvoice, ...otherInfoQuote })
                 if (res?.EC === 0) {
-                    const newTabUrl = `/my/orders/${checkNewCurrentId}`;
+                    const newTabUrl = `/my/orders/${newQuoteIdRealTime}`;
                     window.open(newTabUrl, '_blank');
                 } else {
                     toast.error(<FormattedMessage id='new_quote.preview-toast-error' />)

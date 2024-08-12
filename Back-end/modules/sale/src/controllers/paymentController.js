@@ -2,8 +2,8 @@
 import paymentService from "../services/paymentService";
 
 const createPayment = async (req, res) => {
-    const { orderId, amount, orderDescription, bankCode, locale } = req.body;
-    const paymentUrl = paymentService.createPaymentUrl(orderId, amount, orderDescription, bankCode, locale);
+    const { orderId, amount, orderDescription, bankCode, locale, customer, employee } = req.body;
+    const paymentUrl = paymentService.createPaymentUrl(orderId, amount, orderDescription, bankCode, locale, customer, employee);
     res.status(200).json({ paymentUrl });
 };
 

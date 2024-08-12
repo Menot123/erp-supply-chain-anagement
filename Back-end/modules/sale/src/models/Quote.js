@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
         customerId: DataTypes.STRING,
         employeeId: DataTypes.INTEGER,
         expirationDay: DataTypes.STRING,
+        signature: DataTypes.TEXT('long'),
         currency: DataTypes.STRING,
         paymentPolicy: DataTypes.STRING,
         productList: DataTypes.TEXT,

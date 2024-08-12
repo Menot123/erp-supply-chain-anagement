@@ -19,9 +19,11 @@ function Home() {
     const history = useHistory()
     const department = useSelector(state => state.user?.department)
     const idUser = useSelector(state => state.user?.id)
+    console.log(">>>> check idUser: ", idUser);
+
 
     useEffect(() => {
-        if (idUser && idUser.includes("CU")) {
+        if (idUser && idUser.toString().includes("CU")) {
             history.push('/customer')
         }
     }, [idUser])

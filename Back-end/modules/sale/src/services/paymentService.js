@@ -9,7 +9,7 @@ class PaymentService {
         this.vnp_ReturnUrl = 'http://localhost:3000/customer/payment-success'; // URL callback sau khi thanh toán
     }
 
-    createPaymentUrl(orderId, amount, orderDescription, bankCode, locale) {
+    createPaymentUrl(orderId, amount, orderDescription, bankCode, locale, customer, employee) {
         const formattedOrderDescription = orderDescription.trim().replace(/ /g, '_');
         const vnp_Params = {
             vnp_Version: '2.1.0',

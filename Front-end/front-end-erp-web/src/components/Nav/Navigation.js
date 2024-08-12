@@ -23,6 +23,7 @@ import { toast } from 'react-toastify';
 import { path } from '../../utils/constant'
 import ResetPassword from './ResetPassword';
 import { openModalProfile } from '../../redux-toolkit/slices/userSlice'
+import userDefault from '../../assets/img/userDefault.png'
 
 const Navigation = (props) => {
 
@@ -34,11 +35,9 @@ const Navigation = (props) => {
     const location = useLocation();
     const history = useHistory()
     const url = location.pathname;
-    let fullName = ""
-    const nameUser = useSelector(state => state.user.lastName)
-    if (url.startsWith(path.URL_CUSTOMER)) {
-        fullName = nameUser
-    }
+    const nameUser = useSelector(state => state.user?.lastName) ?? ""
+    const idUser = useSelector(state => state.user?.id) ?? ""
+
     const dispatch = useDispatch()
     const [isShowMenuApp, setIsShowMenuApp] = useState(false)
     const [isShowMenuUser, setIsShowMenuUser] = useState(false)
@@ -221,12 +220,11 @@ const Navigation = (props) => {
                         <div className="content-right d-flex align-items-center">
                             {userLogin ?
                                 <>
-                                    {url.includes(path.URL_CUSTOMER) ?
+                                    {(url.includes(path.URL_CUSTOMER) || (idUser.toString()).includes("CU")) ?
                                         <>
                                             <span>Xin chào,</span>
                                             <div ref={dropdownUserRef} onClick={() => handleShowMenuUser(isShowMenuUser)} className='d-flex customer-profile align-items-center'>
-                                                <span className='name-user'>{fullName}</span>
-
+                                                <span className='name-user'>{nameUser}</span>
                                             </div>
                                         </>
                                         :
@@ -236,9 +234,9 @@ const Navigation = (props) => {
                                             </div>
                                             <div ref={dropdownUserRef} onClick={() => handleShowMenuUser(isShowMenuUser)} className='d-flex user-profile align-items-center'>
                                                 <div className='avatar-user '>
-                                                    <img className='img-avatar' src={avatar ? avatar : ''} alt='avatar User' />
+                                                    <img className='img-avatar' src={avatar ?? userDefault} alt='avatar User' />
                                                 </div>
-                                                <span className='name-user'>{language === LANGUAGES.VI ? (lastName === 'NULL' ? '' : lastName) + ' ' + firstName
+                                                <span className='name-user'>{language === LANGUAGES.VI ? (lastName === 'NULL' ? '' : firstName) + ' ' + lastName
                                                     :
                                                     firstName + ' ' + (lastName === 'NULL' ? '' : lastName)
                                                 }</span>
@@ -251,7 +249,7 @@ const Navigation = (props) => {
                                 <NavLink className="navbar-brand ms-3 current-app text-login" to='/login'><FormattedMessage id='navigation.button-login' /></NavLink>
                             }
 
-                            {!url.includes(path.URL_CUSTOMER) &&
+                            {(!url.includes(path.URL_CUSTOMER) && !(idUser.toString()).includes("CU")) &&
                                 <div className='languages'>
                                     <span onClick={() => handleChangeLanguage('vi')} className={language === LANGUAGES.VI ? 'language-vi active' : 'language-vi'}>VN</span>
                                     <span onClick={() => handleChangeLanguage('en')} className={language === LANGUAGES.EN ? 'language-en active' : 'language-en'}>EN</span>
@@ -273,7 +271,7 @@ const Navigation = (props) => {
                 </div>
 
                 <div className={isShowMenuUser === false ? 'drop-down-user-apps d-none' : 'drop-down-user-apps'}>
-                    {!url.includes(path.URL_CUSTOMER) ?
+                    {(!url.includes(path.URL_CUSTOMER) && !(idUser.toString()).includes("CU")) ?
                         <>
                             <span onClick={() => handleShowModalProfile()} className='item-app-user'><FormattedMessage id='navigation.dropdown-user-personal' /></span>
                             {/* <span onClick={() => handleShowResetPasswordModal()} className='item-app-user'>Đổi mật khẩu</span> */}

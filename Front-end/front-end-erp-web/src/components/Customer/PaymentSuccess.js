@@ -16,6 +16,8 @@ export const PaymentSuccess = () => {
     const vnpAmount = searchParams.get('vnp_Amount');
     const vnp_PayDate = searchParams.get('vnp_PayDate');
     const vnpTxnRef = searchParams.get('vnp_TxnRef');
+    const emailReceivers = searchParams.get('vnp_OrderInfo');
+
     const formattedDate = `${vnp_PayDate.slice(0, 4)}-${vnp_PayDate.slice(4, 6)}-${vnp_PayDate.slice(6, 8)}`;
 
     useEffect(() => {
@@ -25,8 +27,8 @@ export const PaymentSuccess = () => {
                 datePaid: formattedDate,
                 total: vnpAmount,
                 paymentMethod: "Chuyển khoản",
-                contentTransfer: `INV${vnpTxnRef}`
-
+                contentTransfer: `INV${vnpTxnRef}`,
+                receivers: emailReceivers
             })
             let resUpdateStatusInvoice = await updateStatusInvoice(vnpTxnRef, { status: "S2" })
 

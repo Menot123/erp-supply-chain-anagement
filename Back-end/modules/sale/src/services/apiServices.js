@@ -1,13 +1,13 @@
 import db from '../models/index'
 const { Op } = require('sequelize');
-import { sendEmail, sendInvoice } from './mailService';
+import { sendEmail, sendNotification, sendInvoice } from './mailService';
 const axios = require('axios');
-import { checkProductInventory } from './checkProductInventory'
+import { checkProductInventory, sendEmails } from './checkProductInventory'
 
 const createCompanyDataService = async (dataCompany) => {
     try {
         let res = {}
-        let fieldCheck = ['name', 'logo', 'address', 'phone', 'taxId', 'email', 'money', 'website',]
+        let fieldCheck = ['name', 'logo', 'address', 'phone', 'taxId', 'email', 'money', 'website']
         if (dataCompany) {
             fieldCheck.forEach(element => {
                 if (!dataCompany[element]) {
@@ -281,10 +281,13 @@ const getAllCodesService = async () => {
     }
 }
 
-const getCommentsService = async () => {
+const getCommentsService = async (quoteId) => {
     try {
         let res = {}
         let comments = await db.Comment.findAll({
+            where: {
+                quoteId: quoteId
+            },
             order: [
                 ['createdAt', 'DESC'],
             ],
@@ -525,7 +528,6 @@ const postQuoteService = async (dataQuote) => {
                     status: dataQuote?.status ?? 'S0'
                 })
             } else {
-                console.log(">>>>>>>>>>>>>>", JSON.stringify(dataQuote.productList));
                 await quote.update({
                     ...dataQuote,
                     tax: JSON.stringify(dataQuote.tax),
@@ -550,7 +552,7 @@ const postQuoteService = async (dataQuote) => {
 
 }
 
-const updateStatusQuoteService = async (quoteId) => {
+const updateStatusQuoteService = async (quoteId, dataSignature) => {
     try {
         let res = {}
         let quote = await db.Quote.findOne({
@@ -560,10 +562,17 @@ const updateStatusQuoteService = async (quoteId) => {
         })
 
         if (quote) {
-            await quote.update({ status: 'S2' })
-            res.EM = 'Create a quote successfully'
-            res.EC = 0
-            res.DT = ''
+            if (dataSignature) {
+                await quote.update({ status: 'S2', signature: JSON.stringify(dataSignature) })
+                res.EM = 'update a quote successfully'
+                res.EC = 0
+                res.DT = ''
+            } else {
+                await quote.update({ status: 'S2' })
+                res.EM = 'update a quote successfully'
+                res.EC = 0
+                res.DT = ''
+            }
         } else {
             await db.Quote.create({
                 ...dataQuote,
@@ -572,6 +581,9 @@ const updateStatusQuoteService = async (quoteId) => {
                 productList: JSON.stringify(dataQuote.productList),
                 status: dataQuote?.status ?? 'S0'
             })
+            res.EM = 'Create a quote successfully'
+            res.EC = 0
+            res.DT = ''
         }
         return res
     }
@@ -847,7 +859,7 @@ const confirmInvoiceService = async (dataInvoice) => {
 const paidInvoiceService = async (dataPaidInvoice) => {
     try {
         let res = {}
-        let fieldCheck = ['datePaid', 'total', 'paymentMethod', 'contentTransfer']
+        let fieldCheck = ['datePaid', 'total', 'paymentMethod', 'contentTransfer', 'receivers']
 
         if (dataPaidInvoice) {
             fieldCheck.forEach(element => {
@@ -858,11 +870,14 @@ const paidInvoiceService = async (dataPaidInvoice) => {
                     return res
                 }
             });
+
+            sendEmails(dataPaidInvoice?.receivers, dataPaidInvoice?.contentTransfer.replace('INV', ''))
             await db.InvoicePaid.create({
                 ...dataPaidInvoice,
                 invoiceId: dataPaidInvoice?.invoiceId,
 
             })
+
             res.EM = 'Create a paid of invoice successfully'
             res.EC = 0
             res.DT = ''
@@ -956,8 +971,9 @@ const getQuotesSentService = async (page, pageSize) => {
         let res = {};
         let quotes = await db.Quote.findAndCountAll({
             where: {
-                [Op.or]: [{ status: 'S2' }, { status: 'S1' }, { status: 'S0' }]
+                [Op.or]: [{ status: 'S2' }, { status: 'S1' }, { status: 'S0' }, { status: 'canceled' }]
             },
+            attributes: { exclude: ['signature'] },
             order: [
                 ['createdAt', 'DESC']
             ],
@@ -1131,6 +1147,112 @@ const updateStatusInvoiceService = async (invoiceId, status) => {
     }
 };
 
+const sendCustomMailService = async (quoteFile, content, receiver) => {
+    let res = {}
+
+    if (content && quoteFile && receiver) {
+        try {
+            await sendEmail({
+                receiver: receiver,
+                bodySendQuote: content,
+                currentLang: 'vi',
+                quoteFile: quoteFile,
+            })
+            await postQuoteService({
+                quoteId: 1,
+                customer: "CU001",
+                expirationDay: null,
+                currency: null,
+                paymentPolicy: null,
+                productList: [],
+                totalPrice: "0"
+            })
+
+            res.EM = 'Sending a example quote successfully'
+            res.EC = 0
+            res.DT = ''
+        } catch (error) {
+            // Xử lý lỗi gửi email
+            console.error('Error sending email:', error)
+            res.EM = 'Sending a quote failed'
+            res.EC = -1
+            res.DT = ''
+        }
+    } else {
+        res.EM = 'Sending a example quote failed'
+        res.EC = -2
+        res.DT = ''
+    }
+    return res
+}
+
+const cancelQuoteService = async (quoteId) => {
+    try {
+        let res = {};
+        if (!quoteId) {
+            res.EM = 'Missing parameters for cancel quote status';
+            res.EC = 1;
+            res.DT = '';
+
+        } else {
+            let quote = await db.Quote.findOne({
+                where: {
+                    quoteId: quoteId,
+                }
+            });
+            if (quote) {
+                quote.update({ status: "canceled" })
+                res.EC = 0;
+                res.EM = 'Cancel quote successfully';
+                res.DT = quote;
+            } else {
+                res.EM = 'Cancel quote failed';
+                res.EC = 2;
+                res.DT = '';
+            }
+        }
+
+        return res;
+    } catch (e) {
+        console.log('>>> error: ', e);
+        return {
+            EC: 1,
+            EM: 'An error cancel quote',
+            DT: ''
+        };
+    }
+};
+
+const sendEmailsService = async (receivers, invoiceId) => {
+    let res = {}
+
+    if (receivers.length > 0 && invoiceId) {
+        try {
+            receivers.forEach(async (receiver) => {
+                await sendNotification({
+                    receiver: receiver,
+                    invoiceId: invoiceId,
+                })
+            });
+
+            res.EM = 'Sending emails successfully'
+            res.EC = 0
+            res.DT = ''
+        } catch (error) {
+            // Xử lý lỗi gửi email
+            console.error('Error sending emails:', error)
+            res.EM = 'Sending emails failed'
+            res.EC = -1
+            res.DT = ''
+        }
+    } else {
+        res.EM = 'Sending emails failed'
+        res.EC = -2
+        res.DT = ''
+    }
+    return res
+}
+
 module.exports = {
     createCompanyDataService, createBranchCompanyDataService, getBranchesService,
     getBranchService, getDetailCompanyService, handleDeleteCompanyService, updateConfirmQuoteService,
@@ -1139,5 +1261,5 @@ module.exports = {
     getDataPreviewQuoteService, postCancelQuoteService, sendEmailCancelQuote, postInvoiceService, getDataPreviewInvoiceService,
     confirmInvoiceService, sendingInvoiceService, paidInvoiceService, getInvoicesPaidService, getInvoicesService,
     getQuotesSentService, listQuoteDeleteService, getInvoicePaidService, getStatisticsService, deleteInvoicesService,
-    updateStatusInvoiceService
+    updateStatusInvoiceService, sendCustomMailService, cancelQuoteService, sendEmailsService
 }

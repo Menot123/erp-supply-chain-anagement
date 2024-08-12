@@ -23,8 +23,6 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
     const [contentTransfer, setContentTransfer] = useState('')
     const [isCreatingPaidInvoice, setIsCreatingPaidInvoice] = useState(false)
 
-
-
     useEffect(() => {
         if (props?.dataQuote) {
             Promise.all([
@@ -45,7 +43,10 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
 
     const handleConfirmPaid = async () => {
         if (datePaid && total && paymentMethod && contentTransfer) {
-            let resCreatePayment = await createVNPayPayment(props?.dataQuote?.quoteId, total)
+            const receivers = props?.dataQuote?.dataCustomer?.email + "_" + props?.dataQuote?.createdUser
+            let resCreatePayment = await createVNPayPayment(props?.dataQuote?.quoteId, total,
+                receivers
+            )
 
             if (resCreatePayment && resCreatePayment?.paymentUrl) {
                 window.location.href = resCreatePayment.paymentUrl;
@@ -108,7 +109,7 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
                                     (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                 }
                                 onChange={(e) => handleChangePaymentMethod(e)}
-                                options={[{ label: "Tiền mặt", value: "Tiền mặt" }, { label: "Chuyển khoản", value: "Chuyển khoản" }]}
+                                options={[{ label: "Chuyển khoản", value: "Chuyển khoản" }]}
                             />
                         </div>
 
