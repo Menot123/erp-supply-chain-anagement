@@ -2,7 +2,7 @@ FROM node:14-alpine
 
 EXPOSE 3000
 
-WORKDIR /felix/api-gateway
+WORKDIR /felix/sale-service
 
 COPY package*.json ./
 

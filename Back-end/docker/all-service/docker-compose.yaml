@@ -1,12 +1,12 @@
 version: '3.8'
 services:
-  # api-gateway:
-  #   build:
-  #     context: ../../api-gateway
-  #     dockerfile: Dockerfile
-  #   restart: unless-stopped
-  #   ports:
-  #     - 8000:8000
+  api-gateway:
+    build:
+      context: ../../api-gateway
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8000:8000
   db-account:
     image: mysql:8.0
     restart: always
@@ -17,6 +17,7 @@ services:
       - '3307:3306'
     expose:
       - 3306
+
   backend-account:
     build:
       context: ../../modules/account
@@ -27,3 +28,85 @@ services:
       - DB_HOST=db-account
     ports:
       - 8085:8085
+
+  db-customer:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_DATABASE=erp_customer
+      - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - '3308:3306'
+    expose:
+      - 3306
+
+  backend-customer:
+    build:
+      context: ../../modules/customer
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - DB_PORT=3306
+      - DB_HOST=db-customer
+    ports:
+      - 8086:8086
+
+  db-sale:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_DATABASE=erp_sale
+      - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - '3309:3306'
+    expose:
+      - 3306
+
+  backend-sale:
+    build:
+      context: ../../modules/sale
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - DB_PORT=3306
+      - DB_HOST=db-sale
+    ports:
+      - 8084:8084
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports:
+      - "5672:5672"
+      - "15672:15672" # Port để truy cập RabbitMQ Management UI
+
+  db-inventory:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_DATABASE=erp_inventory
+      - MYSQL_ROOT_PASSWORD=123456
+
+    ports:
+      - '3301:3306'
+    expose:
+      - 3306
+
+  backend-inventory:
+    build:
+      context: ../../modules/inventory
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - DB_PORT=3306
+      - DB_HOST=db-inventory
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    ports:
+      - 8081:8081
+  backend-bff:
+    build:
+      context: ../../modules/bff
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8088:8088

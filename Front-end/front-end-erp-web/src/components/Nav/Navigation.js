@@ -230,7 +230,7 @@ const Navigation = (props) => {
                                         :
                                         <>
                                             <div className='icon-notifications'>
-                                                <FaBell />
+                                                {/* <FaBell /> */}
                                             </div>
                                             <div ref={dropdownUserRef} onClick={() => handleShowMenuUser(isShowMenuUser)} className='d-flex user-profile align-items-center'>
                                                 <div className='avatar-user '>

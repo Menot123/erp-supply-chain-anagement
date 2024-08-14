@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
             ////
             StockEntry.belongsTo(models.Provider, { foreignKey: 'providerId', targetKey: 'providerId', as: 'providerData' })
             StockEntry.belongsTo(models.Warehouse, { foreignKey: 'warehouseId', targetKey: 'warehouseId', as: 'warehouseData' })
-                // StockEntry.belongsTo(models.User, { foreignKey: 'userId', targetKey: 'userId', as: 'userData' })
+            // StockEntry.belongsTo(models.User, { foreignKey: 'userId', targetKey: 'userId', as: 'userData' })
             StockEntry.hasMany(models.StockEntryItem, { foreignKey: 'stockEntryId', as: 'items' })
         }
         static generateId() {
@@ -48,9 +48,10 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'StockEntry',
+        // tableName: 'stockentry',
         freezeTableName: true,
         hooks: {
-            beforeCreate: async(instance) => {
+            beforeCreate: async (instance) => {
                 instance.stockEntryId = await StockEntry.getNextId();
             },
         }

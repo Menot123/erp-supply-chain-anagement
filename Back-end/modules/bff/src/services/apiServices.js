@@ -1,10 +1,12 @@
 import db from '../models/index'
 const { Op } = require('sequelize');
 const axios = require('axios');
+const apiGatewayUrlDocker = "http://api-gateway:8000";
+
 
 const getInfoCustomerById = async (customerId, jwtToken) => {
     try {
-        const response = await axios.get(`http://localhost:8000/customer/api/customer/${customerId}`, {
+        const response = await axios.get(`http://api-gateway:8000/customer/api/customer/${customerId}`, {
             headers: {
                 'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
             }
@@ -19,7 +21,7 @@ const getQuoteCustomersService = async (page, pageSize, jwtToken) => {
     try {
         let res = {}
         let updatedArray = []
-        const response = await axios.get('http://localhost:8000/sale/api/quotes-sent', {
+        const response = await axios.get('http://api-gateway:8000/sale/api/quotes-sent', {
             params: {
                 page: page,
                 pageSize: pageSize
@@ -52,13 +54,13 @@ const getQuoteCustomersService = async (page, pageSize, jwtToken) => {
 const getQuoteSentService = async (quoteId, jwtToken) => {
     try {
         let res = {}
-        const response = await axios.get(`http://localhost:8000/sale/api/data-preview-quote/${quoteId}`, {
+        const response = await axios.get(`http://api-gateway:8000/sale/api/data-preview-quote/${quoteId}`, {
             headers: {
                 'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
             }
         });
         if (response && response?.data?.DT && response?.data?.DT?.customerId) {
-            const dataCustomer = await axios.get(`http://localhost:8000/customer/api/customer/${response?.data?.DT?.customerId}`, {
+            const dataCustomer = await axios.get(`http://api-gateway:8000/customer/api/customer/${response?.data?.DT?.customerId}`, {
                 headers: {
                     'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
                 }
@@ -85,7 +87,7 @@ const getAllInvoicesService = async (jwtToken, page, pageSize) => {
     try {
         let res = {}
         // let updatedArray = []
-        const responseInvoices = await axios.get(`http://localhost:8000/sale/api/invoices`, {
+        const responseInvoices = await axios.get(`http://api-gateway:8000/sale/api/invoices`, {
             headers: {
                 'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
             },
@@ -95,7 +97,7 @@ const getAllInvoicesService = async (jwtToken, page, pageSize) => {
             }
 
         });
-        // const responseInvoicesPaid = await axios.get(`http://localhost:8000/sale/api/invoices-paid`);
+        // const responseInvoicesPaid = await axios.get(`http://api-gateway:8000/sale/api/invoices-paid`);
         if (responseInvoices && responseInvoices?.data?.DT) {
             const detailCustomerInvoice = responseInvoices?.data?.DT.map(item => getInfoCustomerById(item?.customerId));
             // const detailCustomerInvoicePaid = responseInvoicesPaid?.data?.DT.map(item => getInfoCustomerById(item?.customerId));
@@ -130,18 +132,18 @@ const getAllInvoicesService = async (jwtToken, page, pageSize) => {
 const getInvoiceService = async (invoiceId, jwtToken) => {
     try {
         let res = {}
-        const response = await axios.get(`http://localhost:8000/sale/api/data-preview-invoice/${invoiceId}`, {
+        const response = await axios.get(`http://api-gateway:8000/sale/api/data-preview-invoice/${invoiceId}`, {
             headers: {
                 'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
             }
         });
         if (response && response?.data?.DT && response?.data?.DT?.customerId) {
-            const dataCustomer = await axios.get(`http://localhost:8000/customer/api/customer/${response?.data?.DT?.customerId}`, {
+            const dataCustomer = await axios.get(`http://api-gateway:8000/customer/api/customer/${response?.data?.DT?.customerId}`, {
                 headers: {
                     'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
                 }
             })
-            const dataEmployee = await axios.get(`http://localhost:8000/account/api/get-employee?id=${response?.data?.DT?.employeeId}`, {
+            const dataEmployee = await axios.get(`http://api-gateway:8000/account/api/get-employee?id=${response?.data?.DT?.employeeId}`, {
                 headers: {
                     'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
                 }
@@ -171,7 +173,7 @@ const getStockDeliveryByIdService = async (stockDeliveryId, jwtToken) => {
         let res = {}
         stockDeliveryId = encodeURIComponent(stockDeliveryId)
         console.log(">>>> : ", stockDeliveryId);
-        const response = await axios.get(`http://localhost:8000/inventory/api/stockDeliverys/${stockDeliveryId}`, {
+        const response = await axios.get(`http://api-gateway:8000/inventory/api/stockDeliverys/${stockDeliveryId}`, {
             headers: {
                 'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
             }
@@ -179,7 +181,7 @@ const getStockDeliveryByIdService = async (stockDeliveryId, jwtToken) => {
         console.log(">>>> check response: ", response);
 
         if (response && response?.data?.DT && response?.data?.DT?.customerId) {
-            const dataCustomer = await axios.get(`http://localhost:8000/customer/api/customer/${response?.data?.DT?.customerId}`, {
+            const dataCustomer = await axios.get(`http://api-gateway:8000/customer/api/customer/${response?.data?.DT?.customerId}`, {
                 headers: {
                     'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
                 }
@@ -206,7 +208,7 @@ const getAllInvoicesByCustomerService = async (jwtToken, page, pageSize, custome
     try {
         let res = {}
         // let updatedArray = []
-        const responseInvoices = await axios.get(`http://localhost:8000/sale/api/invoices`, {
+        const responseInvoices = await axios.get(`http://api-gateway:8000/sale/api/invoices`, {
             headers: {
                 'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
             },
@@ -218,7 +220,7 @@ const getAllInvoicesByCustomerService = async (jwtToken, page, pageSize, custome
 
         });
 
-        // const responseInvoicesPaid = await axios.get(`http://localhost:8000/sale/api/invoices-paid`);
+        // const responseInvoicesPaid = await axios.get(`http://api-gateway:8000/sale/api/invoices-paid`);
         if (responseInvoices && responseInvoices?.data?.DT) {
             const detailCustomerInvoice = await getInfoCustomerById(customerId);
 

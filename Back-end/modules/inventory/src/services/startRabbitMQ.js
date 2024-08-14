@@ -4,7 +4,10 @@ import { handleCheckProductIsEnough } from '../services/productService'
 import { sendNotification } from './inventoryMailService'
 
 const startRabbitMQ = () => {
-    amqp.connect('amqp://localhost', (error0, connection) => {
+    const rabbitMQHost = process.env.RABBITMQ_HOST || 'rabbitmq';
+    const rabbitMQPort = process.env.RABBITMQ_PORT || '5672';
+
+    amqp.connect(`amqp://${rabbitMQHost}:${rabbitMQPort}`, (error0, connection) => {
         if (error0) {
             throw error0;
         }

@@ -35,7 +35,8 @@ app.use(cors()); // Enable CORS
 app.use(helmet()); // Add security headers
 app.use(morgan("combined")); // Log HTTP requests
 app.disable("x-powered-by"); // Hide Express server information
-app.use(rateLimitAndTimeout); // Apply the rate limit and timeout middleware to the proxy
+app.use(rateLimitAndTimeout);
+// Apply the rate limit and timeout middleware to the proxy
 app.use(routes);
 
 module.exports = app;

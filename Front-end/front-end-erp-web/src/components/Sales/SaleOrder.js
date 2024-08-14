@@ -172,7 +172,7 @@ function SaleOrder() {
         <>
             <SalesHeader changeFilter={setSearchQuotesSent} selectedItems={selectedItems} handleUncheckAll={handleUnCheckAll}
                 reloadData={() => fetchAllQuotesSent(page, pageSize)} />
-            {!isHaveQuote &&
+            {!isHaveQuote && !isFetchingData &&
                 <div>
                     <DataCompanyModal
                         show={showModalDataCompany}
@@ -296,7 +296,7 @@ function SaleOrder() {
                 </div>
             }
             {
-                isFetchingData
+                isFetchingData && !isHaveQuote
                     ?
                     <div>
                         <Skeleton active />
