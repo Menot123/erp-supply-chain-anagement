@@ -44,7 +44,7 @@ function CreateNewOutputWarehouse() {
     const [listProduct, setListProduct] = useState([])
     const [listCustomer, setListCustomer] = useState([])
     const [selectCustomer, setSelectCustomer] = useState([])
-    // const [operationType, setOperationType] = useState([])
+        // const [operationType, setOperationType] = useState([])
     const [operationTypesSelect, setOperationTypesSelect] = useState([])
     const [deliveryToSelect, setDeliveryToSelect] = useState([{ value: 'actionDelivery', label: 'Xuất kho' }])
     const [timePayment, setTimePayment] = useState([])
@@ -88,7 +88,7 @@ function CreateNewOutputWarehouse() {
                 }))
                 break;
             default:
-            // code block
+                // code block
         }
     }
 
@@ -97,7 +97,7 @@ function CreateNewOutputWarehouse() {
     const intl = useIntl();
 
     useEffect(() => {
-        const fetchAllProduct = async () => {
+        const fetchAllProduct = async() => {
             const res = await getAllProducts()
             if (res && res.EC === 0) {
                 setListProduct(res.DT)
@@ -107,11 +107,11 @@ function CreateNewOutputWarehouse() {
             return res
         }
 
-        const fetchCustomer = async () => {
+        const fetchCustomer = async() => {
             const res = await getCustomers()
             if (res && res.EC === 0) {
                 setListCustomer(res.DT)
-                // console.log(res.DT)
+                    // console.log(res.DT)
             } else {
                 toast.error(res.EM)
             }
@@ -126,12 +126,10 @@ function CreateNewOutputWarehouse() {
         const buildSelectCustomer = () => {
             // console.log(listCustomer)
             let customerSelect = listCustomer.map((item, index) => {
-                return (
-                    {
-                        value: item.id,
-                        label: item.fullName
-                    }
-                )
+                return ({
+                    value: item.id,
+                    label: item.fullName
+                })
             })
             setSelectCustomer(customerSelect)
         }
@@ -152,7 +150,7 @@ function CreateNewOutputWarehouse() {
         return missingFields;
     };
 
-    const handleSaveOutputWarehouse = async () => {
+    const handleSaveOutputWarehouse = async() => {
         dataOutputWarehouse.status = 'draft'
 
         let check = validateDataDelivery()
@@ -174,14 +172,14 @@ function CreateNewOutputWarehouse() {
         history.push('/manage-inventory/output-warehouse')
     }
 
-    const handleSetReadyDelivery = async () => {
+    const handleSetReadyDelivery = async() => {
         console.log(dataOutputWarehouse)
         let check = validateDataDelivery()
 
         if (check.length === 0) {
             dataOutputWarehouse.status = 'ready'
             let res = await createNewDelivery(dataOutputWarehouse)
-            // console.log(res)
+                // console.log(res)
             if (res.EC === 0) {
                 // console.log(res.DT)
                 setStockCreateId(res.DT)
@@ -200,135 +198,173 @@ function CreateNewOutputWarehouse() {
         console.log('done')
     }
 
-    return (
-        <div className='wrapper-create-output-warehouse'>
-            <div className='header-create'>
-                <span className='title-create'>
-                    <span onClick={() => handleCancelCreateOutputWarehouse()} className='bold'>{language === LANGUAGES.EN ? 'Delivery' : 'Phiếu xuất kho'}</span>
-                    <span> / </span>
-                    <span><FormattedMessage id='nav.manage-inventory-create-product-title' /></span>
-                </span>
-                <div className='btn-actions'>
-                    <button onClick={() => handleSaveOutputWarehouse()} className='btn btn-primary btn-main'><FormattedMessage id='btn-save' /></button>
-                    <button onClick={() => handleCancelCreateOutputWarehouse()} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='btn-cancel' /></button>
-                </div>
-            </div>
-            <div className='container-fluid create-product-container'>
-                <div className='actions-status'>
-                    <div className='wrap-btn-actions'>
-                        <button onClick={() => handleSetReadyDelivery()} className='btn btn-main'>Đánh dấu việc cần làm</button>
-                        {/* <button onClick={() => handleSetDoneDelivery()} className='btn btn-gray'>Xác nhận</button> */}
-                        <button onClick={() => handleCancelCreateOutputWarehouse()} className='btn btn-gray'>Hủy</button>
-                    </div>
-                    <div className='output-warehouse-status'>
-                        <Steps
-                            type="navigation"
-                            size="small"
-                            current={currentStepOutputWarehouse}
-                            className="site-navigation-steps output-warehouse-step"
-                            items={[
-                                {
-                                    status: 'process',
-                                    title: 'Nháp',
-                                },
-                                {
-                                    status: 'wait',
-                                    title: 'Sẵn sàng',
-                                },
-                                {
-                                    status: 'wait',
-                                    title: 'Hoàn tất',
-                                },
-                            ]}
-                        />
-                    </div>
-                </div>
-                <div className='body-create-output-warehouse'>
-                    <div className='wrap-info-output-warehouse pt-5'>
-                        <div className='content-left'>
-                            <div className='wrap-expiration-date'>
-                                <label htmlFor='select-receive-from'>Người nhận</label>
-                                <Select
-                                    showSearch
-                                    id='select-receive-from'
-                                    className='receive-from'
-                                    variant="borderless"
-                                    optionFilterProp="children"
-                                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                                    filterSort={(optionA, optionB) =>
-                                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                                    }
-                                    options={selectCustomer}
-                                    onChange={(e) => handleChangeOutputWarehouse(e, 'deliveryTo')}
-                                />
-                            </div>
-                            <div className='wrap-expiration-date'>
-                                <label htmlFor='select-operation-type'>Loại hoạt động</label>
-                                <Select
-                                    showSearch
-                                    id='select-operation-type'
-                                    className='operation-type'
-                                    variant="borderless"
-                                    optionFilterProp="children"
-                                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                                    filterSort={(optionA, optionB) =>
-                                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                                    }
-                                    options={deliveryToSelect}
-                                    onChange={(e) => handleChangeOutputWarehouse(e, 'operationType')}
-                                />
-                            </div>
+    return ( <
+        div className = 'wrapper-create-output-warehouse' >
+        <
+        div className = 'header-create' >
+        <
+        span className = 'title-create' >
+        <
+        span onClick = {
+            () => handleCancelCreateOutputWarehouse() }
+        className = 'bold' > { language === LANGUAGES.EN ? 'Delivery' : 'Phiếu xuất kho' } < /span> <
+        span > / </span >
+        <
+        span > < FormattedMessage id = 'nav.manage-inventory-create-product-title' / > < /span> <
+        /span> <
+        div className = 'btn-actions' >
+        <
+        button onClick = {
+            () => handleSaveOutputWarehouse() }
+        className = 'btn btn-primary btn-main' > < FormattedMessage id = 'btn-save' / > < /button> <
+        button onClick = {
+            () => handleCancelCreateOutputWarehouse() }
+        className = 'ms-1 btn btn-outline-secondary' > < FormattedMessage id = 'btn-cancel' / > < /button> <
+        /div> <
+        /div> <
+        div className = 'container-fluid create-product-container' >
+        <
+        div className = 'actions-status' >
+        <
+        div className = 'wrap-btn-actions' >
+        <
+        button onClick = {
+            () => handleSetReadyDelivery() }
+        className = 'btn btn-main' > Đánh dấu việc cần làm < /button> { /* <button onClick={() => handleSetDoneDelivery()} className='btn btn-gray'>Xác nhận</button> */ } <
+        button onClick = {
+            () => handleCancelCreateOutputWarehouse() }
+        className = 'btn btn-gray' > Hủy < /button> <
+        /div> <
+        div className = 'output-warehouse-status' >
+        <
+        Steps type = "navigation"
+        size = "small"
+        current = { currentStepOutputWarehouse }
+        className = "site-navigation-steps output-warehouse-step"
+        items = {
+            [{
+                    status: 'process',
+                    title: 'Nháp',
+                },
+                {
+                    status: 'wait',
+                    title: 'Sẵn sàng',
+                },
+                {
+                    status: 'wait',
+                    title: 'Hoàn tất',
+                },
+            ]
+        }
+        /> <
+        /div> <
+        /div> <
+        div className = 'body-create-output-warehouse' >
+        <
+        div className = 'wrap-info-output-warehouse pt-5' >
+        <
+        div className = 'content-left' >
+        <
+        div className = 'wrap-expiration-date' >
+        <
+        label htmlFor = 'select-receive-from' > Người nhận < /label> <
+        Select showSearch id = 'select-receive-from'
+        className = 'receive-from'
+        variant = "borderless"
+        optionFilterProp = "children"
+        filterOption = {
+            (input, option) => (option ? .label ? ? '').includes(input) }
+        filterSort = {
+            (optionA, optionB) =>
+            (optionA ? .label ? ? '').toLowerCase().localeCompare((optionB ? .label ? ? '').toLowerCase())
+        }
+        options = { selectCustomer }
+        onChange = {
+            (e) => handleChangeOutputWarehouse(e, 'deliveryTo') }
+        /> <
+        /div> <
+        div className = 'wrap-expiration-date' >
+        <
+        label htmlFor = 'select-operation-type' > Loại hoạt động < /label> <
+        Select showSearch id = 'select-operation-type'
+        className = 'operation-type'
+        variant = "borderless"
+        optionFilterProp = "children"
+        filterOption = {
+            (input, option) => (option ? .label ? ? '').includes(input) }
+        filterSort = {
+            (optionA, optionB) =>
+            (optionA ? .label ? ? '').toLowerCase().localeCompare((optionB ? .label ? ? '').toLowerCase())
+        }
+        options = { deliveryToSelect }
+        onChange = {
+            (e) => handleChangeOutputWarehouse(e, 'operationType') }
+        /> <
+        /div>
 
-                        </div>
+        <
+        /div>
 
-                        <div className='content-right'>
-                            <div className='wrap-expiration-date'>
-                                <label htmlFor='select-date-expiration'>Ngày theo kế hoạch</label>
-                                <DatePicker
-                                    className='select-date-expiration'
-                                    onChange={onChangeDatePicker}
-                                    suffixIcon={false}
-                                    variant="borderless"
-                                    placeholder=''
-                                    size='middle'
-                                    id='select-date-expiration'
-                                />
-                            </div>
-                        </div>
+        <
+        div className = 'content-right' >
+        <
+        div className = 'wrap-expiration-date' >
+        <
+        label htmlFor = 'select-date-expiration' > Ngày theo kế hoạch < /label> <
+        DatePicker className = 'select-date-expiration'
+        onChange = { onChangeDatePicker }
+        suffixIcon = { false }
+        variant = "borderless"
+        placeholder = ''
+        size = 'middle'
+        id = 'select-date-expiration' /
+        >
+        <
+        /div> <
+        /div>
 
-                    </div>
-                    <div className='wrap-info-products pt-3'>
-                        <Tabs
-                            onChange={onChangeTab}
-                            type="card"
-                            items={[{
-                                label: `Hoạt động`,
-                                key: 'tab-1',
-                                children: <TableOutputWarehouse createProductListOfDelivery={createProductListOfDeliveryArray} stockCreateId={stockCreateId} listProductFromParent={listProduct} />,
-                            },
-                            {
-                                label: `Thông tin bổ sung`,
-                                key: 'tab-2',
-                                children: <OtherInfo />,
-                            },
-                            {
-                                label: `Ghi chú`,
-                                key: 'tab-3',
-                                children: <Input.TextArea
-                                    // value={value}
-                                    // onChange={(e) => setValue(e.target.value)}
-                                    placeholder="Thêm một ghi chú nội bộ sẽ được in trên phiếu Hoạt động lấy hàng"
-                                    onChange={(e) => onChangeNote(e)}
-                                    autoSize={{ minRows: 3, maxRows: 5 }}
-                                />,
-                            }
-                            ]}
-                        />
+        <
+        /div> <
+        div className = 'wrap-info-products pt-3' >
+        <
+        Tabs onChange = { onChangeTab }
+        type = "card"
+        items = {
+            [{
+                    label: `Hoạt động`,
+                    key: 'tab-1',
+                    children: < TableOutputWarehouse createProductListOfDelivery = { createProductListOfDeliveryArray }
+                    stockCreateId = { stockCreateId }
+                    listProductFromParent = { listProduct }
+                    />,
+                },
+                {
+                    label: `Thông tin bổ sung`,
+                    key: 'tab-2',
+                    children: < OtherInfo / > ,
+                },
+                {
+                    label: `Ghi chú`,
+                    key: 'tab-3',
+                    children: < Input.TextArea
+                        // value={value}
+                        // onChange={(e) => setValue(e.target.value)}
+                    placeholder = "Thêm một ghi chú nội bộ sẽ được in trên phiếu Hoạt động lấy hàng"
+                    onChange = {
+                        (e) => onChangeNote(e) }
+                    autoSize = {
+                        { minRows: 3, maxRows: 5 } }
+                    />,
+                }
+            ]
+        }
+        />
 
-                    </div>
-                </div>
-            </div>
-        </div >
+        <
+        /div> <
+        /div> <
+        /div> <
+        /div >
     )
 }
 

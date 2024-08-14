@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import axios from "../axios/axiosCustom";
 
 const getCustomers = () => {
@@ -8,12 +9,12 @@ const getAllCodes = () => {
     return axios.get('/sale/api/all-codes')
 }
 
-const getComments = () => {
-    return axios.get('/sale/api/comments')
+const getComments = (quoteId) => {
+    return axios.get(`/sale/api/comments/${quoteId}`)
 }
 
 const createAComment = (dataComment) => {
-    return axios.post('/sale/api/comment', dataComment)
+    return axios.post(`/sale/api/comment`, dataComment)
 }
 
 const editComment = (content, commentId) => {
@@ -52,8 +53,8 @@ const postDataQuote = (data) => {
     return axios.post('/sale/api/quote', data)
 }
 
-const confirmQuote = (quoteId) => {
-    return axios.put(`/sale/api/quote/${quoteId}`)
+const confirmQuote = (quoteId, dataSignature) => {
+    return axios.put(`/sale/api/quote/${quoteId}`, dataSignature)
 }
 
 const getDataQuotePreview = (quoteId) => {
@@ -80,6 +81,10 @@ const confirmInvoice = (dataInvoice) => {
     return axios.put(`/sale/api/invoice`, dataInvoice)
 }
 
+const updateStatusInvoice = (invoiceId, status) => {
+    return axios.put(`/sale/api/invoice-status/${invoiceId}`, status)
+}
+
 const createPaidInvoice = (dataPaidInvoice) => {
     return axios.post(`/sale/api/invoice/paid`, dataPaidInvoice)
 }
@@ -101,6 +106,10 @@ const deleteQuotesSent = (listQuote) => {
     return axios.delete(`/sale/api/delete-quotes-sent`, { data: listQuote })
 }
 
+const deleteInvoices = (listInvoices) => {
+    return axios.delete(`/sale/api/delete-invoices`, { data: listInvoices })
+}
+
 const getCustomer = (customerId) => {
     return axios.get(`/customer/api/customer/${customerId}`)
 }
@@ -115,12 +124,13 @@ const getQuotesSentAndCustomerInfo = (page, pageSize) => {
         });
 }
 
-const getAllInvoice = (page, pageSize) => {
+const getAllInvoice = (page, pageSize, customerId) => {
     return axios.get('/bff/api/invoices',
         {
             params: {
                 page: page,
-                pageSize: pageSize
+                pageSize: pageSize,
+                customerId: customerId
             }
         });
 }
@@ -168,10 +178,57 @@ const getEmployeeById = (employeeId) => {
     return axios.get(`/account/api/get-employee?id=${employeeId}`)
 }
 
+const getSaleEmployees = () => {
+    return axios.get(`/account/api/sale-employees`)
+}
+
+const createStockDelivery = (dataStockDelivery) => {
+    return axios.post(`/inventory/api/stockDeliverys`, dataStockDelivery)
+}
+
+const createStockDeliveryItems = (dataStockDeliveryItems) => {
+    return axios.post(`/inventory/api/stockDeliveryItemsList`, dataStockDeliveryItems)
+}
+
+const getAllCustomerInvoices = (page, pageSize, customerId) => {
+    return axios.get(`/bff/api/customer/invoices/${customerId}`,
+        {
+            params: {
+                page: page,
+                pageSize: pageSize,
+            }
+        });
+}
+
+const createVNPayPayment = (invoiceId, total, receivers) => {
+    const paymentData = {
+        orderId: invoiceId,
+        amount: total,
+        orderDescription: receivers,
+        bankCode: "NCB",
+        locale: "vn",
+    };
+    return axios.post('/sale/api/create-payment', paymentData)
+}
+
+const sendCustomMail = (data) => {
+    return axios.post('/sale/api/sending-mail-custom', data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+};
+
+const cancelQuote = (quoteId) => {
+    return axios.put(`/sale/api/cancel-quote/${quoteId}`);
+}
+
 export {
     getCustomers, getAllCodes, getComments, createAComment, editComment, deleteComment, getLatestQuoteCode,
     sendingQuoteToCustomer, postDataQuote, confirmQuote, getDataQuotePreview, postDataCancelQuote, postDataInvoice,
     getDataInvoicePreview, confirmInvoice, sendingInvoiceToCustomer, createPaidInvoice, getAllPaidInvoice, getAllQuotesSent,
     deleteQuotesSent, getCustomer, getQuotesSentAndCustomerInfo, getAllInvoice, getInvoice, getCustomerPagination,
-    postDataCustomer, deleteCustomer, updateCustomer, getInvoicePaid, getStatistic, getEmployeeById
+    postDataCustomer, deleteCustomer, updateCustomer, getInvoicePaid, getStatistic, getEmployeeById, getSaleEmployees,
+    createStockDelivery, deleteInvoices, createStockDeliveryItems, getAllCustomerInvoices, createVNPayPayment,
+    updateStatusInvoice, sendCustomMail, cancelQuote
 }

@@ -4,20 +4,25 @@ import Modal from 'react-bootstrap/Modal';
 import { Input } from 'antd';
 import { TiTimes } from "react-icons/ti";
 import { FormattedMessage, useIntl } from 'react-intl'
+import { cancelQuote } from '../../../services/saleServices'
+import { toast } from 'react-toastify';
 
 export const ModalRejectQuote = (props) => {
 
     const intl = useIntl();
     const { TextArea } = Input;
 
-    const handleCloseModalSignature = () => {
+    const handleConfirmCancelQuote = async () => {
 
-    }
+        const res = await cancelQuote(props?.quoteId)
+        if (res && res?.EC === 0) {
+            props?.close()
+            window.scrollTo(0, 0)
+            props?.reloadData(true)
+        } else {
+            toast.error("Có lỗi xảy ra khi thực hiện từ chối báo giá, vui lòng thử lại sau.")
+        }
 
-    const handleConfirmCancelQuote = () => {
-        props?.cancelQuote()
-        props?.close()
-        window.scrollTo(0, 0)
     }
 
     return (

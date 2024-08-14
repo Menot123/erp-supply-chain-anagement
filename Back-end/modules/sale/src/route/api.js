@@ -1,5 +1,6 @@
 import express from "express"
 import apiController from '../controllers/apiController'
+import paymentController from '../controllers/paymentController'
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() }); // Sử dụng bộ nhớ để lưu trữ file trong bộ nhớ đệm
 const router = express.Router()
@@ -241,7 +242,7 @@ const initApiRoutes = (app) => {
      *              description: Error from server.
      * 
      */
-    router.get('/comments', apiController.getComments);
+    router.get('/comments/:id', apiController.getComments);
 
     /**
      * @swagger
@@ -461,6 +462,8 @@ const initApiRoutes = (app) => {
     */
     router.put('/invoice', apiController.confirmInvoice);
 
+    router.put('/invoice-status/:id', apiController.updateStatusInvoice)
+
     /**
     * @swagger
     * /api/invoice/paid:
@@ -543,6 +546,22 @@ const initApiRoutes = (app) => {
 
     /**
     * @swagger
+    * /api/delete-invoices:
+    *  get:
+    *      tags:
+    *          - Sales
+    *      summary: delete invoices in sale order list
+    *      responses:
+    *          201:
+    *              description: Return status delete invoices in sale order list. 
+    *          500:
+    *              description: Error from server.
+    * 
+    */
+    router.delete('/delete-invoices', apiController.deleteInvoices);
+
+    /**
+    * @swagger
     * /api/invoice-paid:
     *  get:
     *      tags:
@@ -558,20 +577,137 @@ const initApiRoutes = (app) => {
     router.get('/invoice-paid/:invoiceId', apiController.getInvoicePaid);
 
     /**
-   * @swagger
-   * /api/statistic/invoices-paid:
-   *  get:
-   *      tags:
-   *          - Sales
-   *      summary: Get info of invoice paid
-   *      responses:
-   *          201:
-   *              description: Return status info of invoice paid. 
-   *          500:
-   *              description: Error from server.
-   * 
-   */
+     * @swagger
+     * /api/statistic/invoices-paid:
+     *  get:
+     *      tags:
+     *          - Sales
+     *      summary: Get info of invoice paid
+     *      responses:
+     *          201:
+     *              description: Return status info of invoice paid. 
+     *          500:
+     *              description: Error from server.
+     * 
+     */
     router.get('/statistic/invoices-paid', apiController.getStatistics);
+
+    /**
+     * @swagger
+     * /create-payment:
+     *  post:
+     *    tags:
+     *      - Payment
+     *    summary: Create a VNPay payment
+     *    requestBody:
+     *      required: true
+     *      content:
+     *        application/json:
+     *          schema:
+     *            type: object
+     *            properties:
+     *              orderId:
+     *                type: string
+     *                example: "123456"
+     *              amount:
+     *                type: integer
+     *                example: 1000000
+     *              orderDescription:
+     *                type: string
+     *                example: "Payment for order 123456"
+     *              bankCode:
+     *                type: string
+     *                example: "NCB"
+     *              locale:
+     *                type: string
+     *                example: "vn"
+     *    responses:
+     *      200:
+     *        description: Return payment URL.
+     *      500:
+     *        description: Error from server.
+     */
+    router.post('/create-payment', paymentController.createPayment);
+
+    /**
+     * @swagger
+     * /payment-return:
+     *  get:
+     *    tags:
+     *      - Payment
+     *    summary: Handle VNPay return URL after payment
+     *    parameters:
+     *      - in: query
+     *        name: vnp_TmnCode
+     *        schema:
+     *          type: string
+     *        required: true
+     *        description: Tmn code from VNPay
+     *      - in: query
+     *        name: vnp_Amount
+     *        schema:
+     *          type: integer
+     *        required: true
+     *        description: Amount paid
+     *      - in: query
+     *        name: vnp_BankCode
+     *        schema:
+     *          type: string
+     *        required: true
+     *        description: Bank code
+     *      - in: query
+     *        name: vnp_ResponseCode
+     *        schema:
+     *          type: string
+     *        required: true
+     *        description: Response code from VNPay
+     *      - in: query
+     *        name: vnp_TransactionNo
+     *        schema:
+     *          type: string
+     *        required: true
+     *        description: Transaction number from VNPay
+     *      - in: query
+     *        name: vnp_TxnRef
+     *        schema:
+     *          type: string
+     *        required: true
+     *        description: Order ID
+     *      - in: query
+     *        name: vnp_SecureHash
+     *        schema:
+     *          type: string
+     *        required: true
+     *        description: Secure hash from VNPay
+     *    responses:
+     *      200:
+     *        description: Payment verification successful.
+     *      400:
+     *        description: Payment verification failed.
+     */
+    router.get('/payment-return', paymentController.paymentReturn);
+
+    /**
+     * @swagger
+     * /api/sending-mail-custom:
+     *  get:
+     *      tags:
+     *          - Sales
+     *      summary: Sending a custom to email
+     *      description: Sending a custom to email and update status of quote.
+     *      responses:
+     *          200:
+     *              description: Return status sending custom email
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/sending-mail-custom', upload.single('quoteFile'), apiController.sendCustomMail);
+
+    router.post('/sendingEmails', apiController.sendEmails);
+
+
+    router.put('/cancel-quote/:quoteId', apiController.cancelQuote);
 
     return app.use("/api/", router)
 }

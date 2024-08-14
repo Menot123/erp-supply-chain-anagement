@@ -160,7 +160,8 @@ const getAllCodes = async (req, res, next) => {
 
 const getComments = async (req, res, next) => {
     try {
-        let response = await apiService.getCommentsService();
+        let quoteId = req.params.id
+        let response = await apiService.getCommentsService(quoteId);
         return res.status(200).json({
             EM: response.EM,
             EC: response.EC,
@@ -306,7 +307,9 @@ const postQuote = async (req, res, next) => {
 const updateStatusQuote = async (req, res, next) => {
     try {
         let quoteId = req.params?.quoteId
-        let response = await apiService.updateStatusQuoteService(quoteId);
+        const signature = req.body
+
+        let response = await apiService.updateStatusQuoteService(quoteId, signature);
         return res.status(201).json({
             EM: response.EM,
             EC: response.EC,
@@ -415,6 +418,7 @@ const paidInvoice = async (req, res, next) => {
     try {
         const dataPaymentInvoice = req.body;
         let response = await apiService.paidInvoiceService(dataPaymentInvoice);
+
         return res.status(201).json({
             EM: response.EM,
             EC: response.EC,
@@ -450,7 +454,9 @@ const getInvoices = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const pageSize = parseInt(req.query.pageSize) || 40;
-        let response = await apiService.getInvoicesService(page, pageSize);
+        const customerId = req.query?.customerId
+
+        let response = await apiService.getInvoicesService(page, pageSize, customerId);
         return res.status(201).json({
             EM: response.EM,
             EC: response.EC,
@@ -505,6 +511,26 @@ const deleteQuotesSent = async (req, res, next) => {
     }
 }
 
+const deleteInvoices = async (req, res, next) => {
+    try {
+        const listInvoicesDelete = req?.body
+        const response = await apiService.deleteInvoicesService(listInvoicesDelete);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT,
+            total: response?.total
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in delete quotes sent controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+
 const getInvoicePaid = async (req, res, next) => {
     try {
         const invoiceId = req.params.invoiceId
@@ -544,10 +570,88 @@ const getStatistics = async (req, res, next) => {
     }
 }
 
+
+const updateStatusInvoice = async (req, res, next) => {
+    try {
+        const invoiceId = req.params.id
+        const statusUpdate = req.body?.status
+        let response = await apiService.updateStatusInvoiceService(invoiceId, statusUpdate);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT,
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in update status of invoice controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const sendCustomMail = async (req, res, next) => {
+    try {
+        const { bodySendQuote, receiver } = req.body;
+        const quoteFile = req.file;
+        let response = await apiService.sendCustomMailService(quoteFile, bodySendQuote, receiver);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT,
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in update status of invoice controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const cancelQuote = async (req, res, next) => {
+    try {
+        const quoteId = req.params.quoteId
+
+        let response = await apiService.cancelQuoteService(quoteId);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT,
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in cancel quote controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const sendEmails = async (req, res, next) => {
+    try {
+        const { receivers, invoiceId } = req.body
+
+        let response = await apiService.sendEmailsService(receivers, invoiceId);
+        return res.status(201).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT,
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in cancel quote controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 module.exports = {
     createCompanyData, createBranchCompanyData, getBranches, getBranch, getDetailCompany,
     handleDeleteCompany, updateConfirmQuote, getCustomers, getAllCodes, getComments, postComment,
     updateComment, deleteComment, getLatestQuote, sendingQuote, postQuote, updateStatusQuote, getDataPreviewQuote,
     postCancelQuote, postInvoice, getDataPreviewInvoice, confirmInvoice, sendingInvoice, paidInvoice, getInvoicesPaid,
-    getInvoices, getQuotesSent, deleteQuotesSent, getInvoicePaid, getStatistics
+    getInvoices, getQuotesSent, deleteQuotesSent, getInvoicePaid, getStatistics, deleteInvoices, updateStatusInvoice,
+    sendCustomMail, cancelQuote, sendEmails
 }

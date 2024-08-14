@@ -18,3 +18,5 @@ export const getBase64 = (file) => {
         reader.onerror = error => reject(error)
     })
 }
+
+

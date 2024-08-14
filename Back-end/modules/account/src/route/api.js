@@ -90,7 +90,7 @@ let initApiRoutes = (app) => {
     router.get('/get-allType', apiController.getAllTypeByType)
 
     // Authenticated
-    router.all('*', jwt.checkUserJWT);
+    // router.all('*', jwt.checkUserJWT);
 
     // Forgot password
     /**
@@ -457,6 +457,23 @@ let initApiRoutes = (app) => {
      * 
      */
     router.get('/departments', apiController.handleGetAllDepartments);
+
+    /**
+ * @swagger
+ * /api/departments:
+ *  get:
+ *      tags:
+ *          - Account
+ *      summary: Get all departments
+ *      description: Get all departments in database             
+ *      responses:
+ *          200:
+ *              description: Return status and list of departments if status is active.
+ *          404:
+ *              description: Error from server.
+ * 
+ */
+    router.get('/sale-employees', apiController.getSaleEmployees);
 
     // /**
     //  * @swagger

@@ -16,7 +16,9 @@ import { getQuotesSentAndCustomerInfo } from '../../services/saleServices'
 import { useHistory } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid';
 import { Pagination, Empty, Skeleton } from 'antd';
-
+import { ModalSendQuoteEx } from './Modal/ModalSendQuoteEx';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 function SaleOrder() {
 
@@ -25,8 +27,10 @@ function SaleOrder() {
     const [showModalDataCompany, setShowModalDataCompany] = useState(false)
     const [isDoneStep1, setIsDoneStep1] = useState(false)
     const [isDoneStep2, setIsDoneStep2] = useState(false)
+    const [isDoneStep3, setIsDoneStep3] = useState(false)
     const [showModalStep2, setShowModalStep2] = useState(false)
-    const [isHaveQuote, setIsHaveQuote] = useState(true)
+    const [showModalStep3, setShowModalStep3] = useState(false)
+    const [isHaveQuote, setIsHaveQuote] = useState(false)
     const [selectedItems, setSelectedItems] = useState([])
     const [invoices, setInvoices] = useState([])
     const [totalQuotes, setTotalQuotes] = useState(0)
@@ -45,9 +49,10 @@ function SaleOrder() {
 
     const fetchAllQuotesSent = async (page, pageSize) => {
         const res = await getQuotesSentAndCustomerInfo(page, pageSize)
-        if (res?.EC === 0) {
+        if (res?.EC === 0 && res?.DT.length > 0) {
             setQuotesSent(res?.DT)
             setTotalQuotesSent(res?.total)
+            setIsHaveQuote(true)
         }
         setIsFetchingData(false)
     }
@@ -84,6 +89,14 @@ function SaleOrder() {
 
     const handleCloseModalStep2 = () => {
         setShowModalStep2(false)
+    }
+
+    const handleShowModalStep3 = () => {
+        setShowModalStep3(true)
+    }
+
+    const handleCloseModalStep3 = () => {
+        setShowModalStep3(false)
     }
 
     const handleChangeCheckBox = (e) => {
@@ -130,12 +143,36 @@ function SaleOrder() {
         history.push(`/sale-order/${invoiceId}`)
     }
 
+    const handleGeneratePdf = async (type) => {
+        try {
+            // Tạo một instance jsPDF với thông số cơ bản
+            const pdf = new jsPDF({
+                orientation: "vertical",
+                unit: 'px',
+                format: "a4",
+            });
+
+            // Để tạo một file rỗng, không cần thêm bất kỳ nội dung nào vào PDF
+            // Tuy nhiên, bạn có thể thêm một dòng chữ hoặc tiêu đề đơn giản nếu muốn
+            pdf.text("Báo giá mãu - nodata", 20, 20);
+
+            if (type && type === 'POST_API') {
+                return pdf.output('blob');
+            }
+
+            // Lưu file PDF với tên "Empty.pdf"
+            pdf.save("Empty.pdf");
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
     return (
 
         <>
             <SalesHeader changeFilter={setSearchQuotesSent} selectedItems={selectedItems} handleUncheckAll={handleUnCheckAll}
                 reloadData={() => fetchAllQuotesSent(page, pageSize)} />
-            {!isHaveQuote &&
+            {!isHaveQuote && !isFetchingData &&
                 <div>
                     <DataCompanyModal
                         show={showModalDataCompany}
@@ -146,6 +183,14 @@ function SaleOrder() {
                         show={showModalStep2}
                         handleClose={handleCloseModalStep2}
                         isDone={setIsDoneStep2}
+                    />
+
+                    <ModalSendQuoteEx
+                        show={showModalStep3}
+                        handleClose={handleCloseModalStep3}
+                        isDone={setIsDoneStep3}
+                        downloadQuote={handleGeneratePdf}
+                        fetchAllQuotesSent={fetchAllQuotesSent}
                     />
 
                     <div className='wrapper-config-data'>
@@ -215,13 +260,22 @@ function SaleOrder() {
                                         <img className='element-logo-first-step' src={four_step} alt='element-logo-first-step' />
                                     </div>
                                     <div className='first-step-content'>
-                                        <span className='main-content'>
+                                        <span className='main-content' onClick={() => handleShowModalStep3()}>
                                             <FormattedMessage id="sales-title-step3" />
                                         </span>
                                         <span className='sub-content'>
                                             <FormattedMessage id="sales-sub-title-step3" />
                                         </span>
-                                        <button className='btn btn-step3'><FormattedMessage id="sales-btn-step3" /></button>
+
+                                        {isDoneStep3
+                                            ?
+                                            <div className='btn-well-done'>
+                                                <FaCheck color="green" />
+                                                <span onClick={() => handleShowModalStep3()} className='text-well-done hover-item'><FormattedMessage id="sales-btn-doneStep" /></span>
+                                            </div>
+                                            :
+                                            <button onClick={() => handleShowModalStep3()} className='btn btn-step3'><FormattedMessage id="sales-btn-step3" /></button>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -242,152 +296,157 @@ function SaleOrder() {
                 </div>
             }
             {
-                isFetchingData
+                isFetchingData && !isHaveQuote
                     ?
                     <div>
                         <Skeleton active />
                     </div>
-                    :
-                    <div className='pb-3'>
-                        <table className="table table-striped table-hover table-quotes">
-                            <thead>
-                                <tr>
-                                    <th scope="col">
-                                        <Form.Check // prettier-ignore
-                                            type={'checkbox'}
-                                            id={`checkAll}`}
-                                            label={`Số`}
-                                            onChange={handleCheckAll}
-                                            checked={isCheckAll}
-                                        />
-                                    </th>
-                                    <th scope="col">Ngày tạo</th>
-                                    <th scope="col">Khách hàng</th>
-                                    <th scope="col">Nhân viên kinh doanh</th>
-                                    <th scope="col">Tổng</th>
-                                    <th scope="col">Trạng thái</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {invoices && invoices.length > 0 &&
-                                    invoices.map((item, index) => {
-                                        return (
-                                            <tr className='hover-item' key={uuidv4()} >
-                                                <th scope="row">
-                                                    <Form.Check // prettier-ignore
-                                                        type={'checkbox'}
-                                                        id={item?.invoiceId}
-                                                        value={item?.invoiceId}
-                                                        label={`INV${item?.invoiceId}`}
-                                                        onChange={(e) => handleChangeCheckBox(e)}
-                                                        checked={selectedItems.includes(item?.invoiceId)}
-                                                    />
-                                                </th>
-                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}>{convertDateTime(item?.createdAt)}</td>
-                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}>Huỳnh Khánh Duy</td>
-                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}>Nguyễn Bá Thành</td>
-                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}><span className='cost'>
-                                                    {Number(item?.total).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                                                </span></td>
-                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}> <span className='status-quote'>Báo giá đã gửi</span> </td>
+                    : (isHaveQuote &&
+                        <div className='pb-3'>
+                            <table className="table table-striped table-hover table-quotes">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">
+                                            <Form.Check // prettier-ignore
+                                                type={'checkbox'}
+                                                id={`checkAll}`}
+                                                label={`Số`}
+                                                onChange={handleCheckAll}
+                                                checked={isCheckAll}
+                                            />
+                                        </th>
+                                        <th scope="col">Ngày tạo</th>
+                                        <th scope="col">Khách hàng</th>
+                                        <th scope="col">Nhân viên kinh doanh</th>
+                                        <th scope="col">Tổng</th>
+                                        <th scope="col">Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {invoices && invoices.length > 0 &&
+                                        invoices.map((item, index) => {
+                                            return (
+                                                <tr className='hover-item' key={uuidv4()} >
+                                                    <th scope="row">
+                                                        <Form.Check // prettier-ignore
+                                                            type={'checkbox'}
+                                                            id={item?.invoiceId}
+                                                            value={item?.invoiceId}
+                                                            label={`INV${item?.invoiceId}`}
+                                                            onChange={(e) => handleChangeCheckBox(e)}
+                                                            checked={selectedItems.includes(item?.invoiceId)}
+                                                        />
+                                                    </th>
+                                                    <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}>{convertDateTime(item?.createdAt)}</td>
+                                                    <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}>Huỳnh Khánh Duy</td>
+                                                    <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}>Nguyễn Bá Thành</td>
+                                                    <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}><span className='cost'>
+                                                        {Number(item?.total).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                                    </span></td>
+                                                    <td onClick={() => handleViewQuoteFromSaleOrder(item?.invoiceId)}> <span className='status-quote'>Báo giá đã gửi</span> </td>
+                                                </tr>
+
+                                            )
+                                        })
+                                    }
+
+                                    {
+                                        quotesSent && quotesSent.length > 0 ?
+                                            (
+                                                (() => {
+                                                    const filteredQuotes = quotesSent.filter((item) => {
+                                                        return searchQuotesSent.toLowerCase() === '' ||
+                                                            (item?.dataCustomer?.fullName.toLowerCase().includes(searchQuotesSent.toLowerCase()) ||
+                                                                ("QUO" + item?.quoteId.toString()).toLowerCase().includes(searchQuotesSent.toLowerCase()));
+                                                    })
+
+                                                    if (filteredQuotes.length > 0) {
+                                                        return filteredQuotes.map((item, index) => (
+                                                            <tr className='hover-item' key={uuidv4()}>
+                                                                <th scope="row">
+                                                                    <Form.Check // prettier-ignore
+                                                                        type={'checkbox'}
+                                                                        id={item?.quoteId}
+                                                                        value={item?.quoteId}
+                                                                        label={`QUO${item?.quoteId}`}
+                                                                        onChange={(e) => handleChangeCheckBox(e)}
+                                                                        checked={selectedItems.includes(item?.quoteId.toString())}
+                                                                    />
+                                                                </th>
+                                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>{convertDateTime(item?.createdAt)}</td>
+                                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>{item?.dataCustomer?.fullName}</td>
+                                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>{item?.updatedUser}</td>
+                                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}><span className='cost'>
+                                                                    {Number(item?.totalPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                                                </span></td>
+                                                                <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>
+                                                                    {item?.status === 'S1' &&
+                                                                        <span className='status-quote'>Báo giá đã gửi</span>
+                                                                    }
+                                                                    {item?.status === 'S0' &&
+                                                                        <span className='status-quote-draft'>Báo giá</span>
+                                                                    }
+                                                                    {item?.status === 'S2' &&
+                                                                        <span className='status-quote-s2'>Chờ xác nhận</span>
+                                                                    }
+                                                                    {item?.status === 'canceled' &&
+                                                                        <span className='status-quote-canceled'>Đã hủy</span>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+
+                                                        )
+                                                        )
+                                                    } else {
+                                                        return (
+                                                            <tr>
+                                                                <td colSpan="6">
+                                                                    <div className='text-center w-100 fw-medium'>
+                                                                        <span>Báo giá hoặc hóa đơn không tồn tại</span>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    }
+                                                })()
+                                            )
+                                            :
+                                            <tr >
+                                                <td colSpan={6}>
+                                                    <Empty />
+                                                </td>
                                             </tr>
 
-                                        )
-                                    })
-                                }
-
-                                {
-                                    quotesSent && quotesSent.length > 0 ?
-                                        (
-                                            (() => {
-                                                const filteredQuotes = quotesSent.filter((item) => {
-                                                    return searchQuotesSent.toLowerCase() === '' ||
-                                                        (item?.dataCustomer?.fullName.toLowerCase().includes(searchQuotesSent.toLowerCase()) ||
-                                                            ("QUO" + item?.quoteId.toString()).toLowerCase().includes(searchQuotesSent.toLowerCase()));
-                                                })
-
-                                                if (filteredQuotes.length > 0) {
-                                                    return filteredQuotes.map((item, index) => (
-                                                        <tr className='hover-item' key={uuidv4()}>
-                                                            <th scope="row">
-                                                                <Form.Check // prettier-ignore
-                                                                    type={'checkbox'}
-                                                                    id={item?.quoteId}
-                                                                    value={item?.quoteId}
-                                                                    label={`QUO${item?.quoteId}`}
-                                                                    onChange={(e) => handleChangeCheckBox(e)}
-                                                                    checked={selectedItems.includes(item?.quoteId.toString())}
-                                                                />
-                                                            </th>
-                                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>{convertDateTime(item?.createdAt)}</td>
-                                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>{item?.dataCustomer?.fullName}</td>
-                                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>Nguyễn Bá Thành</td>
-                                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}><span className='cost'>
-                                                                {Number(item?.totalPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                                                            </span></td>
-                                                            <td onClick={() => handleViewQuoteFromSaleOrder(item?.quoteId)}>
-                                                                {item?.status === 'S1' &&
-                                                                    <span className='status-quote'>Báo giá đã gửi</span>
-                                                                }
-                                                                {item?.status === 'S0' &&
-                                                                    <span className='status-quote-draft'>Báo giá</span>
-                                                                }
-                                                                {item?.status === 'S2' &&
-                                                                    <span className='status-quote-s2'>Chờ xác nhận</span>
-                                                                }
-                                                            </td>
-                                                        </tr>
-
-                                                    )
-                                                    )
-                                                } else {
-                                                    return (
-                                                        <tr>
-                                                            <td colSpan="6">
-                                                                <div className='text-center w-100 fw-medium'>
-                                                                    <span>Báo giá hoặc hóa đơn không tồn tại</span>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    );
-                                                }
-                                            })()
-                                        )
-                                        :
+                                    }
+                                </tbody>
+                                {quotesSent && quotesSent.length > 0 &&
+                                    <tfoot>
                                         <tr >
-                                            <td colSpan={6}>
-                                                <Empty />
+                                            <th scope="row">
+
+                                            </th>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>
+                                                <span className='total-cost' data-tooltip="Tổng đã gồm thuế">
+                                                    {Number(totalQuotes).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                                </span>
                                             </td>
+                                            <td></td>
+                                            <td></td>
                                         </tr>
-
+                                    </tfoot>
                                 }
-                            </tbody>
+                            </table >
                             {quotesSent && quotesSent.length > 0 &&
-                                <tfoot>
-                                    <tr >
-                                        <th scope="row">
-
-                                        </th>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td>
-                                            <span className='total-cost' data-tooltip="Tổng đã gồm thuế">
-                                                {Number(totalQuotes).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                                            </span>
-                                        </td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                </tfoot>
+                                <div className='d-flex justify-content-end pe-4'>
+                                    <Pagination defaultCurrent={page} total={totalQuotesSent} pageSize={pageSize} onChange={onChangePagination} />
+                                </div>
                             }
-                        </table >
-                        {quotesSent && quotesSent.length > 0 &&
-                            <div className='d-flex justify-content-end pe-4'>
-                                <Pagination defaultCurrent={page} total={totalQuotesSent} pageSize={pageSize} onChange={onChangePagination} />
-                            </div>
-                        }
-                    </div >
+                        </div >
+                    )
+
             }
         </>
     )

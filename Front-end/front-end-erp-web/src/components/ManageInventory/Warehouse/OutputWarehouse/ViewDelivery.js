@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux';
-import { getStockDeliveryInfo, getDeliveryListItems, checkMinusStock, updateDelivery } from '../../../../services/inventoryServices'
+import { getStockDeliveryInfoBFF, getDeliveryListItems, checkMinusStock, updateDelivery } from '../../../../services/inventoryServices'
 import { getCustomers } from '../../../../services/saleServices'
 import { LANGUAGES } from '../../../../utils/constant'
 import { OtherInfo } from './OtherInfo';
@@ -74,7 +74,7 @@ function ViewDelivery() {
 
     useEffect(() => {
         const deliveryInfo = async () => {
-            const res = await getStockDeliveryInfo(idDelivery)
+            const res = await getStockDeliveryInfoBFF(idDelivery)
             if (res && res.EC === 0) {
                 setDeliveryInfo(res.DT)
                 // console.log('Delivery Info:')
@@ -305,8 +305,10 @@ function ViewDelivery() {
                                             filterSort={(optionA, optionB) =>
                                                 (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                             }
-                                            options={[{ value: deliveryInfo.customerId, label: getNameViById(customerLIst, deliveryInfo.customerId) }]}
+                                            options={[{ value: deliveryInfo.customerId, label: deliveryInfo.customerData.fullName }]}
                                             defaultValue={deliveryInfo.customerId}
+                                        // options={[{ value: deliveryInfo.customerId, label: getNameViById(customerLIst, deliveryInfo.customerId) }]}
+                                        // defaultValue={deliveryInfo.customerId}
                                         // onChange={(e) => handleChangeInputWarehouse(e, 'receiveFrom')}
                                         />
                                     </div>

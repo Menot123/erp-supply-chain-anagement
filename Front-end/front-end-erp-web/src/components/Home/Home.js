@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './Home.scss'
 import { FaSearch } from "react-icons/fa";
 import inventory from '../../../src/assets/img/inventory2.png'
@@ -18,6 +18,15 @@ function Home() {
     const intl = useIntl();
     const history = useHistory()
     const department = useSelector(state => state.user?.department)
+    const idUser = useSelector(state => state.user?.id)
+    console.log(">>>> check idUser: ", idUser);
+
+
+    useEffect(() => {
+        if (idUser && idUser.toString().includes("CU")) {
+            history.push('/customer')
+        }
+    }, [idUser])
 
     const handleRedirectRoute = (userDepartment, url) => {
         if (department === 'admin') {
@@ -88,7 +97,7 @@ function Home() {
                         </div>
                     </div>
 
-                    <div onClick={() => handleRedirectRoute('D4', '/accounting')} className='col-4 app-item'>
+                    {/* <div onClick={() => handleRedirectRoute('D4', '/accounting')} className='col-4 app-item'>
                         <div className='wrap-img-app'>
                             <img className='img-element-app' src={ke_toan} alt='img-element-app' />
                         </div>
@@ -102,7 +111,7 @@ function Home() {
                                 <span className='description-app'><FormattedMessage id='homepage.item-accounting-des' /></span>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                     <div onClick={() => handleRedirectRoute('D5', '/manage-accounts')} className='col-4 app-item'>
                         <div className='wrap-img-app'>

@@ -13,6 +13,12 @@ export const ModalSendQuoteToEmail = (props) => {
 Đã có quotation S${props?.dataQuote?.quoteId} có giá trị là ${props?.dataQuote?.totalPrice} đã sẵn sàng để bạn kiểm tra.
     
 Đừng ngần ngại liên hệ với chúng tôi nếu bạn có câu hỏi cần được giải đáp.
+
+Để xem chi tiết báo giá vui lòng <a href="http://localhost:3000/my/orders/${props?.dataQuote?.quoteId}">nhấn vào đây.</a> 
+
+Chúc quý khách hàng một ngày tốt lành.
+
+Trân trọng.
 `;
 
 

@@ -12,7 +12,10 @@ export const Comments = (props) => {
     const [activeComment, setActiveComment] = useState(null)
     const commentRoots = dataComments.filter(comment => comment.parentId === null)
     const userId = useSelector(state => state.user.id)
-    const firstName = useSelector(state => state.user.firstName)
+    const lastName = useSelector(state => state.user?.lastName)
+    const firstName = useSelector(state => state.user?.firstName)
+
+    const fullName = (firstName ?? "") + " " + lastName
 
     const getCommentsReply = (commentId) => {
         return dataComments.filter(comment => +comment.parentId === +commentId).sort((a, b) =>
@@ -21,7 +24,7 @@ export const Comments = (props) => {
     }
 
     const fetchComments = async () => {
-        let res = await getComments()
+        let res = await getComments(props?.quoteId)
 
         if (res && res.EC === 0 && res?.DT.length > 0) {
             setDataComments(res?.DT)
@@ -30,10 +33,11 @@ export const Comments = (props) => {
 
     const addComment = async (content, parentId = null) => {
         const dataComment = {
+            quoteId: props?.quoteId,
             body: content,
             parentId,
             userId: userId ? userId : 100,
-            username: firstName,
+            username: fullName,
             createdAt: new Date().toISOString(),
         }
         let res = await createAComment(dataComment)
@@ -63,7 +67,7 @@ export const Comments = (props) => {
 
     useEffect(() => {
         fetchComments()
-    }, [])
+    }, [props?.quoteId])
 
     return (
         <div className='wrapper-comments'>

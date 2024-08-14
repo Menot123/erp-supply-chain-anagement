@@ -107,6 +107,47 @@ const initApiRoutes = (app) => {
      */
     router.get('/invoice/:invoiceId', apiController.getInvoice);
 
+    /**
+    * @swagger
+    * /api/stockDeliverys/{id}:
+    *  get:
+    *      tags:
+    *          - StockDelivery
+    *      summary: Get stockDelivery with id
+    *      description: Get information about stockDelivery with id
+    *      parameters:
+    *          - in: path
+    *            name: id     
+    *            required: true            
+    *            schema:     
+    *                type: string
+    *            description: ID of stockDelivery you want to get information 
+    *      responses:
+    *          200:
+    *              description: Return status and info of stockDelivery if exist.
+    *          404:
+    *              description: Error from server.
+    * 
+    */
+    router.get('/stockDeliveryById/:id', apiController.getStockDeliveryById);
+
+    /**
+     * @swagger
+     * /api/invoices:customerId:
+     *  get:
+     *      tags:
+     *          - BFF customer service and sale service to get all invoice
+     *      summary: Get info of invoices and info of customer 
+     *      description: Get info of invoices and info of customer 
+     *      responses:
+     *          200:
+     *              description: Return status of get info of invoices and info of customer.
+     *          500:
+     *              description: Error from server.
+     * 
+     */
+    router.get('/customer/invoices/:id', apiController.getAllInvoicesByCustomer);
+
     return app.use("/api/", router)
 }
 

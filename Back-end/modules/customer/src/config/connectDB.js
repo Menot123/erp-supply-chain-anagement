@@ -1,9 +1,14 @@
 const { Sequelize } = require('sequelize');
+require('dotenv').config();
 
 // Option 3: Passing parameters separately (other dialects)
-const sequelize = new Sequelize('erp_customer', 'root', null, {
-    host: 'localhost',
+const sequelize = new Sequelize('erp_customer', 'root', "123456", {
+    host: process.env.DB_HOST,
     dialect: 'mysql',
+    port: process.env.DB_PORT,
+    define: {
+        freezeTableName: true
+    },
     // logging: false
 });
 

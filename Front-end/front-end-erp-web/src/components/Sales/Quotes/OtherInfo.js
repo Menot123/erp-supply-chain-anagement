@@ -13,7 +13,7 @@ export const OtherInfo = (props) => {
         const buildSelectCustomer = (dataCustomer) => {
             if (dataCustomer && dataCustomer?.lastName && dataCustomer?.firstName) {
                 return {
-                    label: dataCustomer?.lastName + ' ' + dataCustomer?.firstName,
+                    label: dataCustomer?.firstName + ' ' + dataCustomer?.lastName,
                     value: props?.otherInfoQuote?.employeeId
                 }
             } else {
@@ -29,8 +29,6 @@ export const OtherInfo = (props) => {
                 const res = await getEmployeeById(props?.otherInfoQuote?.employeeId)
                 if (res?.EC === 0) {
                     setSelectCustomer(buildSelectCustomer(res?.DT))
-                    console.log(">>>> selectCustomer: ", buildSelectCustomer(res?.DT));
-
                 }
             }
         }
@@ -58,12 +56,10 @@ export const OtherInfo = (props) => {
                         filterSort={(optionA, optionB) =>
                             (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                         }
-                        options={[
-                            { value: 1, label: 'Nguyễn Văn Khánh' },
-                            { value: 2, label: 'Nguyễn Tiến Đạt' },
-                        ]}
+                        options={props?.listSaleEmployeesSelect ?? []}
                         value={selectCustomer ? selectCustomer : null}
                         onChange={(e) => props?.handleChangeEmployeeId(e)}
+                        disabled={props?.isDisable}
                     />
                 </div>
             </div>
@@ -82,6 +78,7 @@ export const OtherInfo = (props) => {
                         size='middle'
                         id='select-date-delivery'
                         defaultValue={props?.otherInfoQuote?.deliveryDate ? dayjs(props?.otherInfoQuote?.deliveryDate) : null}
+                        disabled={props?.isDisable}
                     />
                 </div>
             </div>

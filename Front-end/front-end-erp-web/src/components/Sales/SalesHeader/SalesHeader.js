@@ -7,7 +7,7 @@ import { FaTimes } from "react-icons/fa";
 import { IoIosSettings } from "react-icons/io";
 import { Dropdown, Popconfirm } from 'antd';
 import { FaRegTrashCan } from "react-icons/fa6";
-import { deleteQuotesSent, deleteCustomer } from "../../../services/saleServices"
+import { deleteQuotesSent, deleteInvoices, deleteCustomer } from "../../../services/saleServices"
 import { toast } from 'react-toastify';
 import { HiSquares2X2 } from "react-icons/hi2";
 import { MdViewList } from "react-icons/md";
@@ -26,6 +26,8 @@ function SalesHeader(props) {
             let res = {}
             if (url === '/sale-order/customers') {
                 res = await deleteCustomer(listQuote)
+            } else if (url === '/sale-order/invoices') {
+                res = await deleteInvoices(listQuote)
             } else {
                 res = await deleteQuotesSent(listQuote)
             }

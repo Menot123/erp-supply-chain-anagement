@@ -1,6 +1,6 @@
 FROM node:14-alpine
 
-EXPOSE 8000
+EXPOSE 3000
 
 WORKDIR /felix/api-gateway
 

@@ -309,6 +309,25 @@ const handleDeleteProductService = async (productId) => {
     }
 }
 
+const handleCheckProductIsEnough = async (listProduct) => {
+    try {
+        let arrProduct = [];
+        if (listProduct && listProduct.length > 0) {
+            await Promise.all(listProduct.map(async (item) => {
+                let currentQuantityProduct = await db.Stock.findOne({
+                    where: { productId: item?.productId }
+                });
+                if (+item?.quantity > +currentQuantityProduct?.quantity) {
+                    arrProduct.push({ productName: item?.name });
+                }
+            }));
+        }
+        return arrProduct
+    } catch (e) {
+        console.log('>>> error when check quantity product: ', e)
+    }
+}
+
 module.exports = {
     handleGetProductsService,
     handleGetProductsPaginationService,
@@ -316,5 +335,6 @@ module.exports = {
     handleCreateProductService,
     handleImportProductService,
     handleUpdateProductService,
-    handleDeleteProductService
+    handleDeleteProductService,
+    handleCheckProductIsEnough
 }

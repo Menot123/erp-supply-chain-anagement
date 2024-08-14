@@ -16,6 +16,8 @@ import { FormattedMessage } from 'react-intl'
 import PuffLoader from "react-spinners/PuffLoader";
 import { GoTriangleDown } from "react-icons/go";
 import { GoTriangleUp } from "react-icons/go";
+import avatarUser from '../../assets/img/avatarUser.jpg'
+
 
 function ManageAccount() {
     const location = useLocation();
@@ -144,7 +146,7 @@ function ManageAccount() {
                                         return filteredEmployees.map((item, index) => (
                                             <div onClick={() => handleDetailEmployee(item)} key={index} className='employee-item d-flex col-4  '>
                                                 <div className='avatar-employee'>
-                                                    <img className='img-employee' src={item.avatar} alt='avatar-employee' />
+                                                    <img className='img-employee' src={item.avatar ?? avatarUser} alt='avatar-employee' />
                                                 </div>
                                                 <div className='des-employee'>
                                                     <span className='name-employee '>{language === LANGUAGES.EN ? item.firstName + ' ' + item.lastName : item.lastName + ' ' + item.firstName}</span>

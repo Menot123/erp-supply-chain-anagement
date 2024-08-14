@@ -223,8 +223,33 @@ const handleGetAllDepartmentsService = async () => {
     }
 }
 
+const getSaleEmployeesService = async () => {
+    try {
+        let res = {}
+        const employees = await db.User.findAll({
+            where: {
+                status: 'active',
+                department: 'D3'
+            },
+            attributes: { exclude: ['avatar'] }
+        })
+        if (employees) {
+            res.EC = 0
+            res.EM = 'Get all sale employees successfully'
+            res.DT = employees
+        } else {
+            res.EM = 'Get all sale employees failed'
+            res.EC = 2
+            res.DT = ''
+        }
+
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
 
 module.exports = {
     getAllTypeService, getEmployeesByDepartmentService, handleCreateUsersService, handleCreateDepartmentService,
-    handleGetAllDepartmentsService
+    handleGetAllDepartmentsService, getSaleEmployeesService
 }

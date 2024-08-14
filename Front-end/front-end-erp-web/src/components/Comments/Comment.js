@@ -8,6 +8,7 @@ export const Comment = ({ comment, replies, currentUserId, handleDeleteComment,
     activeComment, updateComment, setActiveComment, parentId = null, addComment }) => {
 
     const canReply = Boolean(currentUserId)
+
     const canEdit = +currentUserId === +comment.userId
     const canDelete = +currentUserId === +comment.userId
     const isReplying = activeComment && activeComment.type === 'replying'

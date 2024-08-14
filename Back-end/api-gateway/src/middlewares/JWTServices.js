@@ -13,7 +13,7 @@ const verifyToken = (token) => {
     return dataDecoded;
 }
 
-const urlSalePermission = ['/sale', '/inventory', '/customer']
+const urlSalePermission = ['/sale', '/inventory', '/customer', "/account"]
 
 const checkPermissionAccess = (department, currentUrl, urlPermissions) => {
     switch (department) {
@@ -38,6 +38,8 @@ const checkUserJWT = (req, res, next) => {
         let token = cookies.jwt
         let decode = verifyToken(token)
         if (decode) {
+            console.log("HEHEHE");
+
             switch (decode?.department) {
                 case 'D3':
                     if (checkPermissionAccess(decode?.department, req?.baseUrl, urlSalePermission)) {

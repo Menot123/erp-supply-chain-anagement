@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import './NewQuote.scss'
 import { useHistory } from 'react-router-dom'
-import { Steps, Select, Tooltip, DatePicker, Tabs } from "antd";
+import { Alert, Steps, Select, Tooltip, DatePicker, Tabs } from "antd";
 import { useState } from 'react'
 import { TableProducts } from './TableProducts';
 import { getAllProducts } from '../../../services/inventoryServices'
@@ -116,12 +116,6 @@ export const OpenQuoteCreated = () => {
     const [arrCurrentInvoiceStep, setArrInvoiceCurrentStep] = useState(defaultCreateInvoiceStep1)
 
     useEffect(() => {
-        // const path = location.pathname
-        // const orderId = path.split("/").pop();
-        // const invoiceId = path.split("/").pop();
-        // let currentURL = path.split("/")
-        // currentURL = currentURL[currentURL.length - 2]
-        // setCurrentURL(currentURL)
 
         const fetchDataQuotePreview = async () => {
             setIsLoadingData(true)
@@ -145,28 +139,11 @@ export const OpenQuoteCreated = () => {
                 let customer = res?.DT?.dataCustomer?.fullName
                 customer = customer.split(' ')
                 if (customer && customer.length > 0) {
-                    // setNameCustomer(customer[customer.length - 1])
                 }
-                // setDataPreview({ ...res?.DT, tax: JSON.parse(res?.DT?.tax), productList: JSON.parse(res?.DT?.productList) })
                 buildDataTableProduct(JSON.parse(res?.DT?.productList))
             }
             setIsLoadingData(false)
         }
-
-        // const fetchDataDraftInvoice = async () => {
-        //     setIsLoadingData(true)
-        //     const res = await getDataInvoicePreview(invoiceId)
-        //     if (res.EC === 0) {
-        //         let customer = res?.DT?.dataCustomerInvoice?.fullName
-        //         customer = customer.split(' ')
-        //         if (customer && customer.length > 0) {
-        //             setNameCustomer(customer[customer.length - 1])
-        //         }
-        //         setDataPreview({ ...res?.DT, tax: JSON.parse(res?.DT?.tax), productList: JSON.parse(res?.DT?.productList) })
-        //         buildDataTableProduct(JSON.parse(res?.DT?.productList))
-        //     }
-        //     setIsLoadingData(false)
-        // }
 
         const buildDataTableProduct = (listProduct) => {
             let dataProducts = []
@@ -182,14 +159,8 @@ export const OpenQuoteCreated = () => {
                     })
                 })
             }
-            // setDataProducts(dataProducts)
         }
 
-        // if (currentURL === 'invoice') {
-        //     fetchDataDraftInvoice()
-        // } else {
-        //     fetchDataQuotePreview()
-        // }
         fetchDataQuotePreview()
     }, [id, intl])
 
@@ -568,7 +539,6 @@ export const OpenQuoteCreated = () => {
         }
     }
 
-
     return (
         <div className='wrapper-create-quote'>
             <div className='header-create-quote'>
@@ -584,18 +554,35 @@ export const OpenQuoteCreated = () => {
                 </div>
             </div>
             <div className='wrapper-body-create-quote'>
+                {
+                    dataQuote?.status === 'canceled' &&
+                    <Alert
+                        className='my-3 text-center w-100'
+                        description={
+                            <div>
+                                <b className='hover-item ms-2'> Báo giá này đã bị hủy.</b>
+                            </div>
+                        }
+                        type="error"
+                        closable
+                    />
+                }
+
                 <div className='actions-status'>
                     <div className='wrap-btn-actions'>
                         {
                             currentStepQuote === 3 || isCreateInvoice ? "" :
-                                <>
-                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCreateInvoice}><FormattedMessage id="btn-create-bill" /></button>}
-                                    {currentStepQuote !== 2 && <button className='btn btn-main' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
-                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
-                                    {currentStepQuote !== 2 && <button className='btn btn-gray' onClick={handleConfirmQuote}><FormattedMessage id="btn-confirm-quote" /></button>}
-                                    <button className='btn btn-gray' onClick={handlePushDataQuotePreview}><FormattedMessage id="btn-preview-quote" /></button>
-                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCancelQuote}><FormattedMessage id="btn-cancel-quote" /></button>}
-                                </>
+                                (dataQuote?.status !== 'canceled' &&
+                                    <>
+                                        {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCreateInvoice}><FormattedMessage id="btn-create-bill" /></button>}
+                                        {currentStepQuote !== 2 && <button className='btn btn-main' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
+                                        {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
+                                        {currentStepQuote !== 2 && <button className='btn btn-gray' onClick={handleConfirmQuote}><FormattedMessage id="btn-confirm-quote" /></button>}
+                                        <button className='btn btn-gray' onClick={handlePushDataQuotePreview}><FormattedMessage id="btn-preview-quote" /></button>
+                                        {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCancelQuote}><FormattedMessage id="btn-cancel-quote" /></button>}
+                                    </>
+                                )
+
                         }
 
                         {
@@ -637,14 +624,16 @@ export const OpenQuoteCreated = () => {
                                     }
                                 ]} />
                             :
-                            <Steps
-                                type="navigation"
-                                size="small"
-                                current={currentStepQuote}
-                                className="site-navigation-steps quote-step"
-                                items={dataStep ?? []}
+                            (dataQuote?.status !== 'canceled' &&
+                                <Steps
+                                    type="navigation"
+                                    size="small"
+                                    current={currentStepQuote}
+                                    className="site-navigation-steps quote-step"
+                                    items={dataStep ?? []}
 
-                            />
+                                />
+                            )
                         }
 
                     </div>

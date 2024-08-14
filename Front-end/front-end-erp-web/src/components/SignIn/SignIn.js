@@ -20,12 +20,17 @@ const SignIn = (props) => {
 
     const intl = useIntl();
     const language = useSelector(state => state.language.value)
+    const isLogin = useSelector(state => state.user?.isLogin)
     const dispatch = useDispatch()
     const history = useHistory();
 
     const handleChangeLanguage = (key) => {
         Promise.all([dispatch(translate(key)), dispatch(changeLanguage(key))])
 
+    }
+
+    if (isLogin) {
+        history.push('/home')
     }
 
     useEffect(() => {

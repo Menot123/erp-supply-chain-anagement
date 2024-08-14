@@ -12,7 +12,7 @@ import { useState } from 'react'
 import { FaCheck } from "react-icons/fa";
 import { ModalConfirmQuote } from './Modal/ModalConfirmQuote';
 import Form from 'react-bootstrap/Form';
-import { getAllInvoice, getInvoicePaid } from '../../services/saleServices'
+import { getAllInvoice, getInvoicePaid, getInvoice } from '../../services/saleServices'
 import { useHistory } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid';
 import { Pagination, Empty, Skeleton, Modal, Button } from 'antd';
@@ -137,10 +137,12 @@ function SaleOrderInvoice() {
 
     const fetchDataInvoicePaid = async (invoiceId) => {
         let res = await getInvoicePaid(invoiceId)
-        if (res && res?.EC === 0 && res?.DT) {
+        let resInfoInvoice = await getInvoice(invoiceId)
+        if (res && res?.EC === 0 && res?.DT && resInfoInvoice?.EC === 0) {
             setDataInvoicePaid((prevState) => ({
                 ...prevState,
-                ...res?.DT
+                ...res?.DT,
+                byEmployee: resInfoInvoice?.DT?.dataEmployee
             }))
         }
     }
@@ -331,18 +333,18 @@ function SaleOrderInvoice() {
                                                                     checked={selectedItems.includes(item?.invoiceId.toString())}
                                                                 />
                                                             </th>
-                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, "Example")}>{convertDateTime(item?.createdAt)}</td>
-                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, "Example")}>{item?.dataCustomer?.fullName}</td>
-                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, "Example")}>Nguyễn Bá Thành</td>
-                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, "Example")}><span className='cost'>
+                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}>{convertDateTime(item?.createdAt)}</td>
+                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}>{item?.dataCustomer?.fullName}</td>
+                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}>{item?.updatedUser}</td>
+                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}><span className='cost'>
                                                                 {Number(item?.totalPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                                                             </span></td>
-                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, "Example")}>
+                                                            <td onClick={() => handleViewInvoiceFromSaleOrder(item?.invoiceId, item?.status, item?.dataCustomer?.fullName, dataInvoicePaid?.byEmployee)}>
                                                                 {item?.status === 'S0' &&
                                                                     <span className='status-quote'>Chờ xác nhận</span>
                                                                 }
                                                                 {item?.status === 'S1' &&
-                                                                    <span span className='status-quote-draft'>Chờ thanh toán</span>
+                                                                    <span className='status-quote-draft'>Chờ thanh toán</span>
                                                                 }
                                                                 {
                                                                     item?.status === 'S2' &&

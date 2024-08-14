@@ -1,9 +1,9 @@
 {
     "development": {
         "username": "root",
-        "password": null,
+        "password": "123456",
         "database": "erp_inventory",
-        "host": "127.0.0.1",
+        "host": "db-inventory",
         "dialect": "mysql",
         "logging": false
     },

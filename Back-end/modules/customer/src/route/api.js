@@ -103,6 +103,25 @@ const initApiRoutes = (app) => {
      */
     router.put('/customer/:id', apiController.updateCustomer);
 
+    /**
+     * @swagger
+     * /api/customer:
+     *  post:
+     *      tags:
+     *          - Customer
+     *      summary: customer login
+     *      responses:
+     *          200:
+     *              description: Return status login of the customer.
+     *          500:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/auth/login', apiController.loginCustomer);
+
+    router.post('/customers', apiController.createListCustomer);
+
+
     return app.use("/api/", router)
 }
 

@@ -8,6 +8,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      quoteId: {
+        type: Sequelize.INTEGER
+      },
       body: {
         type: Sequelize.STRING
       },

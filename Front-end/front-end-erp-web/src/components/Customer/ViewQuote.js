@@ -15,7 +15,7 @@ import { useReactToPrint } from 'react-to-print';
 import { ModalRejectQuote } from '../Sales/Modal/ModalRejectQuote';
 import { Comments } from '../Comments/Comments';
 import { FormattedMessage, useIntl } from 'react-intl'
-import { getDataQuotePreview, getDataInvoicePreview, getCustomer } from '../../services/saleServices'
+import { getDataQuotePreview, getDataInvoicePreview, getCustomer, confirmQuote } from '../../services/saleServices'
 import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux';
 import logo from '../../assets/img/logo.png'
@@ -26,6 +26,7 @@ export const ViewQuote = () => {
     const intl = useIntl();
 
     const language = useSelector(state => state.language.value)
+    const idCustomer = useSelector(state => state.user.id) ?? ""
     const history = useHistory()
     const [signature, setSignature] = useState()
     const canvasRef = useRef(null);
@@ -45,12 +46,16 @@ export const ViewQuote = () => {
     const [isLoadingData, setIsLoadingData] = useState(false)
     const [currentURL, setCurrentURL] = useState("/")
     const [dataCustomer, setDataCustomer] = useState(null)
-
+    const [quoteIdToComments, setQuoteIdToComments] = useState(1)
+    const [isSigned, setIsSigned] = useState(false)
+    const [isReloadData, setIsReloadData] = useState(false)
 
     useEffect(() => {
         const path = location.pathname
         const orderId = path.split("/").pop();
         const invoiceId = path.split("/").pop();
+
+        setQuoteIdToComments(orderId)
         let currentURL = path.split("/")
         currentURL = currentURL[currentURL.length - 2]
         setCurrentURL(currentURL)
@@ -59,8 +64,16 @@ export const ViewQuote = () => {
             setIsLoadingData(true)
             const res = await getDataQuotePreview(orderId)
             if (res.EC === 0) {
+
+                if (idCustomer && (idCustomer.toString()).includes("CU") && idCustomer !== res?.DT?.customerId) {
+                    history.push('/not-found/404')
+                }
                 let customer = res?.DT?.dataCustomer?.fullName
                 setDataCustomer(res?.DT?.dataCustomer)
+
+                if (res?.DT?.signature) {
+                    setIsSigned(true)
+                }
                 customer = customer.split(' ')
                 if (customer && customer.length > 0) {
                     setNameCustomer(customer[customer.length - 1])
@@ -115,7 +128,7 @@ export const ViewQuote = () => {
         } else {
             fetchDataQuotePreview()
         }
-    }, [location.pathname, intl])
+    }, [location.pathname, idCustomer, isReloadData])
 
     useEffect(() => {
         const autoSignature = (name) => {
@@ -130,7 +143,7 @@ export const ViewQuote = () => {
                 const centerY = canvas.height / 2;
                 ctx.fillText(name, centerX, centerY);
 
-                const imageDataURL = canvas.toDataURL(); // Chuyển đổi canvas thành đường dẫn hình ảnh
+                const imageDataURL = canvas.toDataURL(); // Chuyển đổi canvas thành đường dẫn hình ản
 
                 setDataSignature(imageDataURL); // Lưu đường dẫn hình ảnh vào state
             }
@@ -151,7 +164,6 @@ export const ViewQuote = () => {
     const backPreviousPage = () => {
         history.goBack()
     }
-
 
     const columns = [
         {
@@ -212,16 +224,19 @@ export const ViewQuote = () => {
         }
     }
 
+
+
     const handleSaveDrawSignature = () => {
         const res = signature.getTrimmedCanvas().toDataURL('image/jpeg')
         setSignatureFillInQuote(res)
     }
 
-    const handleSubmitSignature = () => {
+    const handleSubmitSignature = async () => {
         switch (typeSignature) {
             case 'draw':
                 setSubmitSignature(true)
-                setTimeout(() => {
+                setTimeout(async () => {
+                    await confirmQuote(quoteIdToComments, signatureFillInQuote.replace(/[{}]/g, ''))
                     handleSaveDrawSignature()
                     handleCloseModalSignature()
                     setSubmitSignature(false)
@@ -230,7 +245,8 @@ export const ViewQuote = () => {
             case 'auto':
             case 'upload':
                 setSubmitSignature(true)
-                setTimeout(() => {
+                setTimeout(async () => {
+                    await confirmQuote(quoteIdToComments, dataSignature.replace(/[{}]/g, ''))
                     setSignatureFillInQuote(dataSignature)
                     handleCloseModalSignature()
                     setSubmitSignature(false)
@@ -314,19 +330,22 @@ export const ViewQuote = () => {
                         <Affix offsetTop={100} className='fixed-content-left'>
                             <div>
                                 <h2>{dataPreview && dataPreview?.totalPrice !== 0 ? (+dataPreview?.totalPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : '0₫'}</h2>
-                                {currentURL !== "invoice" &&
+                                {currentURL !== "invoice" && dataPreview?.status !== 'canceled' &&
                                     <button className='btn btn-main  btn-accept' onClick={handleShowModalSignature}><MdDone /><FormattedMessage id="new_quote.preview-btn-sign" /></button>
                                 }
-                                <button className='btn btn-view-detail d-flex align-items-center' onClick={generatePDF}><FaPrint className='me-1' />
-                                    <FormattedMessage id={currentURL === "invoice" ? "new_invoice.preview-btn-save-pdf" : "new_quote.preview-btn-save-pdf"} />
-                                </button>
+                                {
+                                    dataPreview?.status !== 'canceled' &&
+                                    <button className='btn btn-view-detail d-flex align-items-center' onClick={generatePDF}><FaPrint className='me-1' />
+                                        <FormattedMessage id={currentURL === "invoice" ? "new_invoice.preview-btn-save-pdf" : "new_quote.preview-btn-save-pdf"} />
+                                    </button>
+                                }
                             </div>
                         </Affix>
 
                     </div>
 
                     <div className='content-right'>
-                        {isCancelQuote &&
+                        {isCancelQuote || dataPreview?.status === 'canceled' &&
                             <Alert
                                 className='my-3 text-center'
                                 description={
@@ -386,8 +405,6 @@ export const ViewQuote = () => {
                                     </div>
 
 
-                                    {console.log(">>>> dataPreview?.tax: ", dataPreview?.tax)}
-
                                     {
                                         dataPreview && dataPreview?.tax && Object.keys(dataPreview?.tax).map((taxValue, index) => (
                                             <div key={'tax-total' + index} className='tax d-flex justify-content-between bottom-line'>
@@ -414,6 +431,14 @@ export const ViewQuote = () => {
                                             <span className='signatured-text'>{dataCustomer?.fullName ? dataCustomer?.fullName : 'name'}</span>
                                         </>
                                     }
+                                    {isSigned &&
+                                        <>
+                                            <h5><FormattedMessage id="new_quote.preview-modal-sign-title-area" /></h5>
+                                            <div>
+                                                <p className='mb-0'>(Đã ký)</p>
+                                            </div>
+                                            <span className='signatured-text'>{dataCustomer?.fullName ? dataCustomer?.fullName : 'name'}</span>
+                                        </>}
                                 </div>
 
                             </div>
@@ -440,17 +465,19 @@ export const ViewQuote = () => {
                             </div>
                         </div>
 
-                        {!currentURL === "invoice" &&
+                        {currentURL !== "invoice" &&
                             <>
-                                <div className='btn-actions d-flex justify-content-center gap-2'>
-                                    <button className='btn btn-main' onClick={handleShowModalSignature}><MdDone /><FormattedMessage id="new_quote.preview-btn-sign" /></button>
-                                    <button className='btn btn-reply hover-item' onClick={handleScrollToComment}><FaComment /> <FormattedMessage id="new_quote.preview-btn-comment" /></button>
-                                    <button className='btn btn-danger' onClick={() => setIsShowModalRejectQuote(true)}><TiTimes /> <FormattedMessage id="new_quote.preview-btn-cancel" /></button>
+                                {dataPreview?.status !== 'canceled' &&
+                                    <div className='btn-actions d-flex justify-content-center gap-2'>
+                                        <button className='btn btn-main' onClick={handleShowModalSignature}><MdDone /><FormattedMessage id="new_quote.preview-btn-sign" /></button>
+                                        <button className='btn btn-reply hover-item' onClick={handleScrollToComment}><FaComment /> <FormattedMessage id="new_quote.preview-btn-comment" /></button>
+                                        <button className='btn btn-danger' onClick={() => setIsShowModalRejectQuote(true)}><TiTimes /> <FormattedMessage id="new_quote.preview-btn-cancel" /></button>
 
-                                </div>
+                                    </div>
+                                }
 
                                 <h4 className='mt-3' ref={commentRef}><FormattedMessage id="new_quote.preview-btn-history-comment" /></h4>
-                                <Comments />
+                                <Comments quoteId={quoteIdToComments} />
                             </>
                         }
                     </div>
@@ -559,6 +586,8 @@ export const ViewQuote = () => {
                 show={isShowModalRejectQuote}
                 close={() => setIsShowModalRejectQuote(false)}
                 cancelQuote={() => setIsCancelQuote(true)}
+                quoteId={quoteIdToComments}
+                reloadData={setIsReloadData}
             />
         </>
 

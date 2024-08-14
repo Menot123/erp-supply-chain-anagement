@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
         },
         customerId: DataTypes.STRING,
+        employeeId: DataTypes.INTEGER,
         createdDate: DataTypes.STRING,
         paymentPolicy: DataTypes.STRING,
         productList: DataTypes.TEXT,
@@ -22,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
         priceBeforeTax: DataTypes.STRING,
         tax: DataTypes.STRING,
         totalPrice: DataTypes.STRING,
+        deliveryDate: DataTypes.STRING,
         status: DataTypes.STRING,
         createdUser: DataTypes.INTEGER,
         updatedUser: DataTypes.INTEGER

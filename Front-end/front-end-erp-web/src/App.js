@@ -19,8 +19,12 @@ import ManageAccountingRoute from './routes/ManageAccountingRoute';
 import ManagePurchaseRoute from './routes/ManagePurchaseRoute';
 import ModalProfile from './components/ProfileEmployee/ModalProfile';
 import PrivateRoute from './routes/PrivateRoute'
+import CustomerPrivateRoutes from './routes/CustomerPrivateRoutes'
 import SaleOrderRoute from './routes/SaleOrderRoute';
 import { ViewQuote } from './components/Customer/ViewQuote';
+import CustomerSignIn from './components/SignIn/CustomerSignIn';
+import HomeCustomer from './components/Customer/HomeCustomer';
+import CustomerRoute from './routes/CustomerRoute';
 
 function App() {
 
@@ -33,7 +37,7 @@ function App() {
 
   return (
     <div className='app-container'>
-      {url === '/login' || url === '/forgot-password' ? ' ' : <Navigation />}
+      {url === '/login' || url === '/forgot-password' || url === ('/customer/login') ? ' ' : <Navigation />}
       <Switch>
         <PrivateRoute path={path.MANAGE_EMPLOYEES} component={ManageEmployeeRoute}>
         </PrivateRoute>
@@ -48,6 +52,11 @@ function App() {
         <Route path={path.SIGN_IN} exact>
           <SignIn />
         </Route>
+        <Route path={path.CUSTOMER_SIGN_IN} exact>
+          <CustomerSignIn />
+        </Route>
+        <CustomerPrivateRoutes path={path.CUSTOMER_HOME2} component={CustomerRoute}>
+        </CustomerPrivateRoutes>
         <Route path={path.FORGOT_PASSWORD} exact>
           <ForgotPassword />
         </Route>
@@ -61,7 +70,9 @@ function App() {
         </Route>
 
       </Switch>
-      <ModalProfile />
+      {!url.startsWith('/customer') &&
+        <ModalProfile />
+      }
       <ToastContainer
         position="bottom-right"
         style={{ minWidth: "fit-content" }}

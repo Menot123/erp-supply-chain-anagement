@@ -79,11 +79,11 @@ export const ModalConfirmQuote = (props) => {
                                 type={'radio'}
                                 name="group1"
                                 id={'option-payment'}
-                                label={'PayPal'}
-                                value='Paypal'
+                                label={'Email'}
+                                value='Email'
                                 onChange={(e) => handleChangeSelectRadio(e)}
-                                checked={paymentMethod === "Paypal"}
-                                selected={paymentMethodSelected === "Paypal"}
+                                checked={paymentMethod === "Email"}
+                                selected={paymentMethodSelected === "Email"}
                             />
                         </Form>
                     </div>

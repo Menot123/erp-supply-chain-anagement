@@ -13,7 +13,10 @@ import { validateData } from '../../../utils/functions'
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { QuotePDF } from './QuotePDF';
-import { getLatestQuoteCode, postDataQuote, postDataInvoice, confirmInvoice } from '../../../services/saleServices'
+import {
+    getLatestQuoteCode, postDataQuote, postDataInvoice, confirmInvoice, createStockDelivery,
+    createStockDeliveryItems
+} from '../../../services/saleServices'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { ModalCancelQuote } from '../Modal/ModalCancelQuote';
@@ -34,6 +37,7 @@ export const OpenInvoiceCreated = () => {
     const intl = useIntl();
     const language = useSelector(state => state.language.value)
     const email = useSelector(state => state.user.email)
+    const userId = useSelector(state => state.user?.id)
 
     const defaultDataQuote = {
         quoteId: '',
@@ -134,6 +138,7 @@ export const OpenInvoiceCreated = () => {
                     changeStep(1)
                 } else if (res?.DT && res?.DT?.status === 'S1') {
                     setArrInvoiceCurrentStep(defaultCreateInvoiceStep2)
+                    setCurrentStepInvoice(1)
                 } else {
                     setCurrentStepInvoice(1)
                     setArrInvoiceCurrentStep(defaultCreateInvoiceStep2)
@@ -142,6 +147,7 @@ export const OpenInvoiceCreated = () => {
                 }
                 setIsCreateInvoice(true)
                 setDataQuote({ ...res?.DT, quoteId: res?.DT?.invoiceId, productList: JSON.parse(res?.DT?.productList), fullDataCustomer: res?.DT?.dataCustomer })
+                setOtherInfoQuote({ employeeId: res?.DT?.employeeId, deliveryDate: res?.DT?.deliveryDate })
                 setDateCreateInvoice(res?.DT?.createdDate)
                 setDataCustomerSelect({ label: res?.DT?.dataCustomer?.fullName, value: res?.DT?.dataCustomer?.customerId })
                 setExpirationDay(res?.DT?.expirationDay)
@@ -347,16 +353,12 @@ export const OpenInvoiceCreated = () => {
         }))
     };
 
-    const onChangeTab = (key) => {
-        console.log(key);
-    };
-
-
     const handleChangeInputQuote = (e, type, label) => {
         switch (type) {
             case 'customer':
             case 'currency':
             case 'paymentPolicy':
+            case 'policyAndCondition':
             case 'totalPrice':
             case 'productList':
                 if (type === 'customer') {
@@ -369,6 +371,15 @@ export const OpenInvoiceCreated = () => {
                 }
                 if (type === 'currency') {
                     setCurrency({ value: e, label: label })
+                }
+
+                if (type === 'policyAndCondition') {
+                    setPolicyAndCondition(e.target.value)
+                    setDataQuote((prevState) => ({
+                        ...prevState,
+                        [type]: e.target.value
+                    }))
+                    break;
                 }
 
                 setDataQuote((prevState) => ({
@@ -474,30 +485,53 @@ export const OpenInvoiceCreated = () => {
         setDataSendQuotePDF([])
     }
 
-    const handleConfirmQuote = async () => {
+    const addDays = (dateString, daysToAdd) => {
+        // Chuyển đổi chuỗi ngày tháng thành đối tượng Date
+        const date = new Date(dateString);
 
-        if (dataQuote && dataQuote?.quoteId) {
-            const arrValidateFieldsQuote = ['customerId', 'expirationDay', 'currency', 'paymentPolicy']
-            let check = validateData(arrValidateFieldsQuote, dataQuote)
-            if (check && check.length === 0) {
-                let res = await postDataQuote({ ...dataQuote, status: 'S2' })
-                if (res?.EC === 0) {
-                    changeStep(2)
-                } else {
-                    toast.error(<FormattedMessage id='new_quote.preview-toast-error' />)
-                }
-            } else {
-                toast.warning(<FormattedMessage id="new_quote.confirm-toast-empty-field" />)
-            }
-        }
+        // Thêm số ngày cần thêm
+        date.setDate(date.getDate() + daysToAdd);
+
+        // Định dạng lại ngày theo định dạng "YYYY-MM-DD"
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0, nên cần +1
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
     }
 
     const handleConfirmInvoice = async () => {
-        const arrValidateFieldsQuote = ['customerId', 'paymentPolicy']
+        const arrValidateFieldsQuote = ['customer', 'paymentPolicy']
         let check = validateData(arrValidateFieldsQuote, dataQuote)
         if (check && check.length === 0 && dateCreateInvoice) {
-            let res = await confirmInvoice({ ...dataQuote, dateCreateInvoice: dateCreateInvoice })
-            if (res.EC !== 0) {
+            let res = await confirmInvoice({ ...dataQuote, dateCreateInvoice: dateCreateInvoice, ...otherInfoQuote, status: 'S1' })
+            if (res && res?.EC === -3) {
+                toast.warning(res?.EM)
+                return
+            }
+            let resStockDelivery = await createStockDelivery(
+                {
+                    customerId: dataQuote?.customer,
+                    warehouseId: "WH001",
+                    userId: otherInfoQuote?.employeeId ?? userId,
+                    scheduledDate: otherInfoQuote?.deliveryDate ?? addDays(dateCreateInvoice, 3),
+                    note: dataQuote?.policyAndCondition,
+                    status: 'ready'
+                }
+            )
+            const dataCreateStockDeliveryItems = dataQuote?.productList?.map((item, index) => {
+                return {
+                    stockDeliveryId: resStockDelivery?.DT,
+                    productId: item?.productId,
+                    description: item?.description,
+                    scheduledDate: otherInfoQuote?.deliveryDate ?? addDays(dateCreateInvoice, 3),
+                    deadline: otherInfoQuote?.deliveryDate ?? addDays(dateCreateInvoice, 10),
+                    quantity: item?.quantity,
+                    trueQuantity: 0
+                }
+            })
+            let resStockDeliveryItems = await createStockDeliveryItems(dataCreateStockDeliveryItems)
+            if (res.EC !== 0 || resStockDelivery?.EC !== 0 || resStockDeliveryItems?.EC !== 0) {
                 toast.error("Something wrong when confirm invoice, please try again later")
             } else {
                 setArrInvoiceCurrentStep(defaultCreateInvoiceStep2)
@@ -506,7 +540,6 @@ export const OpenInvoiceCreated = () => {
         } else {
             toast.warning(<FormattedMessage id="new_quote.confirm-toast-empty-field" />)
         }
-
     }
 
     const setTaxAndPriceBeforeTax = useCallback((type, value) => {
@@ -726,7 +759,6 @@ export const OpenInvoiceCreated = () => {
                     </div>
                     <div className='wrap-info-products' >
                         <Tabs
-                            onChange={onChangeTab}
                             type="card"
                             items={
                                 [{
@@ -741,7 +773,7 @@ export const OpenInvoiceCreated = () => {
                                     {
                                         label: <FormattedMessage id="new_quote.other-info" />,
                                         key: 'tab-2',
-                                        children: <OtherInfo />,
+                                        children: <OtherInfo otherInfoQuote={otherInfoQuote} isDisable={dataQuote?.status === 'S2' ? true : false} />,
                                     }
                                     :
                                     ""
