@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'Warehouse',
-        // tableName: 'warehouse',
+        tableName: 'warehouse',
         freezeTableName: true,
         hooks: {
             beforeCreate: async (instance) => {

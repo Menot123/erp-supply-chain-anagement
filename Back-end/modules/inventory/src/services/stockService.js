@@ -1,7 +1,7 @@
 import db from '../models/index'
 const { Op } = require("sequelize");
 
-const handleGetStocksService = async() => {
+const handleGetStocksService = async () => {
     try {
         let res = {}
         let stocks = await db.Stock.findAll({
@@ -27,6 +27,8 @@ const handleGetStocksService = async() => {
             res.EC = 1
             res.DT = ''
         }
+        console.log(">>>> stocks: ", stocks);
+
         return res
     } catch (error) {
         console.log('>>> error from get stocks: ', e)
@@ -38,7 +40,7 @@ const handleGetStocksService = async() => {
     }
 }
 
-const handleGetStockWithIdService = async(id) => {
+const handleGetStockWithIdService = async (id) => {
     try {
         let res = {}
         let stock = await db.Stock.findOne({
@@ -64,7 +66,7 @@ const handleGetStockWithIdService = async(id) => {
     }
 }
 
-const handleCreateStockService = async(data) => {
+const handleCreateStockService = async (data) => {
     try {
         let res = {}
         let stock = await db.Stock.findOne({
@@ -93,7 +95,7 @@ const handleCreateStockService = async(data) => {
     }
 }
 
-const handleCheckMinusStockService = async(listItems) => {
+const handleCheckMinusStockService = async (listItems) => {
     try {
         let res = {}
         for (const item of listItems) {
@@ -133,7 +135,7 @@ const handleCheckMinusStockService = async(listItems) => {
     }
 }
 
-const handleAddStockService = async(data) => {
+const handleAddStockService = async (data) => {
     try {
         let res = {}
         let stock = await db.Stock.findOne({
@@ -165,7 +167,7 @@ const handleAddStockService = async(data) => {
     }
 }
 
-const handleMinusStockService = async(data) => {
+const handleMinusStockService = async (data) => {
     try {
         let res = {}
         let stock = await db.Stock.findOne({
@@ -201,7 +203,7 @@ const handleMinusStockService = async(data) => {
     }
 }
 
-const handleUpdateStockService = async(stockId, data) => {
+const handleUpdateStockService = async (stockId, data) => {
     try {
         let res = {}
         console.log(data)
@@ -231,7 +233,7 @@ const handleUpdateStockService = async(stockId, data) => {
     }
 }
 
-const handleDeleteStockService = async(stockId) => {
+const handleDeleteStockService = async (stockId) => {
     try {
         let res = {}
         let stock = await db.Stock.findOne({

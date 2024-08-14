@@ -44,9 +44,10 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'Provider',
+        tableName: 'provider',
         freezeTableName: true,
         hooks: {
-            beforeCreate: async(instance) => {
+            beforeCreate: async (instance) => {
                 instance.providerId = await Provider.getNextId();
             },
         }

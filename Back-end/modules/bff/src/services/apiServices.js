@@ -17,6 +17,20 @@ const getInfoCustomerById = async (customerId, jwtToken) => {
     }
 }
 
+const getInfoProviderById = async (providerId, jwtToken) => {
+    try {
+        const response = await axios.get(`http://api-gateway:8000/provider/api/provider/${providerId}`, {
+            headers: {
+                'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
+            }
+        });
+        return response.data;
+    } catch (e) {
+        console.log('>>> error when get quotes sent: ', e)
+    }
+
+}
+
 const getQuoteCustomersService = async (page, pageSize, jwtToken) => {
     try {
         let res = {}
@@ -55,7 +69,7 @@ const getQuoteProvidersService = async (page, pageSize, jwtToken) => {
     try {
         let res = {}
         let updatedArray = []
-        const response = await axios.get('http://localhost:8000/purchase/api/quotes-sent', {
+        const response = await axios.get('http://api-gateway:8000/purchase/api/quotes-sent', {
             params: {
                 page: page,
                 pageSize: pageSize
@@ -63,6 +77,8 @@ const getQuoteProvidersService = async (page, pageSize, jwtToken) => {
                 'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
             }
         });
+
+
         if (response && response?.data && response?.data?.DT) {
             const detailPromises = response?.data?.DT.map(item => getInfoProviderById(item?.providerId));
             const details = await Promise.all(detailPromises);
@@ -120,13 +136,13 @@ const getQuoteSentService = async (quoteId, jwtToken) => {
 const getQuoteSentServiceProvider = async (quoteId, jwtToken) => {
     try {
         let res = {}
-        const response = await axios.get(`http://localhost:8000/purchase/api/data-preview-quote/${quoteId}`, {
+        const response = await axios.get(`http://api-gateway:8000/purchase/api/data-preview-quote/${quoteId}`, {
             headers: {
                 'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
             }
         });
         if (response && response?.data?.DT && response?.data?.DT?.providerId) {
-            const dataProvider = await axios.get(`http://localhost:8000/provider/api/provider/${response?.data?.DT?.providerId}`, {
+            const dataProvider = await axios.get(`http://api-gateway:8000/provider/api/provider/${response?.data?.DT?.providerId}`, {
                 headers: {
                     'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
                 }

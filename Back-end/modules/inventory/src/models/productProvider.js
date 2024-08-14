@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     class ProductProvider extends Model {
         static associate(models) {
             ProductProvider.belongsTo(models.Product, { foreignKey: 'productId', targetKey: 'productId', as: 'productData' })
-                // ProductProvider.belongsTo(models.Provider, { foreignKey: 'providerId', targetKey: 'providerId', as: 'providerData' })
+            // ProductProvider.belongsTo(models.Provider, { foreignKey: 'providerId', targetKey: 'providerId', as: 'providerData' })
         }
     };
     ProductProvider.init({
@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'ProductProvider',
-        // tableName: 'productprovider',
+        tableName: 'productprovider',
         freezeTableName: true
     });
     return ProductProvider;

@@ -981,6 +981,8 @@ const getQuotesSentService = async (page, pageSize) => {
             offset: (page - 1) * pageSize
         });
 
+
+
         if (quotes) {
             res.EC = 0;
             res.EM = 'Get all quotes sent successfully';

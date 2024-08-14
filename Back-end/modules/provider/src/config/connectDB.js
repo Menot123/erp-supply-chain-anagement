@@ -1,13 +1,17 @@
 const { Sequelize } = require('sequelize');
 
 // Option 3: Passing parameters separately (other dialects)
-const sequelize = new Sequelize('erp_provider', 'root', null, {
-    host: 'localhost',
+const sequelize = new Sequelize('erp_provider', 'root', "123456", {
+    host: process.env.DB_HOST,
     dialect: 'mysql',
+    port: process.env.DB_PORT,
+    define: {
+        freezeTableName: true
+    },
     // logging: false
 });
 
-let connectDB = async() => {
+let connectDB = async () => {
     try {
         await sequelize.authenticate();
         console.log('Connection has been established successfully.');

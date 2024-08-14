@@ -1,8 +1,12 @@
 import stockService from '../services/stockService';
-let handleGetStocks = async(req, res) => {
+let handleGetStocks = async (req, res) => {
+    console.log(">>>> here");
+
     try {
 
         let data = await stockService.handleGetStocksService()
+        console.log(">>>> data:", data);
+
         return res.status(200).json({
             EM: data.EM,
             EC: data.EC,
@@ -19,7 +23,7 @@ let handleGetStocks = async(req, res) => {
 }
 
 // Get stock with id
-const handleGetStock = async(req, res, next) => {
+const handleGetStock = async (req, res, next) => {
     try {
         let stockId = req.params.id
         let data = await stockService.handleGetStockWithIdService(stockId)
@@ -38,7 +42,7 @@ const handleGetStock = async(req, res, next) => {
 }
 
 // Create a new stock
-const handleCreateStock = async(req, res, next) => {
+const handleCreateStock = async (req, res, next) => {
     try {
         let dataStock = req.body;
         let response = await stockService.handleCreateStockService(dataStock);
@@ -58,7 +62,7 @@ const handleCreateStock = async(req, res, next) => {
 
 
 // Add a stock
-const handleAddStock = async(req, res, next) => {
+const handleAddStock = async (req, res, next) => {
     try {
         let dataStock = req.body;
         let response = await stockService.handleAddStockService(dataStock);
@@ -77,7 +81,7 @@ const handleAddStock = async(req, res, next) => {
 }
 
 // Check a stock
-const handleCheckMinusStock = async(req, res, next) => {
+const handleCheckMinusStock = async (req, res, next) => {
     try {
         let dataStock = req.body;
         let response = await stockService.handleCheckMinusStockService(dataStock);
@@ -96,7 +100,7 @@ const handleCheckMinusStock = async(req, res, next) => {
 }
 
 // Minus a stock
-const handleMinusStock = async(req, res, next) => {
+const handleMinusStock = async (req, res, next) => {
     try {
         let dataStock = req.body;
         let response = await stockService.handleMinusStockService(dataStock);
@@ -115,7 +119,7 @@ const handleMinusStock = async(req, res, next) => {
 }
 
 // Update a stock with id
-const handleUpdateStock = async(req, res, next) => {
+const handleUpdateStock = async (req, res, next) => {
     try {
         let stockId = req.params.id;
         let dataStock = req.body;
@@ -135,7 +139,7 @@ const handleUpdateStock = async(req, res, next) => {
 }
 
 // Delete a stock with id
-const handleDeleteStock = async(req, res, next) => {
+const handleDeleteStock = async (req, res, next) => {
     try {
         let stockId = req.params.id;
         let response = await stockService.handleDeleteStockService(stockId);

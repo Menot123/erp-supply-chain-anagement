@@ -103,6 +103,52 @@ services:
       - RABBITMQ_PORT=5672
     ports:
       - 8081:8081
+  db-provider:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_DATABASE=erp_provider
+      - MYSQL_ROOT_PASSWORD=123456
+
+    ports:
+      - '3310:3306'
+    expose:
+      - 3306
+
+  backend-provider:
+    build:
+      context: ../../modules/provider
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - DB_PORT=3306
+      - DB_HOST=db-provider
+    ports:
+      - 8089:8089
+
+  db-purchase:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_DATABASE=erp_purchase
+      - MYSQL_ROOT_PASSWORD=123456
+
+    ports:
+      - '3311:3306'
+    expose:
+      - 3306
+
+  backend-purchase:
+    build:
+      context: ../../modules/purchase
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - DB_PORT=3306
+      - DB_HOST=db-purchase
+    ports:
+      - 8083:8083
+
   backend-bff:
     build:
       context: ../../modules/bff
