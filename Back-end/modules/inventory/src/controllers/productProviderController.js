@@ -95,10 +95,33 @@ const handleDeleteProductProvider = async(req, res, next) => {
     }
 }
 
+const handleDeleteProductProviderWithBothId = async(req, res, next) => {
+    try {
+        let dataProductProvider = req.body;
+        // console.log(dataProductProvider);
+        let response = await productProviderService.handleDeleteProductProviderWithBothIdService(dataProductProvider.productId, dataProductProvider.providerId);
+        return res.status(200).json({
+                EM: response.EM,
+                EC: response.EC,
+                DT: response.DT
+            })
+            // return res.status(200).json({
+            //     status: 'ok'
+            // })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in deleteStockEntry controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 module.exports = {
     handleGetProductProviders,
     handleGetProductsBasedOnProvider,
     handleGetProvidersBasedOnProduct,
     handleCreateProductProvider,
-    handleDeleteProductProvider
+    handleDeleteProductProvider,
+    handleDeleteProductProviderWithBothId
 }

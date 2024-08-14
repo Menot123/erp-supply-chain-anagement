@@ -744,12 +744,12 @@ let initApiRoutes = (app) => {
 
     /**
      * @swagger
-     * /api/stocks:
+     * /api/stocks/add:
      *  post:
      *      tags:
      *          - Stock
-     *      summary: Create new stock
-     *      description: Create new stock for ERP system
+     *      summary: Add new stock
+     *      description: Add stock for ERP system
      *      requestBody:
      *          content:
      *              application/json:
@@ -764,12 +764,99 @@ let initApiRoutes = (app) => {
      *                              type: string           
      *      responses:
      *          200:
-     *              description: Return status of create new stock.
+     *              description: Return status of add new stock.
      *          404:
      *              description: Error from server.
      * 
      */
     router.post('/stocks', stockController.handleCreateStock)
+
+    /**
+     * @swagger
+     * /api/stocks/add:
+     *  post:
+     *      tags:
+     *          - Stock
+     *      summary: Add stock
+     *      description: Add stock for ERP system
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          productId:
+     *                              type: string
+     *                          warehouseId:
+     *                              type: string
+     *                          quantity:
+     *                              type: string           
+     *      responses:
+     *          200:
+     *              description: Return status of add stock.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/stocks/add', stockController.handleAddStock)
+
+    /**
+     * @swagger
+     * /api/stocks/checkStock:
+     *  post:
+     *      tags:
+     *          - Stock
+     *      summary: Check Minus stock
+     *      description: Check Minus stock for ERP system
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          productId:
+     *                              type: string
+     *                          warehouseId:
+     *                              type: string
+     *                          quantity:
+     *                              type: string           
+     *      responses:
+     *          200:
+     *              description: Return status of check minus stock.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/stocks/checkStock', stockController.handleCheckMinusStock)
+
+    /**
+     * @swagger
+     * /api/stocks/minus:
+     *  post:
+     *      tags:
+     *          - Stock
+     *      summary: Minus stock
+     *      description: Minus stock for ERP system
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          productId:
+     *                              type: string
+     *                          warehouseId:
+     *                              type: string
+     *                          quantity:
+     *                              type: string           
+     *      responses:
+     *          200:
+     *              description: Return status of minus stock.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/stocks/minus', stockController.handleMinusStock)
 
     /**
      * @swagger
@@ -1570,13 +1657,16 @@ let initApiRoutes = (app) => {
      *          - ProductProvider
      *      summary: Delete productProvider with id
      *      description: Delete a productProvider with id
-     *      parameters:
-     *          - in: path
-     *            name: id     
-     *            required: true            
-     *            schema:     
-     *                type: string
-     *            description: ID of productProvider you want to delete
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          productId:
+     *                              type: string
+     *                          providerId:
+     *                              type: string  
      *      responses:
      *          200:
      *              description: Return status and info of delete productProvider.
@@ -1585,6 +1675,33 @@ let initApiRoutes = (app) => {
      * 
      */
     router.delete('/productProviders/:id', productProviderController.handleDeleteProductProvider)
+
+    /**
+     * @swagger
+     * /api/productProviders:
+     *  post:
+     *      tags:
+     *          - ProductProvider
+     *      summary: Delete productProvider with both id
+     *      description: Delete a productProvider with both id
+     *      requestBody:
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties: 
+     *                          productId:
+     *                              type: string
+     *                          providerId:
+     *                              type: string  
+     *      responses:
+     *          200:
+     *              description: Return status and info of delete productProvider.
+     *          404:
+     *              description: Error from server.
+     * 
+     */
+    router.post('/productProvidersDel', productProviderController.handleDeleteProductProviderWithBothId)
 
     return app.use("/api/", router)
 }

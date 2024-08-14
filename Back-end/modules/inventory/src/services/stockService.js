@@ -93,6 +93,114 @@ const handleCreateStockService = async(data) => {
     }
 }
 
+const handleCheckMinusStockService = async(listItems) => {
+    try {
+        let res = {}
+        for (const item of listItems) {
+            // console.log(item.productId);
+            // console.log(item.trueQuantity);
+            let stock = await db.Stock.findOne({
+                where: {
+                    productId: item.productId,
+                    warehouseId: 'WH001',
+                }
+            });
+            if (stock) {
+                stock.dataValues.quantity = Number(stock.dataValues.quantity) - Number(item.trueQuantity);
+                // console.log(stock.dataValues);
+
+                if (stock.dataValues.quantity >= 0) {
+
+                } else {
+                    res.EM = 'Not enough item in stock';
+                    res.EC = 1;
+                    res.DT = '';
+                    return res
+                }
+            } else {
+                res.EM = 'Stock not existing';
+                res.EC = -1;
+                res.DT = '';
+                return res
+            }
+        }
+        res.EM = 'Check stock successfully';
+        res.EC = 0;
+        res.DT = '';
+        return res;
+    } catch (e) {
+        console.log('>>> error when check minus stock: ', e)
+    }
+}
+
+const handleAddStockService = async(data) => {
+    try {
+        let res = {}
+        let stock = await db.Stock.findOne({
+            where: {
+                productId: data.productId,
+                warehouseId: data.warehouseId,
+            }
+        });
+        if (stock) {
+            data.quantity = Number(data.quantity) + Number(stock.dataValues.quantity)
+            await stock.update({
+                ...data
+            })
+            res.EM = 'Update(U) stock successfully'
+            res.EC = 0
+            res.DT = ''
+        } else {
+            await db.Stock.create({
+                ...data
+            })
+            res.EM = 'Update(C) stock successfully'
+            res.EC = 0
+            res.DT = ''
+
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error when create new stock: ', e)
+    }
+}
+
+const handleMinusStockService = async(data) => {
+    try {
+        let res = {}
+        let stock = await db.Stock.findOne({
+            where: {
+                productId: data.productId,
+                warehouseId: data.warehouseId,
+            }
+        });
+        if (stock) {
+            data.quantity = Number(stock.dataValues.quantity) - Number(data.quantity)
+            if (data.quantity >= 0) {
+                await stock.update({
+                    ...data
+                })
+                res.EM = 'Update(M) stock successfully'
+                res.EC = 0
+                res.DT = ''
+            } else {
+                res.EM = 'Stock not enough'
+                res.EC = 1
+                res.DT = ''
+            }
+
+        } else {
+            res.EM = 'Stock not existing'
+            res.EC = -1
+            res.DT = ''
+
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error when minus stock: ', e)
+    }
+}
+
 const handleUpdateStockService = async(stockId, data) => {
     try {
         let res = {}
@@ -155,5 +263,8 @@ module.exports = {
     handleGetStockWithIdService,
     handleCreateStockService,
     handleUpdateStockService,
+    handleAddStockService,
+    handleCheckMinusStockService,
+    handleMinusStockService,
     handleDeleteStockService
 }

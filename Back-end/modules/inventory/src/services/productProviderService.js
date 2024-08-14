@@ -100,16 +100,11 @@ const handleCreateProductProviderService = async(productId, providerId) => {
     try {
         let res = {}
 
-        // Kiểm tra sự tồn tại của providerId, productId
-        const providerExists = await db.Provider.findOne({
-            where: { providerId: providerId }
-        })
-
         const productExists = await db.Product.findOne({
             where: { productId: productId }
         })
 
-        if (!providerExists || !productExists) {
+        if (!productExists) {
             // Một hoặc nhiều giá trị không tồn tại trong các mô hình liên quan
             res.EM = 'Invalid providerId, productId'
             res.EC = 1
@@ -167,10 +162,33 @@ const handleDeleteProductProviderService = async(productProviderId) => {
     }
 }
 
+const handleDeleteProductProviderWithBothIdService = async(productId, providerId) => {
+    try {
+        let res = {}
+
+        let productProviderId = await db.ProductProvider.findOne({
+            where: {
+                productId: productId,
+                providerId: providerId,
+            }
+        });
+        if (productProviderId) {
+            await productProviderId.update({ status: 'deleted' })
+        }
+        res.EM = 'Detete ProductProvider successfully'
+        res.EC = 0
+        res.DT = ''
+        return res
+    } catch (e) {
+        console.log('>>> error when delete new productProvider: ', e)
+    }
+}
+
 module.exports = {
     handleGetProductProvidersService,
     handleGetProductsBasedOnProviderService,
     handleGetProvidersBasedOnProductService,
     handleCreateProductProviderService,
-    handleDeleteProductProviderService
+    handleDeleteProductProviderService,
+    handleDeleteProductProviderWithBothIdService
 }

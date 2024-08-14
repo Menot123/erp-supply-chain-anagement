@@ -15,6 +15,19 @@ const getInfoCustomerById = async (customerId, jwtToken) => {
     }
 }
 
+const getInfoProviderById = async (providerId, jwtToken) => {
+    try {
+        const response = await axios.get(`http://localhost:8000/provider/api/provider/${providerId}`, {
+            headers: {
+                'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
+            }
+        });
+        return response.data;
+    } catch (e) {
+        console.log('>>> error when get quotes sent: ', e)
+    }
+}
+
 const getQuoteCustomersService = async (page, pageSize, jwtToken) => {
     try {
         let res = {}
@@ -37,6 +50,40 @@ const getQuoteCustomersService = async (page, pageSize, jwtToken) => {
             }));
             res.EC = 0
             res.EM = 'Get all quotes sent and info customer successfully'
+            res.DT = updatedArray
+        } else {
+            res.EC = -1
+            res.EM = 'Get all quotes sent and info failed'
+            res.DT = {}
+        }
+        return res;
+    } catch (e) {
+        console.log('>>> error when get quotes sent: ', e)
+    }
+}
+
+const getQuoteProvidersService = async (page, pageSize, jwtToken) => {
+    try {
+        let res = {}
+        let updatedArray = []
+        const response = await axios.get('http://localhost:8000/purchase/api/quotes-sent', {
+            params: {
+                page: page,
+                pageSize: pageSize
+            }, headers: {
+                'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
+            }
+        });
+        if (response && response?.data && response?.data?.DT) {
+            const detailPromises = response?.data?.DT.map(item => getInfoProviderById(item?.providerId));
+            const details = await Promise.all(detailPromises);
+
+            updatedArray = response?.data?.DT.map((item, index) => ({
+                ...item,
+                dataProvider: details[index]?.DT,
+            }));
+            res.EC = 0
+            res.EM = 'Get all quotes sent and info provider successfully'
             res.DT = updatedArray
         } else {
             res.EC = -1
@@ -73,6 +120,38 @@ const getQuoteSentService = async (quoteId, jwtToken) => {
         } else {
             res.EC = -1
             res.EM = 'Get quote sent and info customer failed'
+            res.DT = {}
+        }
+        return res;
+    } catch (e) {
+        console.log('>>> error when get quotes sent: ', e)
+    }
+}
+
+const getQuoteSentServiceProvider = async (quoteId, jwtToken) => {
+    try {
+        let res = {}
+        const response = await axios.get(`http://localhost:8000/purchase/api/data-preview-quote/${quoteId}`, {
+            headers: {
+                'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
+            }
+        });
+        if (response && response?.data?.DT && response?.data?.DT?.providerId) {
+            const dataProvider = await axios.get(`http://localhost:8000/provider/api/provider/${response?.data?.DT?.providerId}`, {
+                headers: {
+                    'Authorization': jwtToken?.jwt // Truyền JWT khi gọi backend
+                }
+            })
+            const responseData = {
+                ...response?.data?.DT,
+                dataProvider: dataProvider?.data?.DT
+            }
+            res.EC = 0
+            res.EM = 'Get quote sent and info provider successfully'
+            res.DT = responseData
+        } else {
+            res.EC = -1
+            res.EM = 'Get quote sent and info provider failed'
             res.DT = {}
         }
         return res;
@@ -160,5 +239,5 @@ const getInvoiceService = async (invoiceId, jwtToken) => {
 }
 
 module.exports = {
-    getQuoteCustomersService, getQuoteSentService, getAllInvoicesService, getInvoiceService
+    getQuoteCustomersService, getQuoteProvidersService, getQuoteSentService, getQuoteSentServiceProvider, getAllInvoicesService, getInvoiceService
 }

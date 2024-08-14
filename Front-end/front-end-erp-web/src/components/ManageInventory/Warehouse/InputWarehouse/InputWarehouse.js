@@ -8,11 +8,16 @@ import {
 import { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux';
 import { getStockEntrys } from '../../../../services/inventoryServices'
+import { getAllProviders } from '../../../../services/purchaseServices'
 import { LANGUAGES } from '../../../../utils/constant'
 import { toast } from 'react-toastify';
 import { FormattedMessage } from 'react-intl'
+import moment from 'moment';
 
 function InputWarehouse() {
+    const user = useSelector(state => state.user)
+    const userName = user.lastName + ' ' + user.firstName
+
     const history = useHistory();
     const [currentView, setCurrentView] = useState('list')
     const [currentLimit] = useState(16)
@@ -41,6 +46,7 @@ function InputWarehouse() {
     const [orderDelayOfChecked, setOrderDelayOfChecked] = useState(false);
     const [activityTypeChecked, setActivityTypeChecked] = useState(false);
     const [statusChecked, setStatusChecked] = useState(true);
+    const [providerList, setProviderList] = useState([]);
 
     const renderStatus = (item) => {
         let statusClass = '';
@@ -55,6 +61,9 @@ function InputWarehouse() {
         } else if (item === 'done') {
             statusClass = 'green';
             statusText = 'Hoàn thành';
+        } else if (item === 'cancel') {
+            statusClass = 'red';
+            statusText = 'Đã hủy';
         }
 
         return (
@@ -165,6 +174,26 @@ function InputWarehouse() {
 
         fetchStockEntrys()
     }, [currentPage, currentLimit])
+
+    useEffect(() => {
+        const fetchAllProviders = async () => {
+            let response = await getAllProviders()
+            if (response.EC == 0) {
+                Promise.all([setProviderList(response?.DT)])
+                // console.log(response.DT)
+            } else {
+                toast.error(response?.EM)
+            }
+        }
+
+        fetchAllProviders()
+    }, [])
+
+    function getNameViById(providers, item) {
+        const provider = providers.find(provider => provider.providerId === item);
+        return provider ? provider.nameVi : null;
+    }
+
 
     const handleNavigateToReceiptPage = (receiptId) => {
         history.push('/manage-inventory/input-warehouse/' + receiptId)
@@ -329,12 +358,12 @@ function InputWarehouse() {
                                                             : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
                                                         }
                                                         <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)}>{item.stockEntryId}</td>
-                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${contactChecked ? '' : 'hidden'}`}>{item.providerId}</td>
-                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${personInChargeChecked ? '' : 'hidden'}`}>{item.userId}</td>
-                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${plannedDateChecked ? '' : 'hidden'}`}>{item.scheduledDate}</td>
+                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${contactChecked ? '' : 'hidden'}`}>{getNameViById(providerList, item.providerId)}</td>
+                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${personInChargeChecked ? '' : 'hidden'}`}>{userName}</td>
+                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${plannedDateChecked ? '' : 'hidden'}`}>{moment(item.scheduledDate).format('YYYY-MM-DD')}</td>
                                                         <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
                                                         <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${deadlineChecked ? '' : 'hidden'}`}></td>
-                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${effectiveDateChecked ? '' : 'hidden'}`}>{item.createdAt}</td>
+                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${effectiveDateChecked ? '' : 'hidden'}`}>{moment(item.createdAt).format('YYYY-MM-DD')}</td>
                                                         <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
                                                         <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
                                                         <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${activityTypeChecked ? '' : 'hidden'}`}>{item.warehouseId}: Phiếu nhập kho</td>

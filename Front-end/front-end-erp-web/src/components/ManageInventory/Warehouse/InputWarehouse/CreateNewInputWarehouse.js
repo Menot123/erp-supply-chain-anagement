@@ -26,7 +26,7 @@ function CreateNewInputWarehouse() {
         providerId: '',
         operationType: 'Phiếu nhập kho',
         warehouseId: 'WH001',
-        scheduledDay: '',
+        scheduledDate: '',
         productList: [],
         note: '',
         userId: idUser,
@@ -57,7 +57,7 @@ function CreateNewInputWarehouse() {
     const onChangeDatePicker = (date, dateString) => {
         setDataInputWarehouse((prevState) => ({
             ...prevState,
-            scheduledDay: dateString
+            scheduledDate: dateString
         }))
     };
 
@@ -70,7 +70,7 @@ function CreateNewInputWarehouse() {
 
     const onChangeTab = (key) => {
         if (dataInputWarehouse.providerId != '')
-            console.log(dataInputWarehouse.providerId);
+            console.log(dataInputWarehouse);
         // console.log(key);
     };
 
@@ -157,7 +157,7 @@ function CreateNewInputWarehouse() {
 
 
     const validateDataReceipt = () => {
-        const fieldCheck = ['providerId', 'operationType', 'scheduledDay'];
+        const fieldCheck = ['providerId', 'operationType', 'scheduledDate'];
         const missingFields = [];
 
         fieldCheck.forEach(field => {
@@ -170,20 +170,22 @@ function CreateNewInputWarehouse() {
     };
 
     const handleSaveInputWarehouse = async () => {
-        // Validate data
-        // let check = validateDataReceipt()
+        // console.log(dataInputWarehouse)
+        dataInputWarehouse.status = 'draft'
+        let check = validateDataReceipt()
 
-        // if (check.length === 0) {
-        //     let res = await createNewReceipt(dataProduct)
-        //     if (res.EC === 0) {
-        //         cleanValueSubmit()
-        //         toast.success(res.EM)
-        //     } else {
-        //         toast.error(res.EM)
-        //     }
-        // } else {
-        //     toast.warning(`Missing fields: ${check.toString()}`)
-        // }
+        if (check.length === 0) {
+            let res = await createNewReceipt(dataInputWarehouse)
+            if (res.EC === 0) {
+                setStockCreateId(res.DT)
+                toast.success(res.EM)
+                handleCancelCreateInputWarehouse()
+            } else {
+                toast.error(res.EM)
+            }
+        } else {
+            toast.warning(`Missing fields: ${check.toString()}`)
+        }
     }
 
     const handleCancelCreateInputWarehouse = () => {
@@ -230,9 +232,9 @@ function CreateNewInputWarehouse() {
                 <div className='actions-status'>
                     <div className='wrap-btn-actions'>
                         <button onClick={() => handleSetReadyReceipt()} className='btn btn-main'>Đánh dấu việc cần làm</button>
-                        <button onClick={() => handleSetDoneReceipt()} className='btn btn-gray'>Xác nhận</button>
-                        <button className='btn btn-gray'>In nhãn</button>
-                        <button className='btn btn-gray'>Hủy</button>
+                        {/* <button onClick={() => handleSetDoneReceipt()} className='btn btn-gray'>Xác nhận</button> */}
+                        {/* <button className='btn btn-gray'>In nhãn</button> */}
+                        <button onClick={() => handleCancelCreateInputWarehouse()} className='btn btn-gray'>Hủy</button>
                     </div>
                     <div className='input-warehouse-status'>
                         <Steps

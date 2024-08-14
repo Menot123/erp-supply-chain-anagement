@@ -56,7 +56,7 @@ function Home() {
                         </div>
                     </div>
 
-                    <div onClick={() => handleRedirectRoute('D2', '/purchase')} className='col-4 app-item'>
+                    <div onClick={() => handleRedirectRoute('D2', '/manage-purchase')} className='col-4 app-item'>
                         <div className='wrap-img-app'>
                             <img className='img-element-app' src={mua_hang} alt='img-element-app' />
                         </div>

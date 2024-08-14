@@ -1,0 +1,48 @@
+.body-content-sub-company {
+    .table-products {
+        .add-sub-company {
+            color : #017e84;
+            cursor: pointer;
+        }
+
+        td {
+            .empty-data {
+                border-radius: 0px;
+                border-bottom: 1px solid red !important;
+            }
+        }
+    }
+}
+
+.wrap-policy-total {
+    display        : flex;
+    justify-content: space-between;
+
+    .policy {
+        width: 70%;
+
+        .input-policy {
+            border-bottom: 1px solid #fff;
+            border-radius: 0px !important;
+
+            &:hover {
+                border-bottom: 1px solid #000;
+            }
+        }
+    }
+
+    .wrap-tax-price {
+        span {
+            font-weight: 400;
+            font-size  : 0.875rem;
+            line-height: 1.5;
+        }
+
+        .total-price {
+            .total-price-text {
+                margin-top: 4px;
+                border-top: 1px solid #ccc;
+            }
+        }
+    }
+}

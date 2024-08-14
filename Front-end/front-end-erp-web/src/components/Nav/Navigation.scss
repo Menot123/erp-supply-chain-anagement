@@ -23,17 +23,20 @@
                     color: #fff !important;
                 }
                 .nav-manage-employees,
-                .nav-sales {
+                .nav-sales,
+                .nav-purchase {
                     margin-left: 48px;
                     display: flex;
                     gap: 16px;
                     .nav-link-me-employees,
                     .nav-link-me-department,
-                    .nav-link-me-sales {
+                    .nav-link-me-sales,
+                    .nav-link-me-purchase {
                         text-decoration: none !important;
                         color: #fff;
                     }
-                    .nav-link-me-sales {
+                    .nav-link-me-sales,
+                    .nav-link-me-purchase {
                         &:hover {
                             cursor: pointer;
                         }

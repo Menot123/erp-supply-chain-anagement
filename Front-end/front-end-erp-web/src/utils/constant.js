@@ -15,6 +15,7 @@ export const path = {
     CREATE_DEPARTMENT: '/manage-accounts/create-department',
     PROFILE: '/profile',
     MANAGE_INVENTORY: '/manage-inventory',
+    MANAGE_PURCHASE: '/manage-purchase',
     MANAGE_PRODUCTS: '/manage-inventory/products',
     MANAGE_ACCOUNTING: '/accounting',
     IMPORT_PRODUCT: '/manage-inventory/products/import',
@@ -39,7 +40,9 @@ export const path = {
     VIEW_QUOTE: '/my/orders',
     VIEW_DRAFT_INVOICE: '/my/invoice',
     SALE_ORDER_CUSTOMERS: '/sale-order/customers',
+    PURCHASE_PROVIDERS: '/manage-purchase/providers',
     SALE_ORDER_CUSTOMERS_CREATE: '/sale-order/customers/create',
     SALE_ORDER_CUSTOMERS_DETAIL: '/sale-order/customers/:id',
+    PURCHASE_NEW: '/manage-purchase/new',
 
 };

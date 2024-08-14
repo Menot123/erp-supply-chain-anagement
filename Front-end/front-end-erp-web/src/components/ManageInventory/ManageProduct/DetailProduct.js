@@ -4,15 +4,20 @@ import { RiImageAddLine } from "react-icons/ri";
 import { useState, useEffect } from 'react'
 import 'react-image-lightbox/style.css';
 import Lightbox from 'react-image-lightbox';
-import { updateProductInformation, getAllCode, getProductWithId, deleteProduct } from '../../../services/inventoryServices'
+import { updateProductInformation, getAllCode, getProductWithId, deleteProduct, getProviders, getProviderByProductId, deleteProductProvider, createProductProvider } from '../../../services/inventoryServices'
+import { getProvider } from '../../../services/purchaseServices'
 import { useHistory, useParams } from 'react-router-dom'
-import Select from 'react-select'
+import ReactSelect from 'react-select'
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { LANGUAGES } from '../../../utils/constant'
 import { IoMdSettings } from "react-icons/io";
 import Dropdown from 'react-bootstrap/Dropdown';
 import { FormattedMessage, useIntl } from 'react-intl'
+import { Tabs, Input, Select, Tooltip, DatePicker } from 'antd';
+import _ from 'lodash'
+import { IoOptions } from "react-icons/io5";
+import { FaRegTrashCan } from "react-icons/fa6";
 
 
 function DetailProduct() {
@@ -54,6 +59,51 @@ function DetailProduct() {
     const [elementGroupSelect, setElementGroupSelect] = useState(null)
     const [elementUnitSelect, setElementUnitSelect] = useState(null)
 
+    const [creatingProvider, setCreatingProvider] = useState({})
+    const [isCreatingProvider, setIsCreatingProvider] = useState(false)
+    const [selectProvider, setSelectProvider] = useState([])
+    const [listProvider, setListProvider] = useState([])
+    const [listAllProvider, setListAllProvider] = useState([])
+
+    const defaultProvider = {
+        nameProvider: '',
+        providerId: '',
+    }
+
+    useEffect(() => {
+        const fetchAllProvider = async () => {
+            const res = await getProviders()
+            if (res && res.EC === 0) {
+                setListAllProvider(res.DT)
+                // console.log(res.DT)
+            } else {
+                toast.error(res.EM)
+            }
+            return res
+        }
+
+        Promise.all([fetchAllProvider()])
+
+    }, [])
+
+    useEffect(() => {
+        if (listAllProvider.length > 0) {
+            const buildSelectProvider = () => {
+                let providerSelect = listAllProvider.map((item, index) => {
+                    // console.log(item)
+                    return (
+                        {
+                            value: item.providerId,
+                            label: item.nameVi
+                        }
+                    )
+                })
+                setSelectProvider(providerSelect)
+            }
+            buildSelectProvider()
+        }
+    }, [listAllProvider])
+
     useEffect(() => {
         let mounted = true;
         const fetchDataProductNote = async () => {
@@ -80,6 +130,28 @@ function DetailProduct() {
 
     }, [])
 
+    useEffect(() => {
+        const fetchDataProviderOfProduct = async () => {
+            try {
+                let resProvider = await getProviderByProductId(id);
+                if (resProvider.EC === 0) {
+                    // console.log("product provider ", resProvider.DT);
+                    // console.log("list all provider ", listAllProvider)
+                    const mergedData = listAllProvider.filter(provider => resProvider.DT.some(product => product.providerId === provider.providerId))
+                        .map(provider => ({ nameProvider: provider.nameVi, providerId: provider.providerId }));
+                    if (mergedData.length > 0) {
+                        setIsCreatingProvider(true);
+                    }
+                    setListProvider(mergedData);
+                }
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        fetchDataProviderOfProduct();
+    }, [listAllProvider]);
 
     useEffect(() => {
         let canFetchData = true;
@@ -247,7 +319,7 @@ function DetailProduct() {
     };
 
     const cleanValueSubmit = () => {
-        setDataProduct(defaultProduct)
+        setDataProduct(defaultProvider)
         setImgPreview(defaultImgPreview)
         setElementTypeSelect(null)
         setElementGroupSelect(null)
@@ -311,6 +383,93 @@ function DetailProduct() {
             {children}
         </a>
     ));
+
+    const onChangeTab = (key) => {
+
+    };
+
+    const updateEmptyFieldProvider = (providerCreating, type) => {
+        const updatedProviders = listProvider.map(item => {
+            if (item.providerId === providerCreating?.providerId) {
+                // Cập nhật giá trị của trường (field) tương ứng
+                if (type === 'name') {
+                    return { ...item, emptyName: true };
+                }
+            }
+            return item;
+        });
+
+        // Cập nhật danh sách sản phẩm mới
+        setListProvider(updatedProviders);
+    }
+
+    const handleAddNewInput = () => {
+        // Add new provider
+        if (!isCreatingProvider) {
+            setIsCreatingProvider(true)
+            let _listProvider = _.cloneDeep(listProvider)
+            _listProvider.push(defaultProvider)
+            setListProvider(_listProvider)
+            setCreatingProvider(defaultProvider)
+            // console.log(_listProvider)
+        } else {
+            // Existing provider is creating
+            // console.log(listProvider)
+            const providerCreating = listProvider[listProvider.length - 1]
+            if (providerCreating) {
+                if (!providerCreating?.nameProvider || providerCreating?.nameProvider === '') {
+                    updateEmptyFieldProvider(providerCreating, 'nameProvider')
+                    return
+                }
+                else {
+                    let _listProvider = _.cloneDeep(listProvider)
+                    _listProvider.push(defaultProvider)
+                    setListProvider(_listProvider)
+                    setCreatingProvider(defaultProvider)
+                }
+            }
+        }
+    }
+
+    const handleOnchangeNameProvider = async (e, labeledValue) => {
+        let _listProvider = _.cloneDeep(listProvider)
+        let creatingProvider = _listProvider[_listProvider.length - 1]
+        if (creatingProvider) {
+            creatingProvider = {
+                ...creatingProvider,
+                lineId: _listProvider.length,
+                providerId: e,
+                nameProvider: labeledValue?.label
+            }
+        }
+        const providerExists = listProvider.some(provider => provider.providerId === e);
+        if (!providerExists) {
+            _listProvider[_listProvider.length - 1] = creatingProvider
+            let dataCreated = { productId: id, providerId: e }
+            let createPoPr = await createProductProvider(dataCreated)
+            setListProvider(_listProvider);
+        }
+        else {
+            toast.error(`Nhà cung cấp này đã tồn tại`);
+        }
+    }
+
+    const handleRemoveProvider = async (provider) => {
+        let _listProvider = _.cloneDeep(listProvider);
+        if (_listProvider && _listProvider.length > 0) {
+            _listProvider = _listProvider.filter(item => item.providerId !== provider.providerId);
+        }
+        // deleteProductProvider
+        if (provider.providerId !== '') {
+            let dataDelete = { productId: id, providerId: provider.providerId };
+            let deleteProcess = await deleteProductProvider(dataDelete);
+            console.log(deleteProcess);
+            // console.log(id);
+            // console.log(provider.providerId);
+        }
+        setListProvider(_listProvider)
+        setIsCreatingProvider(false)
+    };
 
     return (
         <div className='wrapper-view-product'>
@@ -407,93 +566,153 @@ function DetailProduct() {
                         ></div>
                     </div>
                 </div>
-                <div className='information-detail row'>
-                    <div className='col-6 mt-2'>
-                        <label className='label-input' htmlFor='barCode'><FormattedMessage id='nav.manage-inventory-create-product-barcode' /></label>
-                        {isEdit
-                            ? <input onChange={(e) => handleChangeInput('barCode', e.target.value)} value={dataProduct.barCode} className='input-inf bg-body-secondary' id='barCode' type='text' />
-                            : <span className='input-inf' id='barCode'>{dataProduct.barCode}</span>
-                        }
+                <Tabs
+                    onChange={onChangeTab}
+                    type="card"
+                    items={[{
+                        label: `Thông tin sản phẩm`,
+                        key: 'tab-1',
+                        children: <div className='information-detail row'>
+                            <div className='col-6 mt-2'>
+                                <label className='label-input' htmlFor='barCode'><FormattedMessage id='nav.manage-inventory-create-product-barcode' /></label>
+                                {isEdit
+                                    ? <input onChange={(e) => handleChangeInput('barCode', e.target.value)} value={dataProduct.barCode} className='input-inf bg-body-secondary' id='barCode' type='text' />
+                                    : <span className='input-inf' id='barCode'>{dataProduct.barCode}</span>
+                                }
+                            </div>
+
+                            <div className='col-6 mt-2 d-flex wrap-type'>
+                                <label className={isEdit ? 'label-input d-flex align-items-top' : 'label-input d-flex align-items-center'}><FormattedMessage id='nav.manage-inventory-create-product-type' /></label>
+                                <ReactSelect className='type-select' onChange={(e) => handleChangeInput('type', e)}
+                                    isDisabled={!isEdit}
+                                    styles={{
+                                        control: (baseStyles, state) => ({
+                                            ...baseStyles,
+                                            border: 'none',
+                                            background: isEdit ? 'rgb(233, 236, 239)' : 'white',
+                                        }),
+                                    }}
+                                    placeholder={<div> </div>}
+                                    options={selectTypes && selectTypes.length > 0 ? selectTypes : []}
+                                    // components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                    value={elementTypeSelect ? elementTypeSelect : ''}
+                                />
+                            </div>
+
+                            <div className='col-6 mt-2 mb-1'>
+                                <label className='label-input' htmlFor='cost'><FormattedMessage id='nav.manage-inventory-create-product-cost' /> (VNĐ)</label>
+                                {isEdit
+                                    ? <input onChange={(e) => handleChangeInput('cost', e.target.value)} value={dataProduct.cost} className='input-inf bg-body-secondary' id='cost' type='cost' />
+                                    : <span className='input-inf' id='cost' >{dataProduct.cost}</span>
+                                }
 
 
-                    </div>
-
-                    <div className='col-6 mt-2 d-flex wrap-type'>
-                        <label className={isEdit ? 'label-input d-flex align-items-top' : 'label-input d-flex align-items-center'}><FormattedMessage id='nav.manage-inventory-create-product-type' /></label>
-                        <Select className='type-select' onChange={(e) => handleChangeInput('type', e)}
-                            isDisabled={!isEdit}
-                            styles={{
-                                control: (baseStyles, state) => ({
-                                    ...baseStyles,
-                                    border: 'none',
-                                    background: isEdit ? 'rgb(233, 236, 239)' : 'white',
-                                }),
-                            }}
-                            placeholder={<div> </div>}
-                            options={selectTypes && selectTypes.length > 0 ? selectTypes : []}
-                            // components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
-                            value={elementTypeSelect ? elementTypeSelect : ''}
-                        />
-                    </div>
-
-                    <div className='col-6 mt-2 mb-1'>
-                        <label className='label-input' htmlFor='cost'><FormattedMessage id='nav.manage-inventory-create-product-cost' /> (VNĐ)</label>
-                        {isEdit
-                            ? <input onChange={(e) => handleChangeInput('cost', e.target.value)} value={dataProduct.cost} className='input-inf bg-body-secondary' id='cost' type='cost' />
-                            : <span className='input-inf' id='cost' >{dataProduct.cost}</span>
-                        }
+                            </div>
 
 
-                    </div>
+                            <div className='col-6 mt-2 mb-1'>
+                                <div className="d-flex align-items-start">
+                                    <label className='label-input' htmlFor='expiry'><FormattedMessage id='nav.manage-inventory-create-product-expiry' /></label>
+                                    {isEdit
+                                        ? <input onChange={(e) => handleChangeInput('expiry', e.target.value)} value={dataProduct.expiry} className='input-inf bg-body-secondary' id='expiry' type='expiry' />
+                                        : <span className='input-inf' id='expiry' >{dataProduct.expiry}</span>
+                                    }
+                                </div>
+                            </div>
 
+                            <div className='col-6 mt-2'>
+                                <label className='label-input' htmlFor='descriptionVi'><FormattedMessage id='nav.manage-inventory-create-product-description-vi' /></label>
+                                {isEdit
+                                    ? <input onChange={(e) => handleChangeInput('descriptionVi', e.target.value)} value={dataProduct.descriptionVi} className='input-inf bg-body-secondary' id='descriptionVi' type='text' />
+                                    : <span className='input-inf' id='descriptionVi' >{dataProduct.descriptionVi}</span>
+                                }
 
-                    <div className='col-6 mt-2 mb-1'>
-                        <div className="d-flex align-items-start">
-                            <label className='label-input' htmlFor='expiry'><FormattedMessage id='nav.manage-inventory-create-product-expiry' /></label>
-                            {isEdit
-                                ? <input onChange={(e) => handleChangeInput('expiry', e.target.value)} value={dataProduct.expiry} className='input-inf bg-body-secondary' id='expiry' type='expiry' />
-                                : <span className='input-inf' id='expiry' >{dataProduct.expiry}</span>
-                            }
-                        </div>
-                    </div>
+                            </div>
 
-                    <div className='col-6 mt-2'>
-                        <label className='label-input' htmlFor='descriptionVi'><FormattedMessage id='nav.manage-inventory-create-product-description-vi' /></label>
-                        {isEdit
-                            ? <input onChange={(e) => handleChangeInput('descriptionVi', e.target.value)} value={dataProduct.descriptionVi} className='input-inf bg-body-secondary' id='descriptionVi' type='text' />
-                            : <span className='input-inf' id='descriptionVi' >{dataProduct.descriptionVi}</span>
-                        }
+                            <div className='col-6 mt-2'>
+                                <label className='label-input' htmlFor='descriptionEn'><FormattedMessage id='nav.manage-inventory-create-product-description-en' /></label>
+                                {isEdit
+                                    ? <input onChange={(e) => handleChangeInput('descriptionEn', e.target.value)} value={dataProduct.descriptionEn} className='input-inf bg-body-secondary' id='descriptionEn' type='text' />
+                                    : <span className='input-inf' id='descriptionEn' >{dataProduct.descriptionEn}</span>
+                                }
 
-                    </div>
+                            </div>
 
-                    <div className='col-6 mt-2'>
-                        <label className='label-input' htmlFor='descriptionEn'><FormattedMessage id='nav.manage-inventory-create-product-description-en' /></label>
-                        {isEdit
-                            ? <input onChange={(e) => handleChangeInput('descriptionEn', e.target.value)} value={dataProduct.descriptionEn} className='input-inf bg-body-secondary' id='descriptionEn' type='text' />
-                            : <span className='input-inf' id='descriptionEn' >{dataProduct.descriptionEn}</span>
-                        }
+                            <div className='col-6 mt-2 d-flex wrap-type'>
+                                <label className={isEdit ? 'label-input d-flex align-items-top' : 'label-input d-flex align-items-center'} ><FormattedMessage id='nav.manage-inventory-create-product-unit' /></label>
+                                <ReactSelect className='type-select' onChange={(e) => handleChangeInput('unit', e)}
+                                    isDisabled={!isEdit}
+                                    styles={{
+                                        control: (baseStyles, state) => ({
+                                            ...baseStyles,
+                                            border: 'none',
+                                            background: isEdit ? 'rgb(233, 236, 239)' : 'white',
+                                        }),
+                                    }}
+                                    placeholder={<div> </div>}
+                                    options={selectUnit && selectUnit.length > 0 ? selectUnit : []}
+                                    // components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
+                                    value={elementUnitSelect ? elementUnitSelect : ''}
+                                />
+                            </div>
 
-                    </div>
+                        </div>,
+                    },
+                    {
+                        label: `Nhà cung cấp`,
+                        key: 'tab-2',
+                        children: <>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Nhà cung cấp</th>
+                                    <th scope="col"><IoOptions /></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    listProvider.map((item, index) => {
+                                        return (
+                                            <tr key={'product' + index}>
+                                                <td>
+                                                    <Select
+                                                        key={index}
+                                                        className={item?.emptyName
+                                                            ? 'name-creating-product empty-data'
+                                                            : 'name-creating-product'}
+                                                        placeholder="Nhập để tìm một nhà cung cấp..."
+                                                        variant="borderless"
+                                                        showSearch
+                                                        onChange={(e, labeledValue) => handleOnchangeNameProvider(e, labeledValue)}
+                                                        style={{ width: 200 }}
+                                                        optionFilterProp="children"
+                                                        filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                                        filterSort={(optionA, optionB) =>
+                                                            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                                        }
+                                                        options={selectProvider}
+                                                        value={item.nameProvider}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <Tooltip placement="top" title={`Xóa sản phẩm "${item.name}"`}>
+                                                        <FaRegTrashCan className='hover-item' onClick={() => handleRemoveProvider(item)} />
+                                                    </Tooltip>
+                                                </td>
 
-                    <div className='col-6 mt-2 d-flex wrap-type'>
-                        <label className={isEdit ? 'label-input d-flex align-items-top' : 'label-input d-flex align-items-center'} ><FormattedMessage id='nav.manage-inventory-create-product-unit' /></label>
-                        <Select className='type-select' onChange={(e) => handleChangeInput('unit', e)}
-                            isDisabled={!isEdit}
-                            styles={{
-                                control: (baseStyles, state) => ({
-                                    ...baseStyles,
-                                    border: 'none',
-                                    background: isEdit ? 'rgb(233, 236, 239)' : 'white',
-                                }),
-                            }}
-                            placeholder={<div> </div>}
-                            options={selectUnit && selectUnit.length > 0 ? selectUnit : []}
-                            // components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
-                            value={elementUnitSelect ? elementUnitSelect : ''}
-                        />
-                    </div>
-
-                </div>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                                <tr>
+                                    <td colSpan='7'>
+                                        <span onClick={() => handleAddNewInput()} className='add-output-warehouse'>Thêm một dòng</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </>,
+                    },
+                    ]}
+                />
             </div>
             {
                 imgPreview.isOpen === true &&

@@ -16,6 +16,7 @@ import { path } from './utils/constant'
 import ManageEmployeeRoute from './routes/ManageEmployeeRoute';
 import ManageInventoryRoute from './routes/ManageInventoryRoute';
 import ManageAccountingRoute from './routes/ManageAccountingRoute';
+import ManagePurchaseRoute from './routes/ManagePurchaseRoute';
 import ModalProfile from './components/ProfileEmployee/ModalProfile';
 import PrivateRoute from './routes/PrivateRoute'
 import SaleOrderRoute from './routes/SaleOrderRoute';
@@ -41,6 +42,8 @@ function App() {
         <PrivateRoute path={path.MANAGE_INVENTORY} component={ManageInventoryRoute}>
         </PrivateRoute>
         <PrivateRoute path={path.MANAGE_ACCOUNTING} component={ManageAccountingRoute}>
+        </PrivateRoute>
+        <PrivateRoute path={path.MANAGE_PURCHASE} component={ManagePurchaseRoute}>
         </PrivateRoute>
         <Route path={path.SIGN_IN} exact>
           <SignIn />

@@ -33,11 +33,11 @@ const deleteProduct = (id) => {
 }
 
 const getProviders = () => {
-    return axios.get(`/inventory/api/providers`)
+    return axios.get(`/provider/api/providers`)
 }
 
 const getCustomers = () => {
-    return axios.get(`/inventory/api/customers`)
+    return axios.get(`/customer/api/customers`)
 }
 
 const getStocks = () => {
@@ -56,6 +56,26 @@ const getReceiptListItems = (id) => {
     return axios.get(`/inventory/api/stockEntryItemsBaseOnReceipt/${id}`)
 }
 
+const updateReceiptItem = (id, data) => {
+    return axios.put(`/inventory/api/stockEntryItems/${id}`, data)
+}
+
+const updateDeliveryItem = (id, data) => {
+    return axios.put(`/inventory/api/stockDeliveryItems/${id}`, data)
+}
+
+const addToStock = (data) => {
+    return axios.post(`/inventory/api/stocks/add`, data)
+}
+
+const checkMinusStock = (listItem) => {
+    return axios.post(`/inventory/api/stocks/checkStock`, listItem)
+}
+
+const minusToStock = (data) => {
+    return axios.post(`/inventory/api/stocks/minus`, data)
+}
+
 const getStockDeliverys = () => {
     return axios.get(`/inventory/api/stockDeliverys`)
 }
@@ -72,12 +92,32 @@ const createNewReceipt = (data) => {
     return axios.post(`/inventory/api/stockEntrys`, data)
 }
 
+const updateReceipt = (id, data) => {
+    return axios.put(`/inventory/api/stockEntrys/${id}`, data)
+}
+
+const updateDelivery = (id, data) => {
+    return axios.put(`/inventory/api/stockDeliverys/${id}`, data)
+}
+
 const createNewDelivery = (data) => {
     return axios.post(`/inventory/api/stockDeliverys`, data)
 }
 
 const getProductByProviderId = (id) => {
     return axios.get(`/inventory/api/productProviders/provider/${id}`)
+}
+
+const getProviderByProductId = (id) => {
+    return axios.get(`/inventory/api/productProviders/product/${id}`)
+}
+
+const createProductProvider = (data) => {
+    return axios.post(`/inventory/api/productProviders`, data)
+}
+
+const deleteProductProvider = (data) => {
+    return axios.post(`/inventory/api/productProvidersDel`, data)
 }
 
 const createProductListOfReceipt = (data) => {
@@ -115,8 +155,18 @@ export {
     getStockDeliveryInfo,
     getDeliveryListItems,
     createNewReceipt,
+    updateReceipt,
+    updateDelivery,
+    addToStock,
+    checkMinusStock,
+    minusToStock,
+    updateReceiptItem,
+    updateDeliveryItem,
     createNewDelivery,
     getProductByProviderId,
+    getProviderByProductId,
+    createProductProvider,
+    deleteProductProvider,
     createProductListOfReceipt,
     createProductListOfReceiptArray,
     createProductListOfDelivery,

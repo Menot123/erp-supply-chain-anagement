@@ -7,11 +7,14 @@ import {
 } from "react-router-dom";
 import { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux';
-import { getStockDeliveryInfo, getDeliveryListItems } from '../../../../services/inventoryServices'
+import { getStockDeliveryInfo, getDeliveryListItems, checkMinusStock, updateDelivery } from '../../../../services/inventoryServices'
+import { getCustomers } from '../../../../services/saleServices'
 import { LANGUAGES } from '../../../../utils/constant'
+import { OtherInfo } from './OtherInfo';
 import { toast } from 'react-toastify';
 import { TableProductView } from './TableProductView';
 import { FormattedMessage } from 'react-intl'
+import dayjs from 'dayjs';
 import moment from 'moment'
 import { Steps, Select, Tooltip, DatePicker, Tabs, Input } from "antd";
 
@@ -23,6 +26,10 @@ function ViewDelivery() {
     const pathParts = location.pathname.split('/')
     const idDelivery = pathParts[pathParts.length - 3] + '%2F' + pathParts[pathParts.length - 2] + '%2F' + pathParts[pathParts.length - 1];
     const idString = idDelivery.replace(/%2F/g, '/')
+
+    const [stockUpdateSubmit, setStockUpdateSubmit] = useState(false);
+
+    const [customerLIst, setCustomerList] = useState([]);
 
     const [deliveryInfo, setDeliveryInfo] = useState('');
     const [deliveryItems, setDeliveryItems] = useState([]);
@@ -40,14 +47,37 @@ function ViewDelivery() {
             status: 'wait',
             title: 'Hoàn tất',
         },
+        {
+            status: 'wait',
+            title: 'Đã hủy',
+        },
     ]);
+
+    function getNameViById(customers, item) {
+        const customer = customers.find(customer => customer.id === item);
+        return customer ? customer.fullName : null;
+    }
+
+    useEffect(() => {
+        const fetchAllCustomers = async () => {
+            let response = await getCustomers()
+            if (response.EC == 0) {
+                Promise.all([setCustomerList(response?.DT)])
+                // console.log(response.DT)
+            } else {
+                toast.error(response?.EM)
+            }
+        }
+
+        fetchAllCustomers()
+    }, [])
 
     useEffect(() => {
         const deliveryInfo = async () => {
             const res = await getStockDeliveryInfo(idDelivery)
             if (res && res.EC === 0) {
                 setDeliveryInfo(res.DT)
-                // console.log('Receipt Info:')
+                // console.log('Delivery Info:')
                 // console.log(res.DT)
                 if (res.DT.status === 'ready') {
                     setItemsStatus([
@@ -62,6 +92,10 @@ function ViewDelivery() {
                         {
                             status: 'wait',
                             title: 'Hoàn tất',
+                        },
+                        {
+                            status: 'wait',
+                            title: 'Đã hủy',
                         },
                     ])
                     setCurrentStatus(1);
@@ -80,8 +114,33 @@ function ViewDelivery() {
                             status: 'process',
                             title: 'Hoàn tất',
                         },
+                        {
+                            status: 'wait',
+                            title: 'Đã hủy',
+                        },
                     ])
                     setCurrentStatus(2);
+                }
+                else if (res.DT.status === 'cancel') {
+                    setItemsStatus([
+                        {
+                            status: 'wait',
+                            title: 'Nháp',
+                        },
+                        {
+                            status: 'wait',
+                            title: 'Sẵn sàng',
+                        },
+                        {
+                            status: 'wait',
+                            title: 'Hoàn tất',
+                        },
+                        {
+                            status: 'process',
+                            title: 'Đã hủy',
+                        },
+                    ])
+                    setCurrentStatus(3);
                 }
             } else {
                 toast.error(res.EM)
@@ -89,26 +148,110 @@ function ViewDelivery() {
             return res
         }
 
-        const fetchReceiptListItems = async () => {
+        const fetchDeliveryListItems = async () => {
             const res = await getDeliveryListItems(idDelivery)
             if (res && res.EC === 0) {
                 setDeliveryItems(res.DT)
-                // console.log('Product list of receipt info:')
-                console.log(res)
+                // console.log('Product list of Delivery info:')
+                // console.log(res)
             } else {
                 toast.error(res.EM)
             }
             return res
         }
 
-        Promise.all([deliveryInfo(), fetchReceiptListItems()])
+        Promise.all([deliveryInfo(), fetchDeliveryListItems()])
 
     }, [])
 
-    async function addToStock() {
+    async function minusToStock() {
+        // console.log('Delivery Info ', DeliveryInfo)
+        // console.log('Delivery Items ', DeliveryItems)
+        // console.log(dataOutputWarehouse)
+        let dataOutputWarehouse = {
+            status: 'done'
+        }
+
+        let res = await updateDelivery(encodeURIComponent(deliveryInfo.stockDeliveryId), dataOutputWarehouse)
+        if (res.EC === 0) {
+            toast.success(res.EM)
+            setItemsStatus([
+                {
+                    status: 'wait',
+                    title: 'Nháp',
+                },
+                {
+                    status: 'wait',
+                    title: 'Sẵn sàng',
+                },
+                {
+                    status: 'process',
+                    title: 'Hoàn tất',
+                },
+                {
+                    status: 'wait',
+                    title: 'Đã hủy',
+                },
+            ])
+            setCurrentStatus(2);
+            setStockUpdateSubmit(true)
+            // handleCancelCreateInputWarehouse()
+        } else {
+            toast.error(res.EM)
+        }
 
     }
 
+    async function cancelDelivery() {
+        let dataOutputWarehouse = {
+            status: 'cancel'
+        }
+        let res = await updateDelivery(encodeURIComponent(deliveryInfo.stockDeliveryId), dataOutputWarehouse)
+        if (res.EC === 0) {
+            toast.success(res.EM)
+            setItemsStatus([
+                {
+                    status: 'wait',
+                    title: 'Nháp',
+                },
+                {
+                    status: 'wait',
+                    title: 'Sẵn sàng',
+                },
+                {
+                    status: 'wait',
+                    title: 'Hoàn tất',
+                },
+                {
+                    status: 'process',
+                    title: 'Đã hủy',
+                },
+            ])
+            setCurrentStatus(3);
+            // handleCancelCreateInputWarehouse()
+        } else {
+            toast.error(res.EM)
+        }
+    }
+
+
+    const childrenItem = (product, value) => {
+        // console.log(DeliveryItems)
+        let updateListProduct = deliveryItems.map((item, index) => {
+            if (item.productId === product.productId) {
+                return {
+                    ...item,
+                    trueQuantity: value
+                };
+            }
+            return item;
+        });
+        setDeliveryItems(updateListProduct)
+    }
+
+    const handleCancelViewOutputWarehouse = () => {
+        history.push('/manage-inventory/input-warehouse')
+    }
 
     return (
         <>
@@ -122,15 +265,20 @@ function ViewDelivery() {
                         </span>
                         <div className='btn-actions'>
                             <button className='btn btn-primary btn-main'><FormattedMessage id='btn-save' /></button>
-                            <button className='ms-1 btn btn-outline-secondary'><FormattedMessage id='btn-cancel' /></button>
+                            <button onClick={() => handleCancelViewOutputWarehouse()} className='ms-1 btn btn-outline-secondary'><FormattedMessage id='btn-cancel' /></button>
                         </div>
                     </div>
                     <div className='container-fluid view-product-container'>
                         <div className='actions-status'>
                             <div className='wrap-btn-actions'>
-                                <button className='btn btn-main' onClick={() => addToStock()}>Xác nhận</button>
-                                <button className='btn btn-gray'>In nhãn</button>
-                                <button className='btn btn-gray'>Hủy</button>
+                                {currentStatus === 1 && (
+                                    <>
+                                        <button className='btn btn-main' onClick={() => minusToStock()}>Xác nhận</button>
+                                        <button className='btn btn-gray' onClick={() => cancelDelivery()}>Hủy</button>
+                                    </>
+                                )}
+                                {/* <button className='btn btn-main' onClick={() => addToStock()}>Xác nhận</button>
+                                <button className='btn btn-gray'>Hủy</button> */}
                             </div>
                             <div className='output-warehouse-status'>
                                 <Steps
@@ -157,7 +305,7 @@ function ViewDelivery() {
                                             filterSort={(optionA, optionB) =>
                                                 (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                             }
-                                            options={[{ value: deliveryInfo.customerId, label: deliveryInfo.customerData.nameVi }]}
+                                            options={[{ value: deliveryInfo.customerId, label: getNameViById(customerLIst, deliveryInfo.customerId) }]}
                                             defaultValue={deliveryInfo.customerId}
                                         // onChange={(e) => handleChangeInputWarehouse(e, 'receiveFrom')}
                                         />
@@ -193,7 +341,7 @@ function ViewDelivery() {
                                             placeholder=''
                                             size='middle'
                                             id='select-date-expiration'
-                                            defaultValue={moment('2024-03-20', 'YYYY-MM-DD')}
+                                            defaultValue={dayjs(deliveryInfo.scheduledDate)}
                                         />
                                     </div>
                                 </div>
@@ -206,18 +354,18 @@ function ViewDelivery() {
                                     items={[{
                                         label: `Hoạt động`,
                                         key: 'tab-1',
-                                        children: <TableProductView listProduct={deliveryItems} />,
+                                        children: <TableProductView setStockUpdateSubmit={setStockUpdateSubmit} stockUpdateSubmit={stockUpdateSubmit} listProduct={deliveryItems} setListProduct={setDeliveryItems} setChildItem={childrenItem} currentStatus={currentStatus} setCurrentStatus={setCurrentStatus} />,
                                     },
                                     {
                                         label: `Thông tin bổ sung`,
                                         key: 'tab-2',
-                                        // children: <OtherInfo />,
+                                        children: <OtherInfo />,
                                     },
                                     {
                                         label: `Ghi chú`,
                                         key: 'tab-3',
                                         children: <Input.TextArea
-                                            // value={value}
+                                            value={deliveryInfo.note}
                                             // onChange={(e) => setValue(e.target.value)}
                                             placeholder="Thêm một ghi chú nội bộ sẽ được in trên phiếu Hoạt động lấy hàng"
                                             // onChange={(e) => onChangeNote(e)}

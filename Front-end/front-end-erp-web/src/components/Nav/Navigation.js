@@ -3,6 +3,7 @@ import './Navigation.scss'
 import './NavigationManageEmployee.scss'
 import './NavigationManageInventory.scss'
 import './NavigationManageAccounting.scss'
+import './NavigationPurchase.scss'
 import './NavigationSales.scss'
 import { NavLink, useLocation, useHistory } from 'react-router-dom'
 import { HiSquares2X2 } from "react-icons/hi2";
@@ -12,6 +13,7 @@ import logo_manage_employees from '../../assets/img/employee_app.png'
 import logo_manage_inventory from '../../assets/img/inventory_app.png'
 import logo_manage_accounting from '../../assets/img/accounting_app.png'
 import logo_sales from '../../assets/img/logo_sales.png'
+import logo_purchase from '../../assets/img/purchase.png'
 import { FormattedMessage } from 'react-intl'
 import { useSelector, useDispatch } from 'react-redux';
 import { translate } from '../../redux-toolkit/slices/langSlice'
@@ -159,6 +161,22 @@ const Navigation = (props) => {
                                 :
                                 ''
                             }
+                            {url.includes(path.MANAGE_PURCHASE) ?
+                                <>
+                                    <div className='logo-purchase-page ms-4'>
+                                        <img className='img-logo-purchase-app' src={logo_purchase} alt='img-logo-purchase' />
+                                    </div>
+                                    <NavLink className="navbar-brand ms-1 current-app" to='/manage-purchase'>Mua hàng</NavLink>
+                                    <div className='nav-purchase'>
+                                        <NavLink className='nav-link-me-purchase' to='/manage-purchase'>Yêu cầu báo giá</NavLink>
+                                        <NavLink className='nav-link-me-purchase' to='/manage-purchase/orders'>Đơn mua hàng</NavLink>
+                                        <NavLink className='nav-link-me-purchase' to='/manage-purchase/products'>Sản phẩm</NavLink>
+                                        <NavLink className='nav-link-me-purchase' to='/manage-purchase/providers'>Nhà cung cấp</NavLink>
+                                    </div>
+                                </>
+                                :
+                                ''
+                            }
                             {url.includes(path.MANAGE_ACCOUNTING) ?
                                 <>
                                     <div className='logo-accounting-page ms-4'>
@@ -221,7 +239,7 @@ const Navigation = (props) => {
                 <div className={isShowMenuApp === false ? 'drop-down-menu-apps d-none' : 'drop-down-menu-apps'}>
                     <span onClick={() => redirectDropdownApp('/manage-inventory')} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-inventory' /></span>
                     <span onClick={() => redirectDropdownApp('/accounting')} className='item-app-menu'>Kế toán</span>
-                    <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-purchase' /></span>
+                    <span onClick={() => redirectDropdownApp('/manage-purchase')} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-purchase' /></span>
                     <span onClick={() => redirectDropdownApp('/sale-order')} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-sales' /></span>
                     <span onClick={() => redirectDropdownApp()} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-accounting' /></span>
                     <span onClick={() => redirectDropdownApp('/manage-accounts')} className='item-app-menu'><FormattedMessage id='navigation.dropdown-app-employees' /></span>

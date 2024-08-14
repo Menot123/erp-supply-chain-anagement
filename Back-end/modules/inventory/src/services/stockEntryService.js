@@ -49,7 +49,7 @@ const handleGetStockEntryWithIdService = async(id) => {
             },
             include: [
                 { model: db.StockEntryItem, as: 'items' },
-                { model: db.Provider, as: 'providerData' },
+                // { model: db.Provider, as: 'providerData' },
             ]
         });
         if (stockEntry) {
@@ -72,9 +72,9 @@ const handleCreateStockEntryService = async(data) => {
         let res = {}
 
         // Kiểm tra sự tồn tại của providerId, warehouseId, và userId
-        const providerExists = await db.Provider.findOne({
-            where: { providerId: data.providerId }
-        })
+        // const providerExists = await db.Provider.findOne({
+        //     where: { providerId: data.providerId }
+        // })
 
         const warehouseExists = await db.Warehouse.findOne({
             where: { warehouseId: data.warehouseId }
@@ -84,7 +84,7 @@ const handleCreateStockEntryService = async(data) => {
         //     where: { userId: data.userId }
         // })
 
-        if (!providerExists || !warehouseExists) {
+        if (!warehouseExists) {
             // Một hoặc nhiều giá trị không tồn tại trong các mô hình liên quan
             res.EM = 'Invalid providerId, warehouseId, or userId'
             res.EC = 1
@@ -97,6 +97,7 @@ const handleCreateStockEntryService = async(data) => {
         })
         res.EM = 'Create stockEntry successfully'
         res.EC = 0
+            // res.DT = 'a'
         res.DT = created.dataValues.stockEntryId
         return res
     } catch (e) {

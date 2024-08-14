@@ -5,7 +5,7 @@ import { FaRegBuilding } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { useState } from 'react'
 import './TableProductView.scss'
-import { getProductWithId } from '../../../../services/inventoryServices'
+import { getProductWithId, updateDeliveryItem, minusToStock, checkMinusStock } from '../../../../services/inventoryServices'
 import _ from 'lodash'
 import { Flex, Input, Select, Tooltip, DatePicker } from 'antd';
 import { useEffect } from 'react'
@@ -21,6 +21,7 @@ export const TableProductView = (props) => {
     const [creatingProduct, setCreatingProduct] = useState({})
     const [selectedTax, setSelectedTax] = useState(null)
     const [isCreatingProduct, setIsCreatingProduct] = useState(false)
+    const [stockDeliveryId, setStockDeliveryId] = useState('')
     const [isUpdating, setIsUpdating] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
     const [finalPrice, setFinalPrice] = useState(0);
@@ -46,7 +47,11 @@ export const TableProductView = (props) => {
 
     useEffect(() => {
         if (props && props?.listProduct) {
-            // console.log(props.listProduct)
+            if (props.listProduct[0]?.stockDeliveryId) {
+                // console.log('list product', props.listProduct[0])
+                // console.log(1)
+                setStockDeliveryId(props.listProduct[0].stockDeliveryId)
+            }
             // const buildSelectProduct = () => {
             //     let productSelect = props?.listProductFromParent.map((item, index) => {
             //         return (
@@ -62,23 +67,47 @@ export const TableProductView = (props) => {
         }
     }, [props])
 
-    useEffect(() => {
-        if (props.stockCreateId !== '') {
-            listProduct.forEach(async (product, index) => {
-                // await props.createProductListOfReceipt(
-                //     {
-                //         stockEntryId: props.stockCreateId,
-                //         productId: product.productId,
-                //         description: product.description,
-                //         scheduledDate: product.scheduledDate,
-                //         deadline: product.deadline,
-                //         quantity: product.quantity
-                //     }
-                // )
-                console.log(product)
-            })
+    useEffect(async () => {
+        if (props.stockUpdateSubmit) {
+            // console.log('listProduct: ', props.listProduct)
+            // await props.createProductListOfReceipt(listProduct)
+            let checked = await checkMinusStock(props.listProduct)
+            if (checked.EC == 0) {
+                props.listProduct.map(async (item, index) => {
+                    console.log(item)
+                    let dataStock = {
+                        productId: item.productId,
+                        warehouseId: 'WH001',
+                        quantity: item.trueQuantity
+                    }
+                    let minusResponse = await minusToStock(dataStock)
+                    if (minusResponse.EC == 0) {
+                        // toast.success(minusResponse.EM)
+                        await updateDeliveryItem(item.stockDeliveryItemId,
+                            {
+                                // stockEntryId: props.stockUpdateId,
+                                // productId: item.productId,
+                                // description: item.description,
+                                // scheduledDate: item.scheduledDate,
+                                // deadline: item.deadline,
+                                // quantity: item.quantity,
+                                trueQuantity: item.trueQuantity,
+                            }
+                        )
+                    }
+                })
+                props.setStockUpdateSubmit(false)
+            }
+            else {
+                toast.error(checked.EM)
+            }
+
+
         }
-    }, [props.stockCreateId])
+        else {
+            console.log(props.listProduct)
+        }
+    }, [props.stockUpdateSubmit, props.listProduct])
 
     // useEffect(() => {
 
@@ -152,7 +181,7 @@ export const TableProductView = (props) => {
         }
         _listProduct[_listProduct.length - 1] = creatingProduct
         // Cập nhật danh sách sản phẩm mới
-        console.log(_listProduct)
+        // console.log(_listProduct)
         setListProduct(_listProduct);
     }
 
@@ -209,6 +238,13 @@ export const TableProductView = (props) => {
         setIsCreatingProduct(false)
     };
 
+    const setTrueQuantity = (product, e) => {
+        // console.log(element.target.value)
+        if (props.currentStatus === 1)
+            props?.setChildItem(product, e.target.value)
+        // console.log(props.listProduct)
+    }
+
     return (
         <div>
             <div className='body-content-product-view'>
@@ -217,10 +253,10 @@ export const TableProductView = (props) => {
                         <tr>
                             <th scope="col">Sản phẩm</th>
                             <th scope="col">Mô tả</th>
-                            <th scope="col">Ngày theo kế hoạch</th>
-                            <th scope="col">Hạn chót</th>
+                            {/* <th scope="col">Ngày theo kế hoạch</th>
+                            <th scope="col">Hạn chót</th> */}
                             <th scope="col">Nhu cầu</th>
-                            <th scope="col">Số lượng nhận được</th>
+                            <th scope="col">Số lượng giao</th>
                             <th scope="col"><IoOptions /></th>
                         </tr>
                     </thead>
@@ -259,7 +295,7 @@ export const TableProductView = (props) => {
                                                 onChange={(e) => handleChangeInputCreatingProduct(e, 'description', item)}
                                             />
                                         </td>
-                                        <td>
+                                        {/* <td>
                                             <DatePicker
                                                 className='select-date-expiration'
                                                 onChange={onChangeDatePickerItem}
@@ -284,7 +320,7 @@ export const TableProductView = (props) => {
                                                 id='select-date-expiration'
                                                 format="DD-MM-YYYY"
                                             />
-                                        </td>
+                                        </td> */}
                                         <td>
                                             <Input
                                                 onChange={(e) => handleChangeInputCreatingProduct(e, 'quantity', item)}
@@ -293,11 +329,12 @@ export const TableProductView = (props) => {
                                         </td>
                                         <td>
                                             <Input
-                                                value={item?.trueQuantity && item?.trueQuantity !== '' ? item?.quantity : '0'}
+                                                onChange={(e) => setTrueQuantity(item, e)}
+                                                value={item?.trueQuantity && item?.trueQuantity !== '' ? item?.trueQuantity : '0'}
                                                 variant="borderless" />
                                         </td>
                                         <td>
-                                            <Tooltip placement="top" title={`Xóa sản phẩm "${item.name}"`}>
+                                            <Tooltip placement="top" title={`Xóa sản phẩm "${item.productData.nameVi}"`}>
                                                 <FaRegTrashCan className='hover-item' onClick={() => handleRemoveProduct(item)} />
                                             </Tooltip>
                                         </td>

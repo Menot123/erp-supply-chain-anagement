@@ -46,7 +46,7 @@ const handleGetStockDeliveryWithIdService = async(id) => {
             },
             include: [
                 { model: db.StockDeliveryItem, as: 'items' },
-                { model: db.Customer, as: 'customerData' },
+                // { model: db.Customer, as: 'customerData' },
             ]
         });
         if (stockDelivery) {
@@ -69,9 +69,9 @@ const handleCreateStockDeliveryService = async(data) => {
         let res = {}
 
         // Kiểm tra sự tồn tại của customerId, warehouseId, và userId
-        const customerExists = await db.Customer.findOne({
-            where: { customerId: data.customerId }
-        })
+        // const customerExists = await db.Customer.findOne({
+        //     where: { customerId: data.customerId }
+        // })
 
         const warehouseExists = await db.Warehouse.findOne({
             where: { warehouseId: data.warehouseId }
@@ -81,7 +81,7 @@ const handleCreateStockDeliveryService = async(data) => {
         //     where: { userId: data.userId }
         // })
 
-        if (!customerExists || !warehouseExists) {
+        if (!warehouseExists) {
             // Một hoặc nhiều giá trị không tồn tại trong các mô hình liên quan
             res.EM = 'Invalid customerId, warehouseId, or userId'
             res.EC = 1

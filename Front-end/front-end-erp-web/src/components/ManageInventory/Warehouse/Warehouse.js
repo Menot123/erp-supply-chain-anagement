@@ -185,8 +185,8 @@ function Warehouse() {
         fetchStockEntrys()
     }, [currentPage, currentLimit])
 
-    const handleNavigateToReceiptPage = (receiptId) => {
-        history.push('/manage-inventory/input-warehouse/' + receiptId)
+    const handleNavigateToProductViewPage = (productId) => {
+        history.push('/manage-inventory/products/' + productId)
     }
 
     return (
@@ -256,9 +256,9 @@ function Warehouse() {
                                                             ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
                                                             : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
                                                         }
-                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)}>{item.warehouseData.warehouseId}</td>
-                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${contactChecked ? '' : 'hidden'}`}>{item.productData.nameVi}</td>
-                                                        <td onClick={() => handleNavigateToReceiptPage(item.stockEntryId)} className={`${personInChargeChecked ? '' : 'hidden'}`}>{item.quantity}</td>
+                                                        <td onClick={() => handleNavigateToProductViewPage(item.productData.productId)}>{item.warehouseData.warehouseId}</td>
+                                                        <td onClick={() => handleNavigateToProductViewPage(item.productData.productId)} className={`${contactChecked ? '' : 'hidden'}`}>{item.productData.nameVi}</td>
+                                                        <td onClick={() => handleNavigateToProductViewPage(item.productData.productId)} className={`${personInChargeChecked ? '' : 'hidden'}`}>{item.quantity}</td>
                                                     </tr>
                                                 ));
                                             } else {

@@ -31,7 +31,7 @@ export const TableOutputWarehouse = (props) => {
         stockEntryId: '',
         productId: '',
         description: '',
-        scheduleDate: new Date(),
+        scheduledDate: new Date(),
         deadline: new Date(),
         quantity: '0.0',
     }
@@ -222,8 +222,8 @@ export const TableOutputWarehouse = (props) => {
                         <tr>
                             <th scope="col">Sản phẩm</th>
                             <th scope="col">Mô tả</th>
-                            <th scope="col">Ngày theo kế hoạch</th>
-                            <th scope="col">Hạn chót</th>
+                            {/* <th scope="col">Ngày theo kế hoạch</th>
+                            <th scope="col">Hạn chót</th> */}
                             <th scope="col">Nhu cầu</th>
                             <th scope="col"><IoOptions /></th>
                         </tr>
@@ -261,7 +261,7 @@ export const TableOutputWarehouse = (props) => {
                                                 onChange={(e) => handleChangeInputCreatingProduct(e, 'description', item)}
                                             />
                                         </td>
-                                        <td>
+                                        {/* <td>
                                             <DatePicker
                                                 className='select-date-expiration'
                                                 onChange={onChangeDatePickerItem}
@@ -282,7 +282,7 @@ export const TableOutputWarehouse = (props) => {
                                                 size='middle'
                                                 id='select-date-expiration'
                                             />
-                                        </td>
+                                        </td> */}
                                         <td>
                                             <Input
                                                 onChange={(e) => handleChangeInputCreatingProduct(e, 'quantity', item)}

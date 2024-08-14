@@ -57,6 +57,63 @@ const handleCreateStock = async(req, res, next) => {
 }
 
 
+// Add a stock
+const handleAddStock = async(req, res, next) => {
+    try {
+        let dataStock = req.body;
+        let response = await stockService.handleAddStockService(dataStock);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in addStock controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+// Check a stock
+const handleCheckMinusStock = async(req, res, next) => {
+    try {
+        let dataStock = req.body;
+        let response = await stockService.handleCheckMinusStockService(dataStock);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in minusStock controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+// Minus a stock
+const handleMinusStock = async(req, res, next) => {
+    try {
+        let dataStock = req.body;
+        let response = await stockService.handleMinusStockService(dataStock);
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in minusStock controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 // Update a stock with id
 const handleUpdateStock = async(req, res, next) => {
     try {
@@ -100,6 +157,9 @@ module.exports = {
     handleGetStocks,
     handleGetStock,
     handleCreateStock,
+    handleAddStock,
+    handleCheckMinusStock,
+    handleMinusStock,
     handleUpdateStock,
     handleDeleteStock
 }

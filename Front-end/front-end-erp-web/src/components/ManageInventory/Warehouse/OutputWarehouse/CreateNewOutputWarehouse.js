@@ -23,10 +23,11 @@ function CreateNewOutputWarehouse() {
     const history = useHistory()
 
     const defaultDataOutputWarehouse = {
-        customerId: '',
+        id: '',
         operationType: 'Phiếu xuất kho',
         warehouseId: 'WH001',
-        scheduledDay: '',
+        scheduledDate: '',
+        customerId: '',
         productList: [],
         note: '',
         userId: idUser,
@@ -55,7 +56,7 @@ function CreateNewOutputWarehouse() {
     const onChangeDatePicker = (date, dateString) => {
         setDataOutputWarehouse((prevState) => ({
             ...prevState,
-            scheduledDay: dateString
+            scheduledDate: dateString
         }))
     };
 
@@ -127,8 +128,8 @@ function CreateNewOutputWarehouse() {
             let customerSelect = listCustomer.map((item, index) => {
                 return (
                     {
-                        value: item.customerId,
-                        label: item.nameVi
+                        value: item.id,
+                        label: item.fullName
                     }
                 )
             })
@@ -139,7 +140,7 @@ function CreateNewOutputWarehouse() {
 
 
     const validateDataDelivery = () => {
-        const fieldCheck = ['customerId', 'operationType', 'scheduledDay'];
+        const fieldCheck = ['customerId', 'scheduledDate', 'scheduledDate'];
         const missingFields = [];
 
         fieldCheck.forEach(field => {
@@ -152,20 +153,21 @@ function CreateNewOutputWarehouse() {
     };
 
     const handleSaveOutputWarehouse = async () => {
-        // Validate data
-        // let check = validateDataDelivery()
+        dataOutputWarehouse.status = 'draft'
 
-        // if (check.length === 0) {
-        //     let res = await createNewDelivery(dataProduct)
-        //     if (res.EC === 0) {
-        //         cleanValueSubmit()
-        //         toast.success(res.EM)
-        //     } else {
-        //         toast.error(res.EM)
-        //     }
-        // } else {
-        //     toast.warning(`Missing fields: ${check.toString()}`)
-        // }
+        let check = validateDataDelivery()
+        if (check.length === 0) {
+            let res = await createNewDelivery(dataOutputWarehouse)
+            if (res.EC === 0) {
+                setStockCreateId(res.DT)
+                toast.success(res.EM)
+                handleCancelCreateOutputWarehouse()
+            } else {
+                toast.error(res.EM)
+            }
+        } else {
+            toast.warning(`Missing fields: ${check.toString()}`)
+        }
     }
 
     const handleCancelCreateOutputWarehouse = () => {
@@ -173,19 +175,20 @@ function CreateNewOutputWarehouse() {
     }
 
     const handleSetReadyDelivery = async () => {
-        // console.log(dataOutputWarehouse)
+        console.log(dataOutputWarehouse)
         let check = validateDataDelivery()
 
         if (check.length === 0) {
             dataOutputWarehouse.status = 'ready'
             let res = await createNewDelivery(dataOutputWarehouse)
-            console.log(res)
+            // console.log(res)
             if (res.EC === 0) {
                 // console.log(res.DT)
                 setStockCreateId(res.DT)
                 toast.success(res.EM)
                 handleCancelCreateOutputWarehouse()
             } else {
+                console.log(1)
                 toast.error(res.EM)
             }
         } else {
@@ -214,9 +217,8 @@ function CreateNewOutputWarehouse() {
                 <div className='actions-status'>
                     <div className='wrap-btn-actions'>
                         <button onClick={() => handleSetReadyDelivery()} className='btn btn-main'>Đánh dấu việc cần làm</button>
-                        <button onClick={() => handleSetDoneDelivery()} className='btn btn-gray'>Xác nhận</button>
-                        <button className='btn btn-gray'>In nhãn</button>
-                        <button className='btn btn-gray'>Hủy</button>
+                        {/* <button onClick={() => handleSetDoneDelivery()} className='btn btn-gray'>Xác nhận</button> */}
+                        <button onClick={() => handleCancelCreateOutputWarehouse()} className='btn btn-gray'>Hủy</button>
                     </div>
                     <div className='output-warehouse-status'>
                         <Steps

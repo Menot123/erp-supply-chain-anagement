@@ -20,11 +20,50 @@ const getQuoteCustomers = async (req, res, next) => {
     }
 }
 
+const getQuoteProviders = async (req, res, next) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 10;
+        let jwtToken = req.cookies ?? ''
+        const response = await apiService.getQuoteProvidersService(page, pageSize, jwtToken)
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in get quotes of customers',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
 const getQuoteSent = async (req, res, next) => {
     try {
         const quoteId = req.params?.quoteId
         let jwtToken = req.cookies ?? ''
         const response = await apiService.getQuoteSentService(quoteId, jwtToken)
+        return res.status(200).json({
+            EM: response.EM,
+            EC: response.EC,
+            DT: response.DT
+        })
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in get quotes of customers',
+            EC: -1,
+            DT: ''
+        })
+    }
+}
+
+const getQuoteSentProvider = async (req, res, next) => {
+    try {
+        const quoteId = req.params?.quoteId
+        let jwtToken = req.cookies ?? ''
+        const response = await apiService.getQuoteSentServiceProvider(quoteId, jwtToken)
         return res.status(200).json({
             EM: response.EM,
             EC: response.EC,
@@ -80,5 +119,5 @@ const getInvoice = async (req, res, next) => {
 }
 
 module.exports = {
-    getQuoteCustomers, getQuoteSent, getAllInvoices, getInvoice
+    getQuoteCustomers, getQuoteProviders, getQuoteSent, getQuoteSentProvider, getAllInvoices, getInvoice
 }

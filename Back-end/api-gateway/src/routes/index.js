@@ -6,6 +6,7 @@ const accountingProxy = require("../proxies/accountingProxy");
 const purchaseProxy = require("../proxies/purchaseProxy");
 const saleProxy = require("../proxies/saleProxy");
 const customerProxy = require("../proxies/customerProxy");
+const providerProxy = require("../proxies/providerProxy");
 const bffProxy = require("../proxies/bffProxy");
 const jwtService = require("../middlewares/JWTServices")
 
@@ -19,6 +20,7 @@ router.use("/purchase", purchaseProxy);
 router.use("/sale", jwtService.checkUserJWT, saleProxy);
 router.use("/accounting", accountingProxy);
 router.use("/customer", customerProxy);
+router.use("/provider", providerProxy);
 router.use("/bff", bffProxy);
 
 // Handler for route-not-found

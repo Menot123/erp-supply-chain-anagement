@@ -8,11 +8,16 @@ import {
 import { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux';
 import { getStockDeliverys } from '../../../../services/inventoryServices'
+import { getCustomers } from '../../../../services/saleServices'
+
 import { LANGUAGES } from '../../../../utils/constant'
 import { toast } from 'react-toastify';
 import { FormattedMessage } from 'react-intl'
+import moment from 'moment';
 
 function OutputWarehouse() {
+    const user = useSelector(state => state.user)
+    const userName = user.lastName + ' ' + user.firstName
     const history = useHistory();
     const [currentView, setCurrentView] = useState('list')
     const [currentLimit] = useState(16)
@@ -41,6 +46,7 @@ function OutputWarehouse() {
     const [orderDelayOfChecked, setOrderDelayOfChecked] = useState(false);
     const [activityTypeChecked, setActivityTypeChecked] = useState(false);
     const [statusChecked, setStatusChecked] = useState(true);
+    const [customerList, setCustomerList] = useState([]);
 
     const renderStatus = (item) => {
         let statusClass = '';
@@ -55,6 +61,9 @@ function OutputWarehouse() {
         } else if (item === 'done') {
             statusClass = 'green';
             statusText = 'Hoàn thành';
+        } else if (item === 'cancel') {
+            statusClass = 'red';
+            statusText = 'Đã hủy';
         }
 
         return (
@@ -165,6 +174,25 @@ function OutputWarehouse() {
 
         fetchStockDeliverys()
     }, [currentPage, currentLimit])
+
+    useEffect(() => {
+        const fetchAllCustomers = async () => {
+            let response = await getCustomers()
+            if (response.EC == 0) {
+                Promise.all([setCustomerList(response?.DT)])
+                // console.log(response.DT)
+            } else {
+                toast.error(response?.EM)
+            }
+        }
+
+        fetchAllCustomers()
+    }, [])
+
+    function getNameViById(customers, item) {
+        const customer = customers.find(customer => customer.customerId === item);
+        return customer ? customer.fullName : null;
+    }
 
     const handleNavigateToDeliveryPage = (deliveryId) => {
         history.push('/manage-inventory/output-warehouse/' + deliveryId)
@@ -329,12 +357,12 @@ function OutputWarehouse() {
                                                             : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
                                                         }
                                                         <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)}>{item.stockDeliveryId}</td>
-                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${contactChecked ? '' : 'hidden'}`}>{item.customerId}</td>
-                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${personInChargeChecked ? '' : 'hidden'}`}>{item.userId}</td>
-                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${plannedDateChecked ? '' : 'hidden'}`}>{item.scheduledDate}</td>
+                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${contactChecked ? '' : 'hidden'}`}>{getNameViById(customerList, item.id)}</td>
+                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${personInChargeChecked ? '' : 'hidden'}`}>{userName}</td>
+                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${plannedDateChecked ? '' : 'hidden'}`}>{moment(item.scheduledDate).format('YYYY-MM-DD')}</td>
                                                         <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
                                                         <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${deadlineChecked ? '' : 'hidden'}`}></td>
-                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${effectiveDateChecked ? '' : 'hidden'}`}>{item.createdAt}</td>
+                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${effectiveDateChecked ? '' : 'hidden'}`}>{moment(item.createdAt).format('YYYY-MM-DD')}</td>
                                                         <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
                                                         <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
                                                         <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${activityTypeChecked ? '' : 'hidden'}`}>{item.warehouseId}: Phiếu xuất kho</td>
