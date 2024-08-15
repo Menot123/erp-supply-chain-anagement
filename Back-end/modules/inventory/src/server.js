@@ -13,8 +13,14 @@ let port = process.env.PORT || 8081;
 
 app.use(function (req, res, next) {
 
+
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', process.env.REACT_URL);
+    const allowedOrigins = [process.env.REACT_URL, 'https://deploy-fe-erp-viet-e8i6xks4m-felixs-projects-f472e045.vercel.app/'];
+    const origin = req.headers.origin;
+
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');

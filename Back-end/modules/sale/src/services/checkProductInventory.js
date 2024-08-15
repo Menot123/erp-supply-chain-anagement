@@ -46,9 +46,13 @@ const amqp = require('amqplib/callback_api');
 //     });
 // };
 
+const rabbitMQHost = process.env.RABBITMQ_HOST || 'rabbitmq';
+const rabbitMQPort = process.env.RABBITMQ_PORT || '5672';
+
 export const checkProductInventory = (dataSendToQueue) => {
+
     return new Promise((resolve, reject) => {
-        amqp.connect('amqp://localhost', (error0, connection) => {
+        amqp.connect(`amqp://${rabbitMQHost}:${rabbitMQPort}`, (error0, connection) => {
             if (error0) {
                 return reject(error0);
             }
@@ -102,7 +106,7 @@ function generateUuid() {
 
 export const sendEmails = (receivers, invoiceId) => {
     return new Promise((resolve, reject) => {
-        amqp.connect('amqp://localhost', (error0, connection) => {
+        amqp.connect(`amqp://${rabbitMQHost}:${rabbitMQPort}`, (error0, connection) => {
             if (error0) {
                 return reject(error0);
             }

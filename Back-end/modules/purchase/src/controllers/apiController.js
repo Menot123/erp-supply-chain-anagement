@@ -397,6 +397,7 @@ const confirmInvoice = async (req, res, next) => {
     try {
         const dataInvoice = req.body;
         let response = await apiService.confirmInvoiceService(dataInvoice);
+
         return res.status(201).json({
             EM: response.EM,
             EC: response.EC,

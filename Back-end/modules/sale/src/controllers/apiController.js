@@ -400,6 +400,8 @@ const confirmInvoice = async (req, res, next) => {
     try {
         const dataInvoice = req.body;
         let response = await apiService.confirmInvoiceService(dataInvoice);
+        console.log(">>>> check response: ", response);
+
         return res.status(201).json({
             EM: response.EM,
             EC: response.EC,
