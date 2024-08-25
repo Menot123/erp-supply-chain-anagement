@@ -4,6 +4,7 @@ import { Select, DatePicker } from "antd";
 import { FormattedMessage, useIntl } from 'react-intl'
 import { getEmployeeById } from '../../../services/saleServices'
 import dayjs from 'dayjs';
+import moment from 'moment';
 
 export const OtherInfo = (props) => {
 
@@ -35,6 +36,11 @@ export const OtherInfo = (props) => {
 
         fetchDataEmployee()
     }, [props?.otherInfoQuote])
+
+    const disablePastDates = (current) => {
+        // Can not select days before today and today
+        return current && current < moment().startOf('day');
+    };
 
 
     return (
@@ -79,6 +85,7 @@ export const OtherInfo = (props) => {
                         id='select-date-delivery'
                         defaultValue={props?.otherInfoQuote?.deliveryDate ? dayjs(props?.otherInfoQuote?.deliveryDate) : null}
                         disabled={props?.isDisable}
+                        disabledDate={disablePastDates}
                     />
                 </div>
             </div>

@@ -334,9 +334,9 @@ function DetailProduct() {
             let res = await updateProductInformation(id, dataProduct)
             if (res.EC === 0) {
                 cleanValueSubmit()
-                toast.success(res.EM)
+                toast.success("Cập nhật thông tin sản phẩm thành công")
             } else {
-                toast.error(res.EM)
+                toast.error("Cập nhật thông tin sản phẩm thất bại")
             }
         } else {
             toast.warning(`Missing fields: ${check.toString()}`)

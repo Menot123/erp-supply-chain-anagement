@@ -170,7 +170,7 @@ function CreateNewInputWarehouse() {
     };
 
     const handleSaveInputWarehouse = async () => {
-        // console.log(dataInputWarehouse)
+        console.log(dataInputWarehouse)
         dataInputWarehouse.status = 'draft'
         let check = validateDataReceipt()
 
@@ -178,7 +178,7 @@ function CreateNewInputWarehouse() {
             let res = await createNewReceipt(dataInputWarehouse)
             if (res.EC === 0) {
                 setStockCreateId(res.DT)
-                toast.success(res.EM)
+                toast.success("Tạo phiếu nhập kho thành công!")
                 handleCancelCreateInputWarehouse()
             } else {
                 toast.error(res.EM)

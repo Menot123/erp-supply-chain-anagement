@@ -845,7 +845,7 @@ const paidInvoiceService = async (dataPaidInvoice) => {
             });
             await db.InvoicePaid.create({
                 ...dataPaidInvoice,
-                invoiceId: dataPaidInvoice?.invoiceId,
+                invoiceId: dataPaidInvoice?.invoiceId
 
             })
             res.EM = 'Create a paid of invoice successfully'

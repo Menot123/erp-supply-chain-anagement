@@ -364,6 +364,7 @@ const postInvoice = async (req, res, next) => {
     try {
         const dataInvoice = req.body;
         let response = await apiService.postInvoiceService(dataInvoice);
+
         return res.status(201).json({
             EM: response.EM,
             EC: response.EC,

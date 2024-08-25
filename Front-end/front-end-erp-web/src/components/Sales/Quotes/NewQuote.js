@@ -24,6 +24,7 @@ import { ModalSendInvoiceToEmail } from '../Modal/ModalSendInvoiceToEmail';
 import { InvoicePDF } from './InvoicePDF';
 import { ModalConfirmPaid } from '../Modal/ModalConfirmPaid';
 import { useMemo, useCallback } from 'react';
+import moment from 'moment';
 
 export const NewQuote = () => {
 
@@ -193,6 +194,11 @@ export const NewQuote = () => {
         })
         setCustomersSelect(customersDataBuild)
     }
+
+    const disablePastDates = (current) => {
+        // Can not select days before today and today
+        return current && current < moment().startOf('day');
+    };
 
     useEffect(() => {
         if (currentStepQuote === 3) {
@@ -671,6 +677,7 @@ export const NewQuote = () => {
                                         size='middle'
                                         id='select-date-createInvoice'
                                         key="create-invoice"
+                                        disabledDate={disablePastDates}
                                     />
                                 </div>
                                 :
@@ -685,6 +692,7 @@ export const NewQuote = () => {
                                         placeholder=''
                                         size='middle'
                                         id='select-date-expiration'
+                                        disabledDate={disablePastDates}
                                     />
                                 </div>
                             }

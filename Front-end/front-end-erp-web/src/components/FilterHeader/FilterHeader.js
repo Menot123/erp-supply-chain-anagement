@@ -36,6 +36,8 @@ function FilterHeader(props) {
             props?.changeSearchEmployee(e.target.value)
         } else if (props?.changeSearchDepartment) {
             props?.changeSearchDepartment(e.target.value)
+        } else if (props?.changeSearchProduct) {
+            props?.changeSearchProduct(e.target.value)
         }
     }
 

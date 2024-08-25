@@ -88,10 +88,10 @@ function NewCustomer() {
             let res = await updateCustomer(customerId, dataCustomer)
             if (res.EC === 0) {
                 cleanValueSubmit()
-                toast.success(res.EM)
+                toast.success("Cập nhật thông tin khách hàng thành công!")
                 history.push('/sale-order/customers')
             } else {
-                toast.error(res.EM)
+                toast.error("Cập nhật thông tin khách hàng thất bại!")
             }
         } else {
             toast.warning(`Thiếu các trường sau: ${check.toString()}`)

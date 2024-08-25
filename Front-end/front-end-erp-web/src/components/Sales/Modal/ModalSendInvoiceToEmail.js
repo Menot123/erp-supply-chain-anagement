@@ -61,7 +61,7 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
             setTimeout(() => {
                 setIsSendingEmail(false);
                 if (res && res.EC === 0) {
-                    toast.success(`Sending quote to ${props?.fullDataCustomer?.email} successfully!`)
+                    toast.success(`Gửi hóa đơn đến khách hàng ${props?.fullDataCustomer?.email} thành công!`)
                     Promise.all([props?.close(),
                     props?.handleClearDataQuote()])
                 }

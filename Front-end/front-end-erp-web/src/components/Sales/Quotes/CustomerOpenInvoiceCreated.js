@@ -28,7 +28,7 @@ import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { getInvoice } from '../../../services/saleServices'
 import dayjs from 'dayjs';
 import eventEmitter from '../../../services/emitter'
-
+import moment from 'moment';
 
 export const CustomerOpenInvoiceCreated = () => {
 
@@ -225,6 +225,9 @@ export const CustomerOpenInvoiceCreated = () => {
 
         fetchDataQuotePreview()
     }, [id, intl])
+
+
+
 
     const fetchLatestQuoteCode = async () => {
         let res = await getLatestQuoteCode()

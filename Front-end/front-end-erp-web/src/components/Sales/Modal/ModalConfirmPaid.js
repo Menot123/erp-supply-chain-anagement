@@ -4,7 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import { Select, Input, DatePicker, Popconfirm } from "antd";
 import { toast } from 'react-toastify';
 import { createPaidInvoice, confirmInvoice, createVNPayPayment } from '../../../services/saleServices'
-
+import moment from 'moment';
 
 export const ModalConfirmPaid = (props) => {
 
@@ -56,6 +56,11 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
         }
     }
 
+    const disablePastDates = (current) => {
+        // Can not select days before today and today
+        return current && current < moment().startOf('day');
+    };
+
     return (
         <>
             <Modal show={props?.show}
@@ -85,6 +90,7 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
                                 placeholder=''
                                 size='middle'
                                 id='select-date-paid'
+                                disabledDate={disablePastDates}
                             />
                         </div>
 

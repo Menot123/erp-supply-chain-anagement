@@ -26,6 +26,8 @@ import { InvoicePDF } from './InvoicePDF';
 import { ModalConfirmPaid } from '../Modal/ModalConfirmPaid';
 import { useMemo, useCallback } from 'react';
 import moment from 'moment';
+import dayjs from 'dayjs';
+
 
 export const NewQuote = () => {
 
@@ -669,8 +671,8 @@ export const NewQuote = () => {
                                     <DatePicker
                                         key="expiration-date"
                                         className='select-date-expiration'
-                                        defaultValue={moment()}
-                                        value={moment()}
+                                        defaultValue={dayjs(moment())}
+                                        value={dayjs(moment())}
                                         // value={new Date()}
                                         suffixIcon={false}
                                         variant="borderless"

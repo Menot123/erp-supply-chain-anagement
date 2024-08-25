@@ -13,7 +13,7 @@ app.use(function (req, res, next) {
 
 
     // Website you wish to allow to connect
-    const allowedOrigins = [process.env.REACT_URL, 'https://deploy-fe-erp-viet-e8i6xks4m-felixs-projects-f472e045.vercel.app/'];
+    const allowedOrigins = [process.env.REACT_URL, 'https://deploy-fe-erp-viet-77xme8ljr-felixs-projects-f472e045.vercel.app'];
     const origin = req.headers.origin;
 
     if (allowedOrigins.includes(origin)) {

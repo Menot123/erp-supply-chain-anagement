@@ -25,7 +25,7 @@ export const PaymentSuccess = () => {
             let res = await createPaidInvoice({
                 invoiceId: vnpTxnRef,
                 datePaid: formattedDate,
-                total: vnpAmount,
+                total: (parseInt(vnpAmount) / 100).toString(),
                 paymentMethod: "Chuyển khoản",
                 contentTransfer: `INV${vnpTxnRef}`,
                 receivers: emailReceivers

@@ -410,7 +410,7 @@ const getLatestQuoteService = async () => {
             ],
             where: {
                 status: {
-                    [Op.not]: 'active',
+                    [Op.not]: 'deleted',
                 },
             },
         });
@@ -875,7 +875,7 @@ const paidInvoiceService = async (dataPaidInvoice) => {
             await db.InvoicePaid.create({
                 ...dataPaidInvoice,
                 invoiceId: dataPaidInvoice?.invoiceId,
-
+                createdDate: dataPaidInvoice?.datePaid
             })
 
             res.EM = 'Create a paid of invoice successfully'
@@ -1083,6 +1083,8 @@ const getStatisticsService = async (startDate, endDate) => {
         let res = {};
         let invoices = []
         if (startDate && endDate) {
+            endDate = new Date(endDate)
+            endDate.setHours(23, 59, 59, 999).toString();
             invoices = await db.InvoicePaid.findAll({
                 where: {
                     delete_flag: false,

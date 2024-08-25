@@ -1,0 +1,8 @@
+{
+    "rewrites": [
+        {
+            "source": "/api/:match*",
+            "destination": "https://adapted-boar-annually.ngrok-free.app/api/:match*"
+        }
+    ]
+}

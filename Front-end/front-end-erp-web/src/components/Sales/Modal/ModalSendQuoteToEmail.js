@@ -63,7 +63,7 @@ Trân trọng.
             setTimeout(() => {
                 setIsSendingEmail(false);
                 if (res && res.EC === 0) {
-                    toast.success(`Sending quote to ${props?.fullDataCustomer?.email} successfully!`)
+                    toast.success(`Gửi hóa đơn đến khách hàng ${props?.fullDataCustomer?.email} thành công!`)
                     Promise.all([props?.close(),
                     props?.handleClearDataQuote(),
                     props?.changeStep(1)])
