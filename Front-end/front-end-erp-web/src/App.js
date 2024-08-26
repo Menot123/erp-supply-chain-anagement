@@ -45,8 +45,6 @@ function App() {
         </PrivateRoute>
         <PrivateRoute path={path.MANAGE_INVENTORY} component={ManageInventoryRoute}>
         </PrivateRoute>
-        <PrivateRoute path={path.MANAGE_ACCOUNTING} component={ManageAccountingRoute}>
-        </PrivateRoute>
         <PrivateRoute path={path.MANAGE_PURCHASE} component={ManagePurchaseRoute}>
         </PrivateRoute>
         <Route path={path.SIGN_IN} exact>

@@ -247,9 +247,8 @@ function ListProvider() {
                                                 (() => {
                                                     const filteredCustomers = customers.filter((item) => {
                                                         return searchCustomer.toLowerCase() === '' ||
-                                                            (item?.fullName.toLowerCase().includes(searchCustomer.toLowerCase())
-                                                                || item?.email.toLowerCase().includes(searchCustomer.toLowerCase())
-                                                                || (item?.phone && item?.phone.toLowerCase().includes(searchCustomer.toLowerCase())));
+                                                            (item?.nameVi.toLowerCase().includes(searchCustomer.toLowerCase())
+                                                                || item?.email.toLowerCase().includes(searchCustomer.toLowerCase()));
                                                     })
 
                                                     if (filteredCustomers.length > 0) {
@@ -315,9 +314,8 @@ function ListProvider() {
                                                     (() => {
                                                         const filteredCustomers = customers.filter((item) => {
                                                             return searchCustomer.toLowerCase() === '' ||
-                                                                (item?.fullName.toLowerCase().includes(searchCustomer.toLowerCase())
-                                                                    || item?.email.toLowerCase().includes(searchCustomer.toLowerCase())
-                                                                    || (item?.phone && item?.phone.toLowerCase().includes(searchCustomer.toLowerCase())));
+                                                                (item?.nameVi.toLowerCase().includes(searchCustomer.toLowerCase())
+                                                                    || item?.email.toLowerCase().includes(searchCustomer.toLowerCase()));
                                                         })
 
                                                         if (filteredCustomers.length > 0) {
