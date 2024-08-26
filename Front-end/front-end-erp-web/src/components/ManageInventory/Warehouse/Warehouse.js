@@ -43,6 +43,13 @@ function Warehouse() {
     const [activityTypeChecked, setActivityTypeChecked] = useState(false);
     const [statusChecked, setStatusChecked] = useState(true);
 
+    const [searchWarehouse, setSearchWarehouse] = useState('')
+
+    const changeSearchWarehouse = (content) => {
+        setSearchWarehouse(content)
+    }
+
+
     const status = [
         { id: 1, status: 'draft' },
         { id: 2, status: 'ready' },
@@ -204,6 +211,7 @@ function Warehouse() {
                     setShowActions={setIsShowActions}
                     listCheckedItems={listCheckedItems}
                     numberCheckedItems={numberCheckedItems}
+                    changeSearchWarehouse={changeSearchWarehouse}
                     urlImportProduct={'/manage-inventory/output-warehouse'}
                 />
 
@@ -250,17 +258,35 @@ function Warehouse() {
                                         (() => {
                                             // if (products.length > 0) {
                                             if (stocks.length > 0) {
-                                                return stocks.map((item, index) => (
-                                                    <tr key={'receipt' + index} className='hover-item'>
-                                                        {allElementsChecked
-                                                            ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
-                                                            : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
-                                                        }
-                                                        <td onClick={() => handleNavigateToProductViewPage(item.productData.productId)}>{item.warehouseData.warehouseId}</td>
-                                                        <td onClick={() => handleNavigateToProductViewPage(item.productData.productId)} className={`${contactChecked ? '' : 'hidden'}`}>{item.productData.nameVi}</td>
-                                                        <td onClick={() => handleNavigateToProductViewPage(item.productData.productId)} className={`${personInChargeChecked ? '' : 'hidden'}`}>{item.quantity}</td>
-                                                    </tr>
-                                                ));
+
+                                                const filtereWarehouses = stocks.filter((item) => {
+                                                    return searchWarehouse.toLowerCase() === '' ||
+                                                        (item.warehouseData.warehouseId.toLowerCase().includes(searchWarehouse.toLowerCase()) ||
+                                                            item.productData.nameVi.toLowerCase().includes(searchWarehouse.toLowerCase()));
+
+
+                                                });
+                                                if (filtereWarehouses.length > 0) {
+                                                    return filtereWarehouses.map((item, index) => (
+                                                        <tr key={'receipt' + index} className='hover-item'>
+                                                            {allElementsChecked
+                                                                ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
+                                                                : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
+                                                            }
+                                                            <td onClick={() => handleNavigateToProductViewPage(item.productData.productId)}>{item.warehouseData.warehouseId}</td>
+                                                            <td onClick={() => handleNavigateToProductViewPage(item.productData.productId)} className={`${contactChecked ? '' : 'hidden'}`}>{item.productData.nameVi}</td>
+                                                            <td onClick={() => handleNavigateToProductViewPage(item.productData.productId)} className={`${personInChargeChecked ? '' : 'hidden'}`}>{item.quantity}</td>
+                                                        </tr>
+                                                    ));
+                                                }
+                                                else {
+                                                    return (
+                                                        <div className='text-center w-100 fw-bold'>
+                                                            Không tìm thấy tồn kho
+                                                        </div>
+                                                    );
+                                                }
+
                                             } else {
                                                 return (
                                                     <tr>

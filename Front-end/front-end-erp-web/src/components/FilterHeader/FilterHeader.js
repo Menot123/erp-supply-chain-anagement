@@ -38,7 +38,14 @@ function FilterHeader(props) {
             props?.changeSearchDepartment(e.target.value)
         } else if (props?.changeSearchProduct) {
             props?.changeSearchProduct(e.target.value)
+        } else if (props?.changeSearchInputWarehouse) {
+            props?.changeSearchInputWarehouse(e.target.value)
+        } else if (props?.changeSearchOutputWarehouse) {
+            props?.changeSearchOutputWarehouse(e.target.value)
+        } else if (props?.changeSearchWarehouse) {
+            props?.changeSearchWarehouse(e.target.value)
         }
+
     }
 
     const handleChangeView = (value) => {

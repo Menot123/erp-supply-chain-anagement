@@ -48,6 +48,13 @@ function OutputWarehouse() {
     const [statusChecked, setStatusChecked] = useState(true);
     const [customerList, setCustomerList] = useState([]);
 
+    const [searchOutputWarehouse, setSearchOutputWarehouse] = useState('')
+
+    const changeSearchOutputWarehouse = (content) => {
+        setSearchOutputWarehouse(content)
+    }
+
+
     const renderStatus = (item) => {
         let statusClass = '';
         let statusText = '';
@@ -214,6 +221,7 @@ function OutputWarehouse() {
                     setShowActions={setIsShowActions}
                     listCheckedItems={listCheckedItems}
                     numberCheckedItems={numberCheckedItems}
+                    changeSearchOutputWarehouse={changeSearchOutputWarehouse}
                     urlImportProduct={'/manage-inventory/output-warehouse/import'}
                 />
 
@@ -352,26 +360,43 @@ function OutputWarehouse() {
                                         (() => {
                                             // if (products.length > 0) {
                                             if (tempProductsLength > 0) {
-                                                return stockDeliverys.map((item, index) => (
-                                                    <tr key={'delivery' + index} className='hover-item'>
-                                                        {allElementsChecked
-                                                            ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
-                                                            : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
-                                                        }
-                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)}>{item.stockDeliveryId}</td>
-                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${contactChecked ? '' : 'hidden'}`}>{getNameViById(customerList, item?.customerId)}</td>
-                                                        {/* <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${personInChargeChecked ? '' : 'hidden'}`}>{userName}</td> */}
-                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${plannedDateChecked ? '' : 'hidden'}`}>{moment(item.scheduledDate).format('YYYY-MM-DD')}</td>
-                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
-                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${deadlineChecked ? '' : 'hidden'}`}></td>
-                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${effectiveDateChecked ? '' : 'hidden'}`}>{moment(item.createdAt).format('YYYY-MM-DD')}</td>
-                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
-                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
-                                                        <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${activityTypeChecked ? '' : 'hidden'}`}>{item.warehouseId}: Phiếu xuất kho</td>
-                                                        {renderStatus(item.status)}
-                                                        <td></td>
-                                                    </tr>
-                                                ));
+                                                const filteredOutputWarehouses = stockDeliverys.filter((item) => {
+                                                    return searchOutputWarehouse.toLowerCase() === '' ||
+                                                        (item.stockDeliveryId.toLowerCase().includes(searchOutputWarehouse.toLowerCase()) ||
+                                                            getNameViById(customerList, item?.customerId).toLowerCase().includes(searchOutputWarehouse.toLowerCase()));
+
+
+                                                });
+                                                if (filteredOutputWarehouses.length > 0) {
+                                                    return filteredOutputWarehouses.map((item, index) => (
+                                                        <tr key={'delivery' + index} className='hover-item'>
+                                                            {allElementsChecked
+                                                                ? <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" checked /></th>
+                                                                : <th scope="row"><input onChange={(e) => checkedOrUncheckedElement(e)} className='form-check-input' type="checkbox" /></th>
+                                                            }
+                                                            <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)}>{item.stockDeliveryId}</td>
+                                                            <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${contactChecked ? '' : 'hidden'}`}>{getNameViById(customerList, item?.customerId)}</td>
+                                                            {/* <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${personInChargeChecked ? '' : 'hidden'}`}>{userName}</td> */}
+                                                            <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${plannedDateChecked ? '' : 'hidden'}`}>{moment(item.scheduledDate).format('YYYY-MM-DD')}</td>
+                                                            <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
+                                                            <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${deadlineChecked ? '' : 'hidden'}`}></td>
+                                                            <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${effectiveDateChecked ? '' : 'hidden'}`}>{moment(item.createdAt).format('YYYY-MM-DD')}</td>
+                                                            <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
+                                                            <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
+                                                            <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${activityTypeChecked ? '' : 'hidden'}`}>{item.warehouseId}: Phiếu xuất kho</td>
+                                                            {renderStatus(item.status)}
+                                                            <td></td>
+                                                        </tr>
+                                                    ));
+                                                }
+                                                else {
+                                                    return (
+                                                        <div className='text-center w-100 fw-bold'>
+                                                            Không tìm thấy phiếu xuất kho
+                                                        </div>
+                                                    );
+                                                }
+
                                             } else {
                                                 return (
                                                     <tr>
