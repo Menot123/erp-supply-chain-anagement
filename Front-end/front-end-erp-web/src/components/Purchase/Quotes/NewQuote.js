@@ -44,6 +44,7 @@ export const NewQuote = () => {
         providerId: '',
         expirationDay: '',
         currency: 1,
+        employeeId: idUser,
         paymentPolicy: '',
         productList: [],
         policyAndCondition: '',
@@ -445,6 +446,7 @@ export const NewQuote = () => {
                     let dataReceipt = {
                         providerId: dataQuote.providerId,
                         warehouseId: 'WH001',
+                        purchaseId: 'QUO' + dataQuote.quoteId.toString(),
                         userId: idUser,
                         scheduledDate: dataQuote.expirationDay,
                         note: '',

@@ -4,6 +4,35 @@ const { Op } = require("sequelize");
 
 const salt = bcrypt.genSaltSync(Number(process.env.SALT_HASH_CODE));
 
+const handleGetAllUsersService = async (req, res) => {
+    try {
+        let res = {}
+        let employees = await db.User.findAll({
+            order: [
+                ['firstName', 'DESC']
+            ],
+            where: {
+                status: {
+                    [Op.not]: 'deleted'
+                },
+            },
+            attributes: { exclude: ['role', 'department', 'password', 'gender', 'birth', 'address', 'avatar', 'status', 'createdAt', 'updatedAt'] },
+        });
+        if (employees) {
+            res.EC = 0
+            res.EM = 'Get employees successfully'
+            res.DT = employees
+        } else {
+            res.EM = 'Get employees failed'
+            res.EC = 1
+            res.DT = ''
+        }
+        return res
+    } catch (e) {
+        console.log('>>> error: ', e)
+    }
+}
+
 const handleGetEmployeesService = async () => {
     try {
         let res = {}
@@ -304,6 +333,7 @@ const resetPasswordService = async (userEmail, oldPwd, newPwd) => {
 
 
 module.exports = {
+    handleGetAllUsersService,
     handleGetEmployeesService,
     handleGetEmployeeService,
     handleCreateUserService,
