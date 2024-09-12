@@ -323,7 +323,7 @@ function ManagePurchase(props) {
                                                             </th>
                                                             <td onClick={() => handleViewQuoteFromManagePurchase(item?.quoteId)}>{convertDateTime(item?.createdAt)}</td>
                                                             <td onClick={() => handleViewQuoteFromManagePurchase(item?.quoteId)}>{item?.dataProvider?.nameVi}</td>
-                                                            <td onClick={() => handleViewQuoteFromManagePurchase(item?.quoteId)}>Nguyễn Bá Thành</td>
+                                                            <td onClick={() => handleViewQuoteFromManagePurchase(item?.quoteId)}>{item?.createdUser}</td>
                                                             <td onClick={() => handleViewQuoteFromManagePurchase(item?.quoteId)}><span className='cost'>
                                                                 {Number(item?.totalPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                                                             </span></td>

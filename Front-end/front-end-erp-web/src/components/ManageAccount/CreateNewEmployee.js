@@ -169,9 +169,9 @@ function CreateNewEmployee() {
             let res = await createNewEmployeeService(dataEmployee)
             if (res.EC === 0) {
                 cleanValueSubmit()
-                toast.success(res.EM)
+                toast.success(language === LANGUAGES.VI ? "Thêm mới nhân viên thành công!" : "Create new employee successfully!")
             } else {
-                toast.error(res.EM)
+                toast.error(language === LANGUAGES.VI ? "Có lỗi xảy ra khi thêm mới nhân viên" : "Create a new employee failed")
             }
         } else {
             toast.warning(`Missing fields: ${check.toString()}`)

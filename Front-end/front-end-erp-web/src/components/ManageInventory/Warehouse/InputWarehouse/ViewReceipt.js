@@ -176,7 +176,7 @@ function ViewReceipt() {
 
         let res = await updateReceipt(encodeURIComponent(receiptInfo.stockEntryId), dataInputWarehouse)
         if (res.EC === 0) {
-            toast.success(res.EM)
+            toast.success("Nhập kho thành công!")
             setItemsStatus([
                 {
                     status: 'wait',
@@ -199,7 +199,7 @@ function ViewReceipt() {
             setStockUpdateSubmit(true)
             // handleCancelCreateInputWarehouse()
         } else {
-            toast.error(res.EM)
+            toast.error("Nhập kho thất bại!")
         }
 
     }
@@ -211,7 +211,7 @@ function ViewReceipt() {
 
         let res = await updateReceipt(encodeURIComponent(receiptInfo.stockEntryId), dataInputWarehouse)
         if (res.EC === 0) {
-            toast.success(res.EM)
+            toast.success("Cập nhật phiếu nhập kho thành công!")
             setItemsStatus([
                 {
                     status: 'wait',
@@ -234,7 +234,7 @@ function ViewReceipt() {
             // setStockUpdateSubmit(true)
             // handleCancelCreateInputWarehouse()
         } else {
-            toast.error(res.EM)
+            toast.error("Cập nhật phiếu nhập kho thất bại!")
         }
     }
 
