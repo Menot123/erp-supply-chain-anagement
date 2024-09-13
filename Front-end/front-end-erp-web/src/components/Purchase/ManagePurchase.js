@@ -351,10 +351,10 @@ function ManagePurchase(props) {
                                                             </span></td>
                                                             <td onClick={() => handleViewQuoteFromManagePurchase(item?.quoteId)}>
                                                                 {item?.status === 'S1' &&
-                                                                    <span className='status-quote-s2'>Đơn mua hàng</span>
+                                                                    <span className='status-quote-draft'>YCBG đã gửi</span>
                                                                 }
                                                                 {item?.status === 'S0' &&
-                                                                    <span className='status-quote-s2'>Đơn mua hàng</span>
+                                                                    <span className='status-quote-draft'>YCBG đã gửi</span>
                                                                 }
                                                                 {item?.status === 'S2' &&
                                                                     <span className='status-quote-s2'>Đơn mua hàng</span>

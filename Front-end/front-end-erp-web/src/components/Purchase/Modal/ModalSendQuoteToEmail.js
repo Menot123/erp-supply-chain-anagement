@@ -4,13 +4,15 @@ import Modal from 'react-bootstrap/Modal';
 import { Select, Input } from "antd";
 import { FaRegFilePdf } from "react-icons/fa";
 import { sendingQuoteToCustomer, postDataQuote } from '../../../services/saleServices'
+import { postDataInvoice } from '../../../services/saleServices'
+
 import { toast } from 'react-toastify';
 
 export const ModalSendQuoteToEmail = (props) => {
 
     const defaultValue = `Xin chào,
 
-Đã có quotation S${props?.dataQuote?.quoteId} có giá trị là ${props?.dataQuote?.totalPrice} đã sẵn sàng để bạn kiểm tra.
+Đã có yêu cầu báo giá S${props?.dataQuote?.quoteId} có giá trị là ${props?.dataQuote?.totalPrice} đã sẵn sàng để bạn kiểm tra.
     
 Đừng ngần ngại liên hệ với chúng tôi nếu bạn có câu hỏi cần được giải đáp.
 `;
@@ -23,14 +25,14 @@ export const ModalSendQuoteToEmail = (props) => {
 
 
     useEffect(() => {
-        if (props?.dataQuote && props?.fullDataCustomer) {
-            let receiverText = props?.fullDataCustomer?.fullName + ` <${props?.fullDataCustomer?.email}> `
+        if (props?.dataQuote && props?.fullDataProvider) {
+            let receiverText = props?.fullDataProvider?.nameVi + ` <${props?.fullDataProvider?.email}> `
             Promise.all([
                 setReceiver(receiverText),
-                setTitleSendQuote(props?.fullDataCustomer?.fullName + ' Báo giá (Mã ' + props?.dataQuote?.quoteId + ')'),
+                setTitleSendQuote(props?.fullDataProvider?.nameVi + ' Yêu cầu báo giá (Mã ' + props?.dataQuote?.quoteId + ')'),
                 setBodySendQuote(`Xin chào,
 
-Đã có quotation ${props?.dataQuote?.quoteId} có giá trị là ${props?.dataQuote?.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })} đã sẵn sàng để bạn kiểm tra.
+Đã có yêu cầu báo giá ${props?.dataQuote?.quoteId} có giá trị là ${props?.dataQuote?.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })} đã sẵn sàng để bạn kiểm tra.
                 
 Đừng ngần ngại liên hệ với chúng tôi nếu bạn có câu hỏi cần được giải đáp.`)])
         }
@@ -42,27 +44,40 @@ export const ModalSendQuoteToEmail = (props) => {
 
         try {
             setIsSendingEmail(true)
-            let response = await postDataQuote({ ...props?.dataQuote, status: "S1" })
-            let quoteFile = await props?.downloadQuote('POST_API');
+            // let response = await postDataQuote({ ...props?.dataQuote, status: "S1" })
+            // let quoteFile = await props?.downloadQuote('POST_API');
 
-            // Tạo FormData và thêm các dữ liệu khác
-            const formData = new FormData();
-            formData.append('quoteFile', quoteFile, 'quote.pdf'); // Chuyển đổi Blob thành file
-            formData.append('dataQuote', JSON.stringify({ ...props?.dataQuote, status: "S1" }));
-            formData.append('fullDataCustomer', JSON.stringify(props?.fullDataCustomer));
-            formData.append('bodySendQuote', bodySendQuote);
+            // // Tạo FormData và thêm các dữ liệu khác
+            // const formData = new FormData();
+            // formData.append('quoteFile', quoteFile, 'quote.pdf'); // Chuyển đổi Blob thành file
+            // formData.append('dataQuote', JSON.stringify({ ...props?.dataQuote, status: "S1" }));
+            // formData.append('fullDataProvider', JSON.stringify(props?.fullDataProvider));
+            // formData.append('bodySendQuote', bodySendQuote);
 
-            // Gửi request POST sử dụng axios và chờ phản hồi
-            let res = await sendingQuoteToCustomer(formData);
-            setTimeout(() => {
-                setIsSendingEmail(false);
-                if (res && res.EC === 0) {
-                    toast.success(`Sending quote to ${props?.fullDataCustomer?.email} successfully!`)
-                    Promise.all([props?.close(),
-                    props?.handleClearDataQuote(),
-                    props?.changeStep(1)])
-                }
-            }, 3000);
+            // // Gửi request POST sử dụng axios và chờ phản hồi
+            // let res = await postDataQuote(formData);
+            if (props?.confirmSendingQuote) {
+                let res = await props?.confirmSendingQuote();
+                setTimeout(() => {
+                    setIsSendingEmail(false);
+                    if (res && res.EC === 0) {
+                        toast.success(`Gửi YCBG đến ${props?.fullDataProvider?.email} thành công!`)
+                        // Promise.all([props?.close(),
+                        // props?.handleClearDataQuote(),
+                        // props?.changeStep(1)])
+                    }
+                }, 3000);
+            }
+            else {
+                setTimeout(() => {
+                    setIsSendingEmail(false);
+                    toast.success(`Gửi lại YCBG đến ${props?.fullDataProvider?.email} thành công!`)
+                    // Promise.all([props?.close(),
+                    // props?.handleClearDataQuote(),
+                    // props?.changeStep(1)])
+                }, 3000);
+            }
+
         } catch (error) {
             console.error('Error sending quote:', error);
         }
@@ -79,7 +94,7 @@ export const ModalSendQuoteToEmail = (props) => {
             >
                 <Modal.Header closeButton>
                     <Modal.Title>
-                        <h4>Gửi báo giá</h4>
+                        <h4>Gửi yêu cầu báo giá</h4>
                     </Modal.Title>
 
                 </Modal.Header>

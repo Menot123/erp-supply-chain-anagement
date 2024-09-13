@@ -432,6 +432,62 @@ export const NewQuote = () => {
         setDataSendQuotePDF([])
     }
 
+    const handleSendingQuote = async () => {
+
+        if (dataQuote && dataQuote?.quoteId) {
+            const arrValidateFieldsQuote = ['providerId', 'expirationDay', 'currency']
+            // console.log(dataQuote)
+            let check = validateData(arrValidateFieldsQuote, dataQuote)
+            if (check && check.length === 0) {
+                let res = await postDataQuote({ ...dataQuote, status: 'S1' })
+                console.log(res)
+                if (res?.EC === 0) {
+                    // let dataReceipt = {
+                    //     providerId: dataQuote.providerId,
+                    //     warehouseId: 'WH001',
+                    //     purchaseId: 'QUO' + dataQuote.quoteId.toString(),
+                    //     userId: idUser,
+                    //     scheduledDate: dataQuote.expirationDay,
+                    //     note: '',
+                    //     status: 'ready'
+                    // }
+                    // let createReceipt = await createNewReceipt(dataReceipt)
+                    // if (createReceipt.EC === 0) {
+                    //     let stockCreatedId = createReceipt.DT
+
+                    //     const arrayOfObjects = Array.from({ length: dataQuote.productList.length }, () => ({}));
+
+                    //     for (let i = 0; i < arrayOfObjects.length; i++) {
+                    //         arrayOfObjects[i].deadline = dataQuote.expirationDay
+                    //         arrayOfObjects[i].scheduledDate = dataQuote.expirationDay
+                    //         arrayOfObjects[i].quantity = dataQuote.productList[i].quantity
+                    //         arrayOfObjects[i].description = dataQuote.productList[i].description
+                    //         arrayOfObjects[i].stockEntryId = stockCreatedId
+                    //         arrayOfObjects[i].productId = dataQuote.productList[i].productId
+                    //     }
+
+                    //     let addStockEntryItem = await createProductListOfReceiptArray(arrayOfObjects)
+
+                    //     console.log(1)
+                    //     console.log(arrayOfObjects)
+                    //     console.log(2)
+                    //     console.log(addStockEntryItem)
+
+                    //     // toast.success(res.EM)
+                    //     // handleCancelCreateInputWarehouse()
+                    // }
+                    changeStep(1)
+                    toast.success('Gửi báo giá thành công')
+                    history.push('/manage-purchase')
+                } else {
+                    toast.error(<FormattedMessage id='new_quote.preview-toast-error' />)
+                }
+            } else {
+                toast.warning(<FormattedMessage id="new_quote.confirm-toast-empty-field" />)
+            }
+        }
+    }
+
     const handleConfirmQuote = async () => {
 
         if (dataQuote && dataQuote?.quoteId) {
@@ -440,7 +496,7 @@ export const NewQuote = () => {
             let check = validateData(arrValidateFieldsQuote, dataQuote)
             if (check && check.length === 0) {
                 let res = await postDataQuote({ ...dataQuote, status: 'S2' })
-                console.log(res)
+                // console.log(res)
                 if (res?.EC === 0) {
                     // let createReceipt = createNewReceipt()
                     let dataReceipt = {
@@ -563,12 +619,12 @@ export const NewQuote = () => {
                         {
                             currentStepQuote === 3 || isCreateInvoice ? "" :
                                 <>
-                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCreateInvoice}><FormattedMessage id="btn-create-bill" /></button>}
-                                    {/* {currentStepQuote !== 2 && <button className='btn btn-main' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>} */}
-                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
+                                    {/* {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCreateInvoice}><FormattedMessage id="btn-create-bill" /></button>} */}
+                                    {currentStepQuote !== 2 && <button className='btn btn-main' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
+                                    {/* {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>} */}
                                     {currentStepQuote !== 2 && <button className='btn btn-gray' onClick={handleConfirmQuote}>Xác nhận đơn hàng</button>}
                                     {/* <button className='btn btn-gray' onClick={handlePushDataQuotePreview}><FormattedMessage id="btn-preview-quote" /></button> */}
-                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCancelQuote}><FormattedMessage id="btn-cancel-quote" /></button>}
+                                    {/* {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCancelQuote}><FormattedMessage id="btn-cancel-quote" /></button>} */}
                                 </>
                         }
 
@@ -758,6 +814,7 @@ export const NewQuote = () => {
                         dataQuote={dataQuote}
                         fullDataProvider={fullDataProvider}
                         downloadQuote={handleGeneratePdf}
+                        confirmSendingQuote={handleSendingQuote}
                         handleClearDataQuote={handleClearDataQuote}
                         changeStep={changeStep}
                     />

@@ -42,7 +42,7 @@ function OutputWarehouse() {
     const [productAvailabilityChecked, setProductAvailabilityChecked] = useState(false);
     const [deadlineChecked, setDeadlineChecked] = useState(false);
     const [effectiveDateChecked, setEffectiveDateChecked] = useState(true);
-    const [originalDocumentChecked, setOriginalDocumentChecked] = useState(true);
+    const [originalDocumentChecked, setOriginalDocumentChecked] = useState(false);
     const [orderDelayOfChecked, setOrderDelayOfChecked] = useState(false);
     const [activityTypeChecked, setActivityTypeChecked] = useState(false);
     const [statusChecked, setStatusChecked] = useState(true);
