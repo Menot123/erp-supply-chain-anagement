@@ -13,6 +13,7 @@ import { FaCheck } from "react-icons/fa";
 import { ModalConfirmQuote } from './Modal/ModalConfirmQuote';
 import Form from 'react-bootstrap/Form';
 // import { getQuotesSentAndCustomerInfo } from '../../services/saleServices'
+import { getAllUser } from '../../services/userServices'
 import { getQuotesSentAndProviderInfo } from '../../services/purchaseServices'
 import { useHistory } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid';
@@ -38,6 +39,27 @@ function ManagePurchase(props) {
     const [searchQuotesSent, setSearchQuotesSent] = useState("")
     const [isCheckAll, setIsCheckAll] = useState(false)
     const [isFetchingData, setIsFetchingData] = useState(false)
+
+    const [usersList, setUsersList] = useState([]);
+    useEffect(() => {
+        const getUsers = async () => {
+            let usersArray = await getAllUser();
+            if (usersArray.EC == 0) {
+                setUsersList(usersArray.DT)
+            }
+        }
+        getUsers()
+    }, []);
+
+    function findEmailById(id) {
+        console.log(usersList)
+        const user = usersList.find(user => user.id == id);
+        if (user) {
+            return user.email;
+        } else {
+            return 'Không xác định';
+        }
+    }
 
     const onChangePagination = (page, pageSize) => {
         setPage(page);
@@ -323,7 +345,7 @@ function ManagePurchase(props) {
                                                             </th>
                                                             <td onClick={() => handleViewQuoteFromManagePurchase(item?.quoteId)}>{convertDateTime(item?.createdAt)}</td>
                                                             <td onClick={() => handleViewQuoteFromManagePurchase(item?.quoteId)}>{item?.dataProvider?.nameVi}</td>
-                                                            <td onClick={() => handleViewQuoteFromManagePurchase(item?.quoteId)}>{item?.createdUser}</td>
+                                                            <td onClick={() => handleViewQuoteFromManagePurchase(item?.quoteId)}>{findEmailById(item?.employeeId)}</td>
                                                             <td onClick={() => handleViewQuoteFromManagePurchase(item?.quoteId)}><span className='cost'>
                                                                 {Number(item?.totalPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                                                             </span></td>

@@ -1,4 +1,24 @@
 import userService from '../services/userService';
+
+let handleGetUsers = async (req, res) => {
+    try {
+        let data = await userService.handleGetAllUsersService()
+        return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT
+        })
+
+    } catch (e) {
+        return res.status(500).json({
+            EM: 'error from server in get employees controller',
+            EC: -1,
+            DT: ''
+        })
+    }
+
+}
+
 let handleGetEmployees = async (req, res) => {
     try {
         if (req.query.page && req.query.limit) {
@@ -147,6 +167,7 @@ const handleResetPassword = async (req, res, next) => {
 }
 
 module.exports = {
+    handleGetUsers,
     handleGetEmployees,
     handleGetEmployee,
     handleUpdateEmployee,

@@ -28,6 +28,10 @@ const getAllType = (type) => {
     return axios.get(`/account/api/get-allType?type=${type}`)
 }
 
+const getAllUser = () => {
+    return axios.get(`/account/api/all-users`)
+}
+
 const getAllEmployee = () => {
     return axios.get(`/account/api/employees`)
 }
@@ -105,5 +109,5 @@ export {
     getAllType, getAllEmployee, resetPasswordLoggedIn, updateProfileService, getInfoEmployeeById,
     deleteEmployee, getAllEmployeesByDepartment, postDataUsersFromFile, getEmployeesPagination,
     getListEmployee, postDataNewDepartment, getAllDepartments, postDataCompany, postDataBranchCompany,
-    getAllBranches, getDetailBranch, getDetailCompany, deleteBranch, postDataConfirmMethod
+    getAllBranches, getDetailBranch, getDetailCompany, deleteBranch, postDataConfirmMethod, getAllUser
 }

@@ -9,7 +9,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux';
 import { getStockDeliverys } from '../../../../services/inventoryServices'
 import { getCustomers } from '../../../../services/saleServices'
-
+import { getAllUser } from '../../../../services/userServices'
 import { LANGUAGES } from '../../../../utils/constant'
 import { toast } from 'react-toastify';
 import { FormattedMessage } from 'react-intl'
@@ -54,10 +54,37 @@ function OutputWarehouse() {
         setSearchOutputWarehouse(content)
     }
 
+    const [usersList, setUsersList] = useState([]);
+    useEffect(() => {
+        const getUsers = async () => {
+            let usersArray = await getAllUser();
+            if (usersArray.EC == 0) {
+                setUsersList(usersArray.DT)
+            }
+        }
+        getUsers()
+    }, []);
 
-    const renderStatus = (item) => {
+    function findEmailById(id) {
+        const user = usersList.find(user => user.id == id);
+        if (user) {
+            return user.email;
+        } else {
+            return 'Không xác định';
+        }
+    }
+
+    const renderStatus = (item, status) => {
         let statusClass = '';
         let statusText = '';
+
+        if (!status) {
+            return (
+                <td key='0'>
+                    <span className='hidden'>{statusText}</span>
+                </td>
+            );
+        }
 
         if (item === 'draft') {
             statusClass = 'gray';
@@ -259,7 +286,7 @@ function OutputWarehouse() {
                                         <th className='align-middle' style={{ backgroundColor: '#f1e3f5' }} scope="col"><input onChange={(e) => checkAllElements(e)} className='form-check-input' type="checkbox" /></th>
                                         <th className='align-middle' style={{ backgroundColor: '#f1e3f5' }} scope="col"><FormattedMessage id="inventory-reiceipt-reference-code" /></th>
                                         <th className={`align-middle ${contactChecked ? '' : 'hidden'}`} style={{ backgroundColor: '#f1e3f5' }} scope="col"><FormattedMessage id="inventory-reiceipt-contact" /></th>
-                                        {/* <th className={`align-middle ${personInChargeChecked ? '' : 'hidden'}`} style={{ backgroundColor: '#f1e3f5' }} scope="col"><FormattedMessage id="inventory-reiceipt-person-in-charge" /></th> */}
+                                        <th className={`align-middle ${personInChargeChecked ? '' : 'hidden'}`} style={{ backgroundColor: '#f1e3f5' }} scope="col"><FormattedMessage id="inventory-reiceipt-person-in-charge" /></th>
                                         <th className={`align-middle ${plannedDateChecked ? '' : 'hidden'}`} style={{ backgroundColor: '#f1e3f5' }} scope="col"><FormattedMessage id="inventory-reiceipt-planned-date" /></th>
                                         <th className={`align-middle ${productAvailabilityChecked ? '' : 'hidden'}`} style={{ backgroundColor: '#f1e3f5' }} scope="col"><FormattedMessage id="inventory-reiceipt-product-availabilty" /></th>
                                         <th className={`align-middle ${deadlineChecked ? '' : 'hidden'}`} style={{ backgroundColor: '#f1e3f5' }} scope="col"><FormattedMessage id="inventory-reiceipt-deadline" /></th>
@@ -279,13 +306,13 @@ function OutputWarehouse() {
                                                     <span style={{ marginLeft: '6px', fontWeight: 'normal' }}><FormattedMessage id="inventory-reiceipt-contact" /></span>
                                                 </label></div>
 
-                                                {/* <div className='mt-2 item'><label className="w-100">
+                                                <div className='mt-2 item'><label className="w-100">
                                                     <input className="form-check-input ms-2" type="checkbox" value=""
                                                         checked={personInChargeChecked}
                                                         onChange={() => { setPersonInChargeChecked(!personInChargeChecked) }}
                                                         aria-label="Checkbox for following text input" />
                                                     <span style={{ marginLeft: '6px', fontWeight: 'normal' }}><FormattedMessage id="inventory-reiceipt-person-in-charge" /></span>
-                                                </label></div> */}
+                                                </label></div>
 
                                                 <div className='mt-2 item'><label className="w-100">
                                                     <input className="form-check-input ms-2" type="checkbox" value=""
@@ -376,15 +403,15 @@ function OutputWarehouse() {
                                                             }
                                                             <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)}>{item.stockDeliveryId}</td>
                                                             <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${contactChecked ? '' : 'hidden'}`}>{getNameViById(customerList, item?.customerId)}</td>
-                                                            {/* <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${personInChargeChecked ? '' : 'hidden'}`}>{userName}</td> */}
+                                                            <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${personInChargeChecked ? '' : 'hidden'}`}>{findEmailById(item.userId)}</td>
                                                             <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${plannedDateChecked ? '' : 'hidden'}`}>{moment(item.scheduledDate).format('YYYY-MM-DD')}</td>
                                                             <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${productAvailabilityChecked ? '' : 'hidden'}`}></td>
                                                             <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${deadlineChecked ? '' : 'hidden'}`}></td>
                                                             <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${effectiveDateChecked ? '' : 'hidden'}`}>{moment(item.createdAt).format('YYYY-MM-DD')}</td>
-                                                            <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${originalDocumentChecked ? '' : 'hidden'}`}>Bổ sung thủ công</td>
+                                                            <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${originalDocumentChecked ? '' : 'hidden'}`}>{item.saleId}</td>
                                                             <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${orderDelayOfChecked ? '' : 'hidden'}`}></td>
                                                             <td onClick={() => handleNavigateToDeliveryPage(item.stockDeliveryId)} className={`${activityTypeChecked ? '' : 'hidden'}`}>{item.warehouseId}: Phiếu xuất kho</td>
-                                                            {renderStatus(item.status)}
+                                                            {renderStatus(item.status, statusChecked)}
                                                             <td></td>
                                                         </tr>
                                                     ));

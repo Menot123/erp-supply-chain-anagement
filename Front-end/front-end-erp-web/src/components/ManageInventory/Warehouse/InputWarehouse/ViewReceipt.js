@@ -9,6 +9,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux';
 import { getStockEntryInfo, getReceiptListItems, updateReceipt, checkMinusStock } from '../../../../services/inventoryServices'
 import { getAllProviders } from '../../../../services/purchaseServices'
+import { getAllUser } from '../../../../services/userServices'
 import { LANGUAGES } from '../../../../utils/constant'
 import { toast } from 'react-toastify';
 import { TableProductView } from './TableProductView';
@@ -35,6 +36,27 @@ function ViewReceipt() {
     const [currentStatus, setCurrentStatus] = useState(0);
 
     const [providerList, setProviderList] = useState([]);
+
+    const [usersList, setUsersList] = useState([]);
+    useEffect(() => {
+        const getUsers = async () => {
+            let usersArray = await getAllUser();
+            if (usersArray.EC == 0) {
+                setUsersList(usersArray.DT)
+            }
+        }
+        getUsers()
+    }, []);
+
+    function findEmailById(id) {
+        // console.log(usersList)
+        const user = usersList.find(user => user.id == id);
+        if (user) {
+            return user.email;
+        } else {
+            return 'Không xác định';
+        }
+    }
 
     const [itemsStatus, setItemsStatus] = useState([
         {
@@ -367,7 +389,7 @@ function ViewReceipt() {
                                     {
                                         label: `Thông tin bổ sung`,
                                         key: 'tab-2',
-                                        children: <OtherInfo />,
+                                        children: <OtherInfo userMail={findEmailById(receiptInfo.userId)} />,
                                     },
                                     {
                                         label: `Ghi chú`,

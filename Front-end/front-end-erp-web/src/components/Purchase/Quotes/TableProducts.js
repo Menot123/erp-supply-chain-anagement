@@ -48,6 +48,7 @@ export const TableProducts = (props) => {
     useEffect(() => {
         if (props?.listProductFromParent) {
             if (props?.productAdded) {
+                console.log(props?.productAdded)
                 setListProduct(props?.productAdded)
             }
             if (props?.createNew) {

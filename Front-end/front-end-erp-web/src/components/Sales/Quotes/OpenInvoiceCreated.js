@@ -513,6 +513,7 @@ export const OpenInvoiceCreated = () => {
                 {
                     customerId: dataQuote?.customer,
                     warehouseId: "WH001",
+                    saleId: 'INV' + dataQuote.quoteId.toString(),
                     userId: otherInfoQuote?.employeeId ?? userId,
                     scheduledDate: otherInfoQuote?.deliveryDate ?? addDays(dateCreateInvoice, 3),
                     note: dataQuote?.policyAndCondition,

@@ -9,6 +9,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux';
 import { getStockDeliveryInfoBFF, getDeliveryListItems, checkMinusStock, updateDelivery } from '../../../../services/inventoryServices'
 import { getCustomers } from '../../../../services/saleServices'
+import { getAllUser } from '../../../../services/userServices'
 import { LANGUAGES } from '../../../../utils/constant'
 import { OtherInfo } from './OtherInfo';
 import { toast } from 'react-toastify';
@@ -30,6 +31,27 @@ function ViewDelivery() {
     const [stockUpdateSubmit, setStockUpdateSubmit] = useState(false);
 
     const [customerLIst, setCustomerList] = useState([]);
+
+    const [usersList, setUsersList] = useState([]);
+    useEffect(() => {
+        const getUsers = async () => {
+            let usersArray = await getAllUser();
+            if (usersArray.EC == 0) {
+                setUsersList(usersArray.DT)
+            }
+        }
+        getUsers()
+    }, []);
+
+    function findEmailById(id) {
+        // console.log(usersList)
+        const user = usersList.find(user => user.id == id);
+        if (user) {
+            return user.email;
+        } else {
+            return 'Không xác định';
+        }
+    }
 
     const [deliveryInfo, setDeliveryInfo] = useState('');
     const [deliveryItems, setDeliveryItems] = useState([]);
@@ -361,7 +383,7 @@ function ViewDelivery() {
                                     {
                                         label: `Thông tin bổ sung`,
                                         key: 'tab-2',
-                                        children: <OtherInfo />,
+                                        children: <OtherInfo userMail={findEmailById(deliveryInfo.userId)} />,
                                     },
                                     {
                                         label: `Ghi chú`,

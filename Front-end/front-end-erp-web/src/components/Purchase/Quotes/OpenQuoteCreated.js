@@ -455,12 +455,13 @@ export const OpenQuoteCreated = () => {
     }
 
     const handleSendQuoteToEmail = () => {
-        const arrValidateFieldsQuote = ['providerId', 'expirationDay', 'currency', 'paymentPolicy']
+        const arrValidateFieldsQuote = ['providerId', 'expirationDay', 'currency']
         let check = validateData(arrValidateFieldsQuote, dataQuote)
         if (check && check.length === 0) {
             setDataSendQuotePDF(dataQuote)
             setIsShowModalSendQuote(true)
         } else {
+            console.log(check)
             toast.warning(<FormattedMessage id="new_quote.toast-empty-field" />)
         }
     }
@@ -586,7 +587,7 @@ export const OpenQuoteCreated = () => {
                 </div>
                 <div className='wrapper-text-header'>
                     <Tooltip placement="top" title='Back to "Báo giá"'>
-                        <span onClick={backToQuote} className='title-quote' ><FormattedMessage id="title-new-quote" /></span>
+                        <span onClick={backToQuote} className='title-quote' >Đơn hàng</span>
                     </Tooltip>
                     {/* <span onClick={backToQuote} className='title-quote' data-tooltip='Back to "Báo giá"'>Báo giá</span> */}
                     <span className='title-create'>{currentStepInvoice === 1 ? "INV" + dataQuote?.quoteId : 'Đơn mua hàng'}</span>
@@ -595,38 +596,49 @@ export const OpenQuoteCreated = () => {
             <div className='wrapper-body-create-quote'>
                 <div className='actions-status'>
                     <div className='wrap-btn-actions'>
-                        {/* {
-                            currentStepQuote === 3 || isCreateInvoice ? "" :
-                                <>
-                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCreateInvoice}><FormattedMessage id="btn-create-bill" /></button>}
-                                    {currentStepQuote !== 2 && <button className='btn btn-main' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
-                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
-                                    {currentStepQuote !== 2 && <button className='btn btn-gray' onClick={handleConfirmQuote}><FormattedMessage id="btn-confirm-quote" /></button>}
-                                    <button className='btn btn-gray' onClick={handlePushDataQuotePreview}><FormattedMessage id="btn-preview-quote" /></button>
-                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCancelQuote}><FormattedMessage id="btn-cancel-quote" /></button>}
-                                </>
-                        }
-
                         {
-                            isCreateInvoice && currentStepInvoice === 0 ?
+                            currentStepQuote == 3 || isCreateInvoice ? "" :
                                 <>
-                                    <button className='btn btn-main' onClick={handleConfirmInvoice}><FormattedMessage id="btn-confirm-quote" /></button>
+                                    {/* {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCreateInvoice}><FormattedMessage id="btn-create-bill" /></button>}
+                                    {currentStepQuote !== 2 && <button className='btn btn-main' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>} */}
+                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
+                                    {/* {currentStepQuote !== 2 && <button className='btn btn-gray' onClick={handleConfirmQuote}><FormattedMessage id="btn-confirm-quote" /></button>}
+                                    <button className='btn btn-gray' onClick={handlePushDataQuotePreview}><FormattedMessage id="btn-preview-quote" /></button>
+                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCancelQuote}><FormattedMessage id="btn-cancel-quote" /></button>} */}
+                                </>
+                            /* {
+                                currentStepQuote === 3 || isCreateInvoice ? "" :
+                                    <>
+                                        {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCreateInvoice}><FormattedMessage id="btn-create-bill" /></button>}
+                                        {currentStepQuote !== 2 && <button className='btn btn-main' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
+                                        {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
+                                        {currentStepQuote !== 2 && <button className='btn btn-gray' onClick={handleConfirmQuote}><FormattedMessage id="btn-confirm-quote" /></button>}
+                                        <button className='btn btn-gray' onClick={handlePushDataQuotePreview}><FormattedMessage id="btn-preview-quote" /></button>
+                                        {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCancelQuote}><FormattedMessage id="btn-cancel-quote" /></button>}
+                                    </>
+                            }
+    
+                            {
+                                isCreateInvoice && currentStepInvoice === 0 ?
+                                    <>
+                                        <button className='btn btn-main' onClick={handleConfirmInvoice}><FormattedMessage id="btn-confirm-quote" /></button>
+                                        <button className='btn btn-gray' onClick={() => handlePushDataQuotePreview("invoice")}><FormattedMessage id="btn-preview-quote" /></button>
+                                        <button className='btn btn-gray' onClick={handleCancelQuote}><FormattedMessage id="btn-cancel-quote" /></button>
+                                    </>
+                                    :
+                                    ""
+    
+                            }
+                            {isCreateInvoice && currentStepInvoice === 1 ?
+                                <>
+                                    <button className='btn btn-main' onClick={handleSendInvoice}><FormattedMessage id="btn-send-invoice" /></button>
+                                    {!isPaid && <button className='btn btn-main' onClick={() => setIsShowModalConfirmPaid(true)}><FormattedMessage id="btn-confirmed-payment" /></button>}
                                     <button className='btn btn-gray' onClick={() => handlePushDataQuotePreview("invoice")}><FormattedMessage id="btn-preview-quote" /></button>
-                                    <button className='btn btn-gray' onClick={handleCancelQuote}><FormattedMessage id="btn-cancel-quote" /></button>
                                 </>
                                 :
                                 ""
-
+                            } */
                         }
-                        {isCreateInvoice && currentStepInvoice === 1 ?
-                            <>
-                                <button className='btn btn-main' onClick={handleSendInvoice}><FormattedMessage id="btn-send-invoice" /></button>
-                                {!isPaid && <button className='btn btn-main' onClick={() => setIsShowModalConfirmPaid(true)}><FormattedMessage id="btn-confirmed-payment" /></button>}
-                                <button className='btn btn-gray' onClick={() => handlePushDataQuotePreview("invoice")}><FormattedMessage id="btn-preview-quote" /></button>
-                            </>
-                            :
-                            ""
-                        } */}
                     </div>
                     <div className={isCreateInvoice ? 'quote-status w30' : 'quote-status'}>
                         {isCreateInvoice ?

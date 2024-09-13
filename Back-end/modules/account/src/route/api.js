@@ -202,6 +202,8 @@ let initApiRoutes = (app) => {
      */
     router.post('/reset-password', userController.handleResetPassword);
 
+
+    router.get('/all-users', userController.handleGetUsers);
     // CRUD user
     /**
      * @swagger
