@@ -306,7 +306,7 @@ function DetailProduct() {
     }
 
     const validateDataProduct = () => {
-        const fieldCheck = ['barCode', 'nameVi', 'nameEn', 'type', 'group', 'image', 'cost', 'unit', 'descriptionVi', 'descriptionEn', 'expiry'];
+        const fieldCheck = ['barCode', 'nameVi', 'nameEn', 'type', 'image', 'cost', 'unit', 'descriptionVi', 'descriptionEn', 'expiry'];
         const missingFields = [];
 
         fieldCheck.forEach(field => {
@@ -333,8 +333,9 @@ function DetailProduct() {
         if (check.length === 0) {
             let res = await updateProductInformation(id, dataProduct)
             if (res.EC === 0) {
-                cleanValueSubmit()
+                // cleanValueSubmit()
                 toast.success("Cập nhật thông tin sản phẩm thành công")
+                handleCancelEditProduct()
             } else {
                 toast.error("Cập nhật thông tin sản phẩm thất bại")
             }

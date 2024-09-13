@@ -123,23 +123,23 @@ export const QuotePDF = (props) => {
                 <div className='address-bill-delivery w-50 '>
                     <h5>Địa chỉ xuất hóa đơn và giao hàng</h5>
                     <hr className='mt-1 mb-2' />
-                    {props?.dataQuote?.fullDataCustomer && props?.dataQuote?.fullDataCustomer?.fullName ?
+                    {props?.dataQuote?.fullDataProvider && props?.dataQuote?.fullDataProvider?.nameVi ?
                         <>
-                            <span>{props?.dataQuote?.fullDataCustomer?.fullName}</span> <br />
+                            <span>{props?.dataQuote?.fullDataProvider?.nameVi}</span> <br />
                         </>
                         :
                         <>
-                            <span>{props?.fullDataCustomer?.fullName}</span> <br />
+                            <span>{props?.fullDataProvider?.nameVi}</span> <br />
                         </>
                     }
 
-                    {props?.dataQuote?.fullDataCustomer && props?.dataQuote?.fullDataCustomer?.email ?
+                    {props?.dataQuote?.fullDataProvider && props?.dataQuote?.fullDataProvider?.email ?
                         <>
-                            <span><IoMdMail /> {props?.dataQuote?.fullDataCustomer?.email}</span>
+                            <span><IoMdMail /> {props?.dataQuote?.fullDataProvider?.email}</span>
                         </>
                         :
                         <>
-                            <span><IoMdMail /> {props?.fullDataCustomer?.email}</span>
+                            <span><IoMdMail /> {props?.fullDataProvider?.email}</span>
                         </>
                     }
 

@@ -59,6 +59,7 @@ export const InvoicePDF = (props) => {
 
     useEffect(() => {
         if (props?.dataInvoice?.productList && props?.dataInvoice?.productList.length > 0) {
+            console.log('props' + props.fullDataProvider.nameVi)
             let productsBuild = buildDataTableProduct(props?.dataInvoice?.productList)
             setDataProducts(productsBuild)
             calculateTaxTotals();
@@ -129,10 +130,10 @@ export const InvoicePDF = (props) => {
 
             <div className='wrap-inf-quote d-flex gap-4'>
                 <div className='inf-selling w-50 '>
-                    <h5>Thông tin bán hàng</h5>
+                    <h5>Thông tin mua hàng</h5>
                     <hr className='mt-1 mb-2' />
                     <div className='date-created d-flex'>
-                        <span className='label-date me-2'>Ngày lập hóa đơn:</span>
+                        <span className='label-date me-2'>Ngày lập đơn:</span>
                         <span>{formatDate(getCurrentDate())}</span>
                     </div>
                     <div className='date-expiration d-flex'>
@@ -142,10 +143,10 @@ export const InvoicePDF = (props) => {
                 </div>
 
                 <div className='address-bill-delivery w-50 '>
-                    <h5>Địa chỉ xuất hóa đơn và giao hàng</h5>
+                    <h5>Địa chỉ mua hàng</h5>
                     <hr className='mt-1 mb-2' />
-                    <span>{props?.fullDataCustomer?.fullName}</span> <br />
-                    <span><IoMdMail /> {props?.fullDataCustomer?.email}</span>
+                    <span>{props?.fullDataProvider?.nameVi}</span> <br />
+                    <span><IoMdMail /> {props?.fullDataProvider?.email}</span>
                 </div>
             </div>
 

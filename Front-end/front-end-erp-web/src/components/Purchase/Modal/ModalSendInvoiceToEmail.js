@@ -25,11 +25,11 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
     const [isSendingEmail, setIsSendingEmail] = useState(false)
 
     useEffect(() => {
-        if (props?.dataQuote && props?.fullDataCustomer) {
-            let receiverText = props?.fullDataCustomer?.fullName + ` <${props?.fullDataCustomer?.email}> `
+        if (props?.dataQuote && props?.fullDataProvider) {
+            let receiverText = props?.fullDataProvider?.nameVi + ` <${props?.fullDataProvider?.email}> `
             Promise.all([
                 setReceiver(receiverText),
-                setTitleSendQuote(props?.fullDataCustomer?.fullName + ' - Hóa đơn (Mã INV' + props?.dataQuote?.quoteId + ')'),
+                setTitleSendQuote(props?.fullDataProvider?.nameVi + ' - Hóa đơn (Mã INV' + props?.dataQuote?.quoteId + ')'),
                 setBodySendQuote(`Xin chào,
 
 Đây là hoá đơn của bạn INV${props?.dataQuote?.quoteId} có số tiền là ${props?.dataQuote?.totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}. Vui lòng thanh toán vào thời điểm sớm nhất mà bạn thấy thuận tiện.
@@ -46,25 +46,22 @@ Nếu bạn có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng 
 
         try {
             setIsSendingEmail(true)
-            let response = await confirmInvoice({ ...props?.dataQuote, status: "S1" })
-            let quoteFile = await props?.downloadQuote('POST_API');
+            // let response = await confirmInvoice({ ...props?.dataQuote, status: "S1" })
+            // let quoteFile = await props?.downloadQuote('POST_API');
 
-            // Tạo FormData và thêm các dữ liệu khác
-            const formData = new FormData();
-            formData.append('quoteFile', quoteFile, 'invoice.pdf'); // Chuyển đổi Blob thành file
-            formData.append('dataQuote', JSON.stringify({ ...props?.dataQuote, status: "S1" }));
-            formData.append('fullDataCustomer', JSON.stringify(props?.fullDataCustomer));
-            formData.append('bodySendQuote', bodySendQuote);
+            // // Tạo FormData và thêm các dữ liệu khác
+            // const formData = new FormData();
+            // formData.append('quoteFile', quoteFile, 'invoice.pdf'); // Chuyển đổi Blob thành file
+            // formData.append('dataQuote', JSON.stringify({ ...props?.dataQuote, status: "S1" }));
+            // formData.append('fullDataProvider', JSON.stringify(props?.fullDataProvider));
+            // formData.append('bodySendQuote', bodySendQuote);
 
-            // Gửi request POST sử dụng axios và chờ phản hồi
-            let res = await sendingInvoiceToCustomer(formData);
+            // // Gửi request POST sử dụng axios và chờ phản hồi
+            // let res = await sendingInvoiceToCustomer(formData);
             setTimeout(() => {
                 setIsSendingEmail(false);
-                if (res && res.EC === 0) {
-                    toast.success(`Sending quote to ${props?.fullDataCustomer?.email} successfully!`)
-                    Promise.all([props?.close(),
-                    props?.handleClearDataQuote()])
-                }
+                toast.success(`Gửi đơn mua hàng đến ${props?.fullDataProvider?.email} thành công!`)
+
             }, 3000);
         } catch (error) {
             console.error('Error sending quote:', error);

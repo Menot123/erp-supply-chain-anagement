@@ -25,6 +25,8 @@ import { useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { getDataInvoicePreview } from '../../../services/saleServices'
 import { getDataQuotePreview } from '../../../services/purchaseServices'
+import { createNewReceipt, createProductListOfReceiptArray } from '../../../services/inventoryServices'
+
 
 import dayjs from 'dayjs';
 
@@ -33,6 +35,7 @@ export const OpenQuoteCreated = () => {
     const dispatch = useDispatch()
     const history = useHistory()
     const { id } = useParams()
+    const idUser = useSelector(state => state.user.id)
     const componentPDF = useRef(null)
     const intl = useIntl();
     const language = useSelector(state => state.language.value)
@@ -138,6 +141,10 @@ export const OpenQuoteCreated = () => {
                 } else if (res?.DT && res?.DT?.status === 'S2') {
                     setCurrentStepQuote(2)
                     changeStep(2)
+                }
+                else {
+                    setCurrentStepQuote(1)
+                    changeStep(1)
                 }
                 setDataQuote({ ...res?.DT, total: res?.DT?.totalPrice, productList: JSON.parse(res?.DT?.productList), fullDataProvider: res?.DT?.dataProvider })
                 setOtherInfoQuote({ employeeId: res?.DT?.employeeId, deliveryDate: res?.DT?.deliveryDate })
@@ -465,6 +472,17 @@ export const OpenQuoteCreated = () => {
             toast.warning(<FormattedMessage id="new_quote.toast-empty-field" />)
         }
     }
+    const handleSendInvoiceToEmail = () => {
+        const arrValidateFieldsQuote = ['providerId', 'expirationDay', 'currency']
+        let check = validateData(arrValidateFieldsQuote, dataQuote)
+        if (check && check.length === 0) {
+            setDataSendQuotePDF(dataQuote)
+            setIsShowModalSendInvoice(true)
+        } else {
+            console.log(check)
+            toast.warning(<FormattedMessage id="new_quote.toast-empty-field" />)
+        }
+    }
 
     const handlePushDataQuotePreview = async (type) => {
         const arrValidateFieldsQuote = isCreateInvoice ? ['providerId', 'currency', 'paymentPolicy'] : ['providerId', 'expirationDay', 'currency', 'paymentPolicy']
@@ -503,17 +521,47 @@ export const OpenQuoteCreated = () => {
 
     const handleConfirmQuote = async () => {
         if (dataQuote && dataQuote?.quoteId) {
-            console.log(">>>> check data quote", dataQuote);
-            const arrValidateFieldsQuote = ['providerId', 'expirationDay', 'currency', 'paymentPolicy']
-            let check = validateData(arrValidateFieldsQuote, dataQuote)
-            if (check && check.length === 0) {
-                let res = await postDataQuote({ ...dataQuote, status: 'S2' })
-
-                if (res?.EC === 0) {
-                    changeStep(2)
-                } else {
-                    toast.error(<FormattedMessage id='new_quote.preview-toast-error' />)
+            let res = await postDataQuote({ ...dataQuote, status: 'S2' })
+            // console.log(res)
+            if (res?.EC === 0) {
+                // let createReceipt = createNewReceipt()
+                let dataReceipt = {
+                    providerId: dataQuote.providerId,
+                    warehouseId: 'WH001',
+                    purchaseId: 'QUO' + dataQuote.quoteId.toString(),
+                    userId: idUser,
+                    scheduledDate: dataQuote.expirationDay,
+                    note: '',
+                    status: 'ready'
                 }
+                let createReceipt = await createNewReceipt(dataReceipt)
+                if (createReceipt.EC === 0) {
+                    let stockCreatedId = createReceipt.DT
+
+                    const arrayOfObjects = Array.from({ length: dataQuote.productList.length }, () => ({}));
+
+                    for (let i = 0; i < arrayOfObjects.length; i++) {
+                        arrayOfObjects[i].deadline = dataQuote.expirationDay
+                        arrayOfObjects[i].scheduledDate = dataQuote.expirationDay
+                        arrayOfObjects[i].quantity = dataQuote.productList[i].quantity
+                        arrayOfObjects[i].description = dataQuote.productList[i].description
+                        arrayOfObjects[i].stockEntryId = stockCreatedId
+                        arrayOfObjects[i].productId = dataQuote.productList[i].productId
+                    }
+
+                    let addStockEntryItem = await createProductListOfReceiptArray(arrayOfObjects)
+
+                    console.log(1)
+                    console.log(arrayOfObjects)
+                    console.log(2)
+                    console.log(addStockEntryItem)
+
+                    // toast.success(res.EM)
+                    // handleCancelCreateInputWarehouse()
+                }
+                changeStep(2)
+                toast.success('Tạo đơn mua hàng thành công')
+                history.push('/manage-purchase')
             } else {
                 toast.warning(<FormattedMessage id="new_quote.confirm-toast-empty-field" />)
             }
@@ -599,9 +647,10 @@ export const OpenQuoteCreated = () => {
                         {
                             currentStepQuote == 3 || isCreateInvoice ? "" :
                                 <>
-                                    {/* {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCreateInvoice}><FormattedMessage id="btn-create-bill" /></button>}
-                                    {currentStepQuote !== 2 && <button className='btn btn-main' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>} */}
-                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
+                                    {/* {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCreateInvoice}><FormattedMessage id="btn-create-bill" /></button>} */}
+                                    {currentStepQuote === 1 && <button className='btn btn-gray' onClick={handleSendQuoteToEmail}><FormattedMessage id="btn-send-quote" /></button>}
+                                    {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleSendInvoiceToEmail}><FormattedMessage id="btn-send-quote" /></button>}
+                                    {currentStepQuote === 1 && <button className='btn btn-gray' onClick={handleConfirmQuote}>Xác nhận đơn hàng</button>}
                                     {/* {currentStepQuote !== 2 && <button className='btn btn-gray' onClick={handleConfirmQuote}><FormattedMessage id="btn-confirm-quote" /></button>}
                                     <button className='btn btn-gray' onClick={handlePushDataQuotePreview}><FormattedMessage id="btn-preview-quote" /></button>
                                     {currentStepQuote === 2 && <button className='btn btn-gray' onClick={handleCancelQuote}><FormattedMessage id="btn-cancel-quote" /></button>} */}
@@ -814,9 +863,9 @@ export const OpenQuoteCreated = () => {
             {isShowModalSendInvoice ?
                 <InvoicePDF
                     componentPDF={componentPDF}
-                    fullDataProvider={fullDataProvider}
+                    fullDataProvider={dataQuote?.fullDataProvider}
                     paymentPolicyToQuote={paymentPolicyToQuote}
-                    dataInvoice={dataQuote} />
+                    dataInvoice={dataSendQuotePDF} />
                 :
                 ""
             }

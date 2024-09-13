@@ -12,6 +12,10 @@ const postDataQuote = (data) => {
     return axios.post('/purchase/api/quote', data)
 }
 
+const updateDataQuote = (id, data) => {
+    return axios.post(`/purchase/api/quote/${id}`, data)
+}
+
 const getLatestQuoteCode = () => {
     return axios.get('/purchase/api/quote')
 }
@@ -60,6 +64,7 @@ const getProviderPagination = (page, pageSize) => {
 export {
     getProviders,
     postDataQuote,
+    updateDataQuote,
     getLatestQuoteCode,
     getQuotesSentAndProviderInfo,
     getDataQuotePreview,
